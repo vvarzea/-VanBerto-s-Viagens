@@ -824,6 +824,7 @@
   <input type="hidden" id="pf-lat">
   <input type="hidden" id="pf-lng">
   <input type="hidden" id="pf-edit-id">
+  <input type="hidden" id="pf-country-id">
 
   <button class="submit-btn visited" id="pf-submit" onclick="submitPin()">Guardar Pin</button>
 </div>
@@ -1940,7 +1941,33 @@ function closeAll() {
 // ─── PIN FORM ─────────────────────────────────────────────────────────────────
 let currentPinType = 'pin-visited';
 
-// ─── DYNAMIC STATS ───────────────────────────────────────────────────────────
+// ─── UPDATE MAP COUNTRY COLORS ────────────────────────────────────────────────
+// Called whenever pins change — recolors countries based on current state
+function updateMapColors() {
+  if (!gRef) return;
+
+  // Build set of numeric IDs from user pins marked as visited
+  const userVisitedIds = new Set(
+    pins.filter(p => p.type === 'pin-visited' && p.countryId)
+        .map(p => +p.countryId)
+  );
+
+  gRef.selectAll('.cpath').each(function(d) {
+    const id = +d.id;
+    const el = d3.select(this);
+    if (VISITED[id]) {
+      el.attr('class', 'cpath vis');
+    } else if (wishCountriesNumeric.has(id)) {
+      el.attr('class', 'cpath wish');
+    } else if (userVisitedIds.has(id)) {
+      el.attr('class', 'cpath vis');
+    } else {
+      el.attr('class', 'cpath no');
+    }
+  });
+}
+
+
 function updateStats() {
   // Countries: VISITED object + user pins marked as visited
   const visitedIds = new Set(Object.keys(VISITED).map(Number));
@@ -2093,13 +2120,14 @@ function pfSearch(q) {
 function pfSelect(id, name) {
   document.getElementById('pf-name').value = name;
   document.getElementById('pf-suggestions').style.display = 'none';
+  document.getElementById('pf-country-id').value = id;
   // Auto-fill continent
   const continent = COUNTRY_CONTINENT[+id] || '';
   const contSel = document.getElementById('pf-continent');
   if (contSel && continent) contSel.value = continent;
-  // Auto-fill emoji from flag code
+  // Auto-fill flag code
   const code = FLAG_CODES[+id] || '';
-  document.getElementById('pf-emoji').value = code ? code : '';
+  document.getElementById('pf-emoji').value = code;
 }
 
 function openPinForm(lat, lng, type, numericId) {
@@ -2115,6 +2143,8 @@ function openPinForm(lat, lng, type, numericId) {
   if (contSel) contSel.value = '';
   const seasonSel = document.getElementById('pf-season');
   if (seasonSel) seasonSel.value = '';
+  const countryIdEl = document.getElementById('pf-country-id');
+  if (countryIdEl) countryIdEl.value = '';
   buildYearSelect(currentPinType === 'pin-wish');
   // Sync type buttons
   document.getElementById('type-vis').className = 'type-opt' + (currentPinType === 'pin-visited' ? ' sel-visited' : '');
@@ -2153,6 +2183,7 @@ function submitPin() {
     name,
     year: yearLabel,
     continent,
+    countryId: document.getElementById('pf-country-id')?.value || null,
     emoji: document.getElementById('pf-emoji').value.trim() || (currentPinType === 'pin-visited' ? '📍' : '⭐'),
     note: document.getElementById('pf-note').value.trim(),
     lat: parseFloat(document.getElementById('pf-lat').value) || null,
@@ -2170,6 +2201,7 @@ function submitPin() {
   renderMapPins();
   renderPinsList();
   renderWishList();
+  updateMapColors();
   updateStats();
   showNotif(currentPinType === 'pin-visited' ? '📍 Pin guardado!' : '⭐ Adicionado à wishlist!');
 }
@@ -2266,6 +2298,8 @@ async function deletePin(id) {
   renderPinsList();
   renderWishList();
   renderWishChips();
+  updateMapColors();
+  updateStats();
   showNotif('Pin removido');
 }
 
@@ -2780,7 +2814,7 @@ function showNotif(msg) {
 async function _init() {
   await loadState();
   updateStats();
-  initMap();
+  initMap(); // updateMapColors is called inside after map renders
   renderPinsList();
   initSearch();
   renderFlagStrip();
