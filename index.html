@@ -1329,6 +1329,9 @@ async function initMap() {
       .datum(topojson.mesh(world, world.objects.countries, (a,b) => a !== b))
       .attr('class','border-line').attr('d', path);
 
+    // Apply colors based on VISITED + user pins loaded from storage
+    updateMapColors();
+
     // ── Country labels — stored for HTML overlay (SVG labels had z-order issues) ─
     labelsG = g.append('g').attr('class','labels-layer'); // keep as empty placeholder
     window._visitedLabelData = [];
@@ -1942,27 +1945,22 @@ function closeAll() {
 let currentPinType = 'pin-visited';
 
 // ─── UPDATE MAP COUNTRY COLORS ────────────────────────────────────────────────
-// Called whenever pins change — recolors countries based on current state
 function updateMapColors() {
-  if (!gRef) return;
-
   // Build set of numeric IDs from user pins marked as visited
   const userVisitedIds = new Set(
     pins.filter(p => p.type === 'pin-visited' && p.countryId)
         .map(p => +p.countryId)
   );
 
-  gRef.selectAll('.cpath').each(function(d) {
-    const id = +d.id;
-    const el = d3.select(this);
-    if (VISITED[id]) {
-      el.attr('class', 'cpath vis');
+  d3.selectAll('.cpath').each(function() {
+    const id = +this.getAttribute('data-id');
+    if (!id) return;
+    if (VISITED[id] || userVisitedIds.has(id)) {
+      this.setAttribute('class', 'cpath vis');
     } else if (wishCountriesNumeric.has(id)) {
-      el.attr('class', 'cpath wish');
-    } else if (userVisitedIds.has(id)) {
-      el.attr('class', 'cpath vis');
+      this.setAttribute('class', 'cpath wish');
     } else {
-      el.attr('class', 'cpath no');
+      this.setAttribute('class', 'cpath no');
     }
   });
 }
