@@ -376,9 +376,10 @@
 
   /* PIN FORM */
   #pin-form {
-    position: fixed; bottom: -400px; left: 0; right: 0;
+    position: fixed; bottom: -120vh; left: 0; right: 0;
     background: white; border-radius: 24px 24px 0 0;
     padding: 16px 22px 50px;
+    max-height: 88vh; overflow-y: auto;
     box-shadow: 0 -8px 48px rgba(0,0,0,0.2);
     transition: bottom .32s cubic-bezier(.4,0,.2,1); z-index: 100;
   }
@@ -1976,45 +1977,39 @@ function updateMapColors() {
 
 
 function updateStats() {
-  // Countries: VISITED object + user pins marked as visited
-  const visitedIds = new Set(Object.keys(VISITED).map(Number));
-  // UK counts as 3 (England, Scotland, N.Ireland) — already in VISITED as 826
-  const numPaises = visitedIds.size; // includes UK as 1, Vatican as 1, Monaco as 1 etc.
+  // Countries: VISITED entries + UK counts as 3 (England, Scotland, N.Ireland)
+  // Base: Object.keys(VISITED) has 826 (UK) as 1, but we visited 3 nations
+  const baseCountries = Object.keys(VISITED).length; // e.g. 33
+  // UK = +2 extra (Scotland + N.Ireland on top of England)
+  const numPaises = baseCountries + 2 + pins.filter(p => p.type === 'pin-visited' && p.countryId).length;
 
-  // Continents from VISITED
+  // Continents visited
   const VISITED_CONTINENTS = {
-    // Europa
     276:'Europa',40:'Europa',56:'Europa',208:'Europa',724:'Europa',246:'Europa',
     250:'Europa',300:'Europa',348:'Europa',380:'Europa',372:'Europa',352:'Europa',
     492:'Europa',578:'Europa',620:'Europa',528:'Europa',616:'Europa',203:'Europa',
-    642:'Europa',752:'Europa',756:'Europa',826:'Europa',688:'Europa',499:'Europa',
-    807:'Europa',336:'Europa',
-    // África
+    752:'Europa',756:'Europa',826:'Europa',336:'Europa',
     132:'África',231:'África',504:'África',834:'África',
-    // Ásia & Médio Oriente
     792:'Ásia',764:'Ásia',462:'Ásia',
     784:'Médio Oriente',634:'Médio Oriente',
-    // América
-    124:'América',840:'América',
-    // Oceânia (nenhuma ainda)
+    124:'América do Norte',840:'América do Norte',
   };
   const conts = new Set(Object.keys(VISITED).map(id => VISITED_CONTINENTS[+id]).filter(Boolean));
   const numConts = conts.size;
 
-  // Years: extract from VISITED year strings
-  const allYears = new Set();
-  Object.values(VISITED).forEach(v => {
-    const matches = (v.year || '').match(/\d{4}/g) || [];
-    matches.forEach(y => { const n = +y; if (n >= 2000 && n <= new Date().getFullYear()) allYears.add(n); });
-  });
-  // Also from user pins
+  // 19 anos de viagens em conjunto
+  const TRAVEL_YEARS = new Set([
+    2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,
+    2017,2018,2019,2021,2022,2023,2024,2025,2026
+  ]); // 19 anos (sem 2020 — pandemia)
+  // Add years from user pins
   pins.filter(p => p.type === 'pin-visited').forEach(p => {
     const matches = (p.year || '').match(/\d{4}/g) || [];
-    matches.forEach(y => { const n = +y; if (n >= 2000 && n <= new Date().getFullYear()) allYears.add(n); });
+    matches.forEach(y => { const n = +y; if (n >= 2000 && n <= new Date().getFullYear()) TRAVEL_YEARS.add(n); });
   });
-  const numAnos = allYears.size;
+  const numAnos = TRAVEL_YEARS.size;
 
-  // Destinations: all city pins (PLACES) + island pins + user pins
+  // Destinations: city+island pins + user visited pins
   const numDestinos = PLACES.length + pins.filter(p => p.type === 'pin-visited').length;
 
   // Update DOM
