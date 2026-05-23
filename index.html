@@ -622,6 +622,13 @@
       <div class="cont-lbl">Visitados</div>
       <div id="pins-visited-list"></div>
     </div>
+    <div id="pins-wish-section" style="margin-top:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="cont-lbl" style="margin:0">⭐ Quero Visitar</div>
+        <button class="tool-btn" style="font-size:11px;background:rgba(193,127,36,0.15);color:#c17f24;border-color:#c17f24;" onclick="openPinForm(null,null,'pin-wish')">+ Adicionar</button>
+      </div>
+      <div id="pins-wish-list"></div>
+    </div>
   </div>
 </div>
 
@@ -1031,7 +1038,7 @@ function switchTab(name) {
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  if (name === 'pins') renderPinsList();
+  if (name === 'pins') { renderPinsList(); renderWishList(); }
   if (name === 'list') renderWishChips();
   if (name === 'wish') renderWishList();
 }
@@ -1216,7 +1223,7 @@ async function initMap() {
     const wrap = document.getElementById('map-wrap');
     wrap.style.minHeight = '220px';
 
-    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
     const el = document.getElementById('map-loading');
     if (el) el.remove();
 
@@ -2097,39 +2104,44 @@ const VISITED_PINS_LIST = [
   { name:'Tailândia 🇹🇭', year:'2024', note:'Templos dourados, praias e street food 🍜🛕', code:'th' },
 ];
 
-// ─── RENDER WISH LIST (standalone — called on every wishlist change) ──────────
+// ─── RENDER WISH LIST ────────────────────────────────────────────────────────
 function renderWishList() {
   const wishList = document.getElementById('pins-wish-list');
   if (!wishList) return;
-  const wish = pins.filter(p => p.type === 'pin-wish');
+  const wishPins = pins.filter(p => p.type === 'pin-wish');
 
-  if (wishCountriesNumeric.size === 0 && wish.length === 0) {
-    wishList.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span>Sem destinos na wishlist.</div>';
+  if (wishCountriesNumeric.size === 0 && wishPins.length === 0) {
+    wishList.innerHTML = `<div class="empty-state" style="padding:20px 0;">
+      <span class="empty-icon">⭐</span>
+      <div>Sem destinos na wishlist.<br><small style="color:#aaa">Toca em "Quero ir" no mapa ou usa o botão + Adicionar</small></div>
+    </div>`;
     return;
   }
 
   const countryItems = [...wishCountriesNumeric].map(id => {
     const name = getCountryName(id) || `País ${id}`;
     const code = FLAG_CODES[id] || '';
-    const flag = code ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '⭐ ';
-    return `<div class="pin-item" onclick="openSheetWish({name:'${name.replace(/'/g,"\\'")}',id:${id}})">
-      <div class="pin-dot wish" style="font-size:18px;">${flag ? '🌍' : '⭐'}</div>
+    const flagImg = code
+      ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
+      : `<div class="pin-dot wish">⭐</div>`;
+    return `<div class="pin-item">
+      ${flagImg}
       <div class="pin-info">
-        <div class="pin-name">${flag}${name}</div>
-        <div class="pin-meta">Quero visitar!</div>
+        <div class="pin-name">${name}</div>
+        <div class="pin-meta">⭐ Quero visitar</div>
       </div>
-      <div class="pin-delete" onclick="event.stopPropagation();removeWishCountry(${id})">✕</div>
+      <div class="pin-delete" onclick="removeWishCountry(${id})" title="Remover">✕</div>
     </div>`;
   });
 
-  const pinItems = wish.map(p => `
+  const pinItems = wishPins.map(p => `
     <div class="pin-item">
       <div class="pin-dot wish">${p.emoji || '⭐'}</div>
       <div class="pin-info">
         <div class="pin-name">${p.name}</div>
         <div class="pin-meta">${p.note || 'Quero visitar!'}</div>
       </div>
-      <div class="pin-delete" onclick="deletePin('${p.id}')">✕</div>
+      <div class="pin-delete" onclick="deletePin('${p.id}')" title="Remover">✕</div>
     </div>
   `);
 
@@ -2518,7 +2530,9 @@ function renderFlagStrip() {
   const countries = SEARCH_DATA.filter(d => d.type === 'visited' && !['Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿','Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿','Irlanda do Norte 🇬🇧'].includes(d.name));
 
   strip.innerHTML = countries.map(c => {
-    const shortName = c.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|🏴[\s\S]{0,10}/gu, '').trim().split(' ')[0];
+    // Remove flag emoji, keep full country name (max 12 chars to fit)
+    const cleanName = c.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|🏴[\s\S]{0,10}/gu, '').trim();
+    const shortName = cleanName.length > 12 ? cleanName.slice(0,11) + '…' : cleanName;
     return `<div class="flag-item" onclick="flagStripClick(${c.id}, ${JSON.stringify(c.code)})" title="${c.name} · ${c.year}">
       <img class="flag-img" src="https://flagcdn.com/w40/${c.code}.png" alt="${shortName}" loading="lazy">
       <div class="flag-name">${shortName}</div>
