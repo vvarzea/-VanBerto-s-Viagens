@@ -552,18 +552,18 @@
   <h1>VanBerto<span>'s</span></h1>
   <p class="tagline">Explorar o mundo, uma aventura de cada vez</p>
   <div class="hbadges">
-    <span class="hbadge">🌍 35 Países</span>
+    <span class="hbadge" id="hbadge-paises">🌍 — Países</span>
     <span class="hbadge">5 Continentes</span>
     <span class="hbadge">10 Ilhas PT</span>
     <span class="hbadge">Desde 2007</span>
   </div>
 </header>
 
-<div class="stats-row">
-  <div class="stat"><span class="stat-num">35</span><div class="stat-lbl">Países</div></div>
-  <div class="stat"><span class="stat-num">5</span><div class="stat-lbl">Continentes</div></div>
-  <div class="stat"><span class="stat-num">19</span><div class="stat-lbl">Anos</div></div>
-  <div class="stat"><span class="stat-num">45+</span><div class="stat-lbl">Destinos</div></div>
+<div class="stats-row" id="stats-row">
+  <div class="stat"><span class="stat-num" id="stat-paises">—</span><div class="stat-lbl">Países</div></div>
+  <div class="stat"><span class="stat-num" id="stat-conts">—</span><div class="stat-lbl">Continentes</div></div>
+  <div class="stat"><span class="stat-num" id="stat-anos">—</span><div class="stat-lbl">Anos</div></div>
+  <div class="stat"><span class="stat-num" id="stat-destinos">—</span><div class="stat-lbl">Destinos</div></div>
 </div>
 
 <div class="tabs">
@@ -771,24 +771,56 @@
     <div class="type-opt" id="type-wish" onclick="setPinType('pin-wish')">⭐ Quero ir</div>
   </div>
 
+  <!-- País / Continente -->
   <div class="form-group">
-    <label class="form-label">Nome do local / país</label>
-    <input class="form-input" id="pf-name" type="text" placeholder="ex: Tokyo, Japão">
+    <label class="form-label">País / Destino</label>
+    <input class="form-input" id="pf-name" type="text" placeholder="Escreve para pesquisar…" autocomplete="off" oninput="pfSearch(this.value)">
+    <div id="pf-suggestions" style="display:none;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;margin-top:4px;max-height:160px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.10);"></div>
   </div>
+
+  <!-- Continente (auto-fill, editável) -->
+  <div class="form-group">
+    <label class="form-label">Continente</label>
+    <select class="form-input" id="pf-continent" style="appearance:auto;">
+      <option value="">— selecionar —</option>
+      <option value="Europa">Europa</option>
+      <option value="África">África</option>
+      <option value="Ásia">Ásia</option>
+      <option value="América do Norte">América do Norte</option>
+      <option value="América do Sul">América do Sul</option>
+      <option value="Oceânia">Oceânia</option>
+      <option value="Médio Oriente">Médio Oriente</option>
+    </select>
+  </div>
+
   <div class="form-row">
+    <!-- Ano -->
     <div class="form-group">
       <label class="form-label">Ano</label>
-      <input class="form-input" id="pf-year" type="text" placeholder="ex: 2024">
+      <select class="form-input" id="pf-year" style="appearance:auto;"></select>
     </div>
+    <!-- Época -->
     <div class="form-group">
-      <label class="form-label">Emoji / bandeira</label>
-      <input class="form-input" id="pf-emoji" type="text" placeholder="🇯🇵">
+      <label class="form-label">Época</label>
+      <select class="form-input" id="pf-season" style="appearance:auto;">
+        <option value="">— —</option>
+        <option value="Verão">☀️ Verão</option>
+        <option value="Inverno">❄️ Inverno</option>
+        <option value="Páscoa">🐣 Páscoa</option>
+        <option value="Natal">🎄 Natal</option>
+        <option value="Carnaval">🎭 Carnaval</option>
+        <option value="Primavera">🌸 Primavera</option>
+        <option value="Outono">🍂 Outono</option>
+      </select>
     </div>
   </div>
+
   <div class="form-group">
     <label class="form-label">Nota pessoal (opcional)</label>
-    <input class="form-input" id="pf-note" type="text" placeholder="ex: A melhor ramen da minha vida!">
+    <input class="form-input" id="pf-note" type="text" placeholder="ex: A melhor experiência da minha vida!">
   </div>
+
+  <input type="hidden" id="pf-emoji">
   <input type="hidden" id="pf-lat">
   <input type="hidden" id="pf-lng">
   <input type="hidden" id="pf-edit-id">
@@ -1908,42 +1940,219 @@ function closeAll() {
 // ─── PIN FORM ─────────────────────────────────────────────────────────────────
 let currentPinType = 'pin-visited';
 
+// ─── DYNAMIC STATS ───────────────────────────────────────────────────────────
+function updateStats() {
+  // Countries: VISITED object + user pins marked as visited
+  const visitedIds = new Set(Object.keys(VISITED).map(Number));
+  // UK counts as 3 (England, Scotland, N.Ireland) — already in VISITED as 826
+  const numPaises = visitedIds.size; // includes UK as 1, Vatican as 1, Monaco as 1 etc.
+
+  // Continents from VISITED
+  const VISITED_CONTINENTS = {
+    // Europa
+    276:'Europa',40:'Europa',56:'Europa',208:'Europa',724:'Europa',246:'Europa',
+    250:'Europa',300:'Europa',348:'Europa',380:'Europa',372:'Europa',352:'Europa',
+    492:'Europa',578:'Europa',620:'Europa',528:'Europa',616:'Europa',203:'Europa',
+    642:'Europa',752:'Europa',756:'Europa',826:'Europa',688:'Europa',499:'Europa',
+    807:'Europa',336:'Europa',
+    // África
+    132:'África',231:'África',504:'África',834:'África',
+    // Ásia & Médio Oriente
+    792:'Ásia',764:'Ásia',462:'Ásia',
+    784:'Médio Oriente',634:'Médio Oriente',
+    // América
+    124:'América',840:'América',
+    // Oceânia (nenhuma ainda)
+  };
+  const conts = new Set(Object.keys(VISITED).map(id => VISITED_CONTINENTS[+id]).filter(Boolean));
+  const numConts = conts.size;
+
+  // Years: extract from VISITED year strings
+  const allYears = new Set();
+  Object.values(VISITED).forEach(v => {
+    const matches = (v.year || '').match(/\d{4}/g) || [];
+    matches.forEach(y => { const n = +y; if (n >= 2000 && n <= new Date().getFullYear()) allYears.add(n); });
+  });
+  // Also from user pins
+  pins.filter(p => p.type === 'pin-visited').forEach(p => {
+    const matches = (p.year || '').match(/\d{4}/g) || [];
+    matches.forEach(y => { const n = +y; if (n >= 2000 && n <= new Date().getFullYear()) allYears.add(n); });
+  });
+  const numAnos = allYears.size;
+
+  // Destinations: all city pins (PLACES) + island pins + user pins
+  const numDestinos = PLACES.length + pins.filter(p => p.type === 'pin-visited').length;
+
+  // Update DOM
+  const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  el('stat-paises', numPaises);
+  el('stat-conts', numConts);
+  el('stat-anos', numAnos);
+  el('stat-destinos', numDestinos + '+');
+  const badge = document.getElementById('hbadge-paises');
+  if (badge) badge.textContent = `🌍 ${numPaises} Países`;
+}
+
+
+
+// Country → continent mapping
+const COUNTRY_CONTINENT = {
+  // Europa
+  276:'Europa',40:'Europa',56:'Europa',208:'Europa',724:'Europa',246:'Europa',
+  250:'Europa',300:'Europa',348:'Europa',380:'Europa',372:'Europa',352:'Europa',
+  492:'Europa',578:'Europa',620:'Europa',528:'Europa',616:'Europa',203:'Europa',
+  642:'Europa',643:'Europa',752:'Europa',756:'Europa',826:'Europa',
+  688:'Europa',499:'Europa',807:'Europa',703:'Europa',705:'Europa',
+  440:'Europa',428:'Europa',233:'Europa',112:'Europa',804:'Europa',498:'Europa',
+  336:'Europa',674:'Europa',20:'Europa',442:'Europa',470:'Europa',191:'Europa',
+  196:'Europa',
+  // África
+  12:'África',24:'África',204:'África',72:'África',854:'África',108:'África',
+  120:'África',132:'África',140:'África',148:'África',174:'África',178:'África',
+  180:'África',262:'África',232:'África',231:'África',266:'África',270:'África',
+  288:'Afrika',324:'África',624:'África',384:'África',404:'África',426:'África',
+  430:'África',434:'África',450:'África',454:'África',466:'África',478:'África',
+  480:'África',504:'África',508:'África',516:'África',562:'África',566:'África',
+  646:'África',678:'África',686:'África',694:'África',706:'África',710:'África',
+  729:'África',728:'África',768:'África',788:'África',800:'África',834:'África',
+  716:'África',894:'África',748:'África',
+  // Ásia
+  4:'Ásia',50:'Ásia',64:'Ásia',96:'Ásia',116:'Ásia',156:'Ásia',
+  356:'Ásia',360:'Ásia',364:'Ásia',368:'Ásia',376:'Ásia',392:'Ásia',
+  398:'Ásia',408:'Ásia',410:'Ásia',417:'Ásia',418:'Ásia',422:'Ásia',
+  458:'Ásia',462:'Ásia',104:'Ásia',524:'Ásia',408:'Ásia',586:'Ásia',
+  608:'Ásia',144:'Ásia',762:'Ásia',764:'Ásia',626:'Ásia',704:'Ásia',
+  860:'Ásia',795:'Ásia',158:'Ásia',496:'Ásia',
+  // Médio Oriente
+  48:'Médio Oriente',31:'Médio Oriente',400:'Médio Oriente',414:'Médio Oriente',
+  512:'Médio Oriente',634:'Médio Oriente',682:'Médio Oriente',760:'Médio Oriente',
+  784:'Médio Oriente',887:'Médio Oriente',792:'Médio Oriente',275:'Médio Oriente',
+  // América do Norte
+  124:'América do Norte',484:'América do Norte',840:'América do Norte',
+  192:'América do Norte',214:'América do Norte',222:'América do Norte',
+  320:'América do Norte',332:'América do Norte',340:'América do Norte',
+  388:'América do Norte',558:'América do Norte',591:'América do Norte',
+  630:'América do Norte',780:'América do Norte',
+  // América do Sul
+  32:'América do Sul',68:'América do Sul',76:'América do Sul',152:'América do Sul',
+  170:'América do Sul',218:'América do Sul',328:'América do Sul',600:'América do Sul',
+  604:'América do Sul',740:'América do Sul',858:'América do Sul',862:'América do Sul',
+  // Oceânia
+  36:'Oceânia',554:'Oceânia',598:'Oceânia',242:'Oceânia',90:'Oceânia',
+  548:'Oceânia',520:'Oceânia',585:'Oceânia',583:'Oceânia',584:'Oceânia',
+  798:'Oceânia',776:'Oceânia',882:'Oceânia',
+};
+
+// Build year selector — past years (2000→now) + future years (now+1→now+10)
+function buildYearSelect(isWish) {
+  const sel = document.getElementById('pf-year');
+  if (!sel) return;
+  const now = new Date().getFullYear();
+  sel.innerHTML = '<option value="">— ano —</option>';
+  if (isWish) {
+    // Future: current year + 10 years ahead
+    for (let y = now; y <= now + 10; y++) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      if (y === now + 1) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  } else {
+    // Past: 2000 → current year (descending, default = current)
+    for (let y = now; y >= 2000; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      if (y === now) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  }
+}
+
+// Autocomplete search in form
+function pfSearch(q) {
+  const sug = document.getElementById('pf-suggestions');
+  if (!q || q.length < 2) { sug.style.display = 'none'; return; }
+  const norm = q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const matches = Object.entries(WORLD_NAMES)
+    .filter(([,name]) => name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(norm))
+    .slice(0, 8);
+  if (!matches.length) { sug.style.display = 'none'; return; }
+  sug.style.display = 'block';
+  sug.innerHTML = matches.map(([id, name]) => {
+    const code = FLAG_CODES[+id] || '';
+    const flag = code ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:18px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '🌍 ';
+    return `<div onclick="pfSelect(${id},'${name.replace(/'/g,"\\'")}')"
+      style="padding:8px 14px;cursor:pointer;display:flex;align-items:center;font-size:13px;border-bottom:1px solid #f1f5f9;"
+      onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"
+    >${flag}${name}</div>`;
+  }).join('');
+}
+
+function pfSelect(id, name) {
+  document.getElementById('pf-name').value = name;
+  document.getElementById('pf-suggestions').style.display = 'none';
+  // Auto-fill continent
+  const continent = COUNTRY_CONTINENT[+id] || '';
+  const contSel = document.getElementById('pf-continent');
+  if (contSel && continent) contSel.value = continent;
+  // Auto-fill emoji from flag code
+  const code = FLAG_CODES[+id] || '';
+  document.getElementById('pf-emoji').value = code ? code : '';
+}
+
 function openPinForm(lat, lng, type, numericId) {
-  document.getElementById('pf-name').value = '';
-  document.getElementById('pf-year').value = '';
-  document.getElementById('pf-emoji').value = '';
-  document.getElementById('pf-note').value = '';
+  currentPinType = type || 'pin-visited';
   document.getElementById('pf-lat').value = lat || '';
   document.getElementById('pf-lng').value = lng || '';
   document.getElementById('pf-edit-id').value = '';
-  setPinType(type || 'pin-visited');
+  document.getElementById('pf-name').value = '';
+  document.getElementById('pf-note').value = '';
+  document.getElementById('pf-emoji').value = '';
+  document.getElementById('pf-suggestions').style.display = 'none';
+  const contSel = document.getElementById('pf-continent');
+  if (contSel) contSel.value = '';
+  const seasonSel = document.getElementById('pf-season');
+  if (seasonSel) seasonSel.value = '';
+  buildYearSelect(currentPinType === 'pin-wish');
+  // Sync type buttons
+  document.getElementById('type-vis').className = 'type-opt' + (currentPinType === 'pin-visited' ? ' sel-visited' : '');
+  document.getElementById('type-wish').className = 'type-opt' + (currentPinType === 'pin-wish' ? ' sel-wish' : '');
+  document.getElementById('pf-submit').className = 'submit-btn ' + (currentPinType === 'pin-wish' ? 'wish' : 'visited');
   document.getElementById('pin-form').classList.add('on');
-  document.getElementById('backdrop').classList.add('on');
-  setTimeout(() => document.getElementById('pf-name').focus(), 350);
 }
 
 function closePinForm() {
   document.getElementById('pin-form').classList.remove('on');
   document.getElementById('backdrop').classList.remove('on');
+  const sug = document.getElementById('pf-suggestions');
+  if (sug) sug.style.display = 'none';
 }
 
 function setPinType(type) {
   currentPinType = type;
   document.getElementById('type-vis').className = 'type-opt' + (type === 'pin-visited' ? ' sel-visited' : '');
-  document.getElementById('type-wish').className = 'type-opt' + (type === 'pin-wish' ? ' sel-wishlist' : '');
+  document.getElementById('type-wish').className = 'type-opt' + (type === 'pin-wish' ? ' sel-wish' : '');
   const btn = document.getElementById('pf-submit');
-  btn.className = 'submit-btn ' + (type === 'pin-visited' ? 'visited' : 'wishlist');
+  btn.className = 'submit-btn ' + (type === 'pin-visited' ? 'visited' : 'wish');
   btn.textContent = type === 'pin-visited' ? '📍 Guardar Pin Visitado' : '⭐ Guardar na Wishlist';
+  buildYearSelect(type === 'pin-wish');
 }
 
 function submitPin() {
   const name = document.getElementById('pf-name').value.trim();
   if (!name) { document.getElementById('pf-name').focus(); return; }
   const editId = document.getElementById('pf-edit-id').value;
+  const year = document.getElementById('pf-year').value;
+  const season = document.getElementById('pf-season')?.value || '';
+  const continent = document.getElementById('pf-continent')?.value || '';
+  const yearLabel = [year, season].filter(Boolean).join(' ');
   const pin = {
     id: editId || Date.now().toString(),
     name,
-    year: document.getElementById('pf-year').value.trim(),
+    year: yearLabel,
+    continent,
     emoji: document.getElementById('pf-emoji').value.trim() || (currentPinType === 'pin-visited' ? '📍' : '⭐'),
     note: document.getElementById('pf-note').value.trim(),
     lat: parseFloat(document.getElementById('pf-lat').value) || null,
@@ -1961,6 +2170,7 @@ function submitPin() {
   renderMapPins();
   renderPinsList();
   renderWishList();
+  updateStats();
   showNotif(currentPinType === 'pin-visited' ? '📍 Pin guardado!' : '⭐ Adicionado à wishlist!');
 }
 
@@ -2173,7 +2383,7 @@ function renderPinsList() {
         <div class="pin-dot vis">${p.emoji || '📍'}</div>
         <div class="pin-info">
           <div class="pin-name">${p.name}</div>
-          <div class="pin-meta">${p.year ? p.year + ' · ' : ''}${p.note || 'Sem nota'}</div>
+          <div class="pin-meta">${[p.continent, p.year].filter(Boolean).join(' · ') || 'Sem nota'}</div>
         </div>
         <div class="pin-delete" onclick="deletePin('${p.id}')">✕</div>
       </div>
@@ -2569,6 +2779,7 @@ function showNotif(msg) {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 async function _init() {
   await loadState();
+  updateStats();
   initMap();
   renderPinsList();
   initSearch();
