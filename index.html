@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VanBerto's 🌍</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0c07;
+    --parchment: #f7f0e4;
+    --gold: #c9951a;
+    --gold-light: #f0c84a;
+    --gold-pale: #fdf3d5;
+    --green: #2d7a4f;
+    --green-light: #5db882;
+    --green-pale: #d4f0e2;
+    --red: #c0392b;
+    --red-pale: #fde8e6;
+    --ocean: #a8cfe8;
+    --ocean-deep: #1a5a8a;
+    --cream: #fdf8f0;
+    --muted: #9a8c7a;
+    --border: rgba(0,0,0,0.08);
+    --shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+    padding: 28px 20px 22px;
+    text-align: center;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(201,149,26,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 50%, rgba(45,122,79,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -55deg, transparent, transparent 20px,
+      rgba(255,255,255,0.012) 20px, rgba(255,255,255,0.012) 21px
+    );
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); margin-bottom: 10px;
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+  }
+  .plane { display: inline-block; animation: fly 4s ease-in-out infinite; }
+  @keyframes fly { 0%,100%{transform:translateY(0) rotate(-8deg);} 50%{transform:translateY(-7px) rotate(7deg);} }
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 10vw, 58px);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  header h1 span { font-style: italic; font-weight: 400; color: var(--gold-light); }
+  header .tagline { font-size: 11px; opacity: .35; letter-spacing: 2.5px; text-transform: uppercase; color: white; margin-bottom: 16px; }
+  .hbadges { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
+  .hbadge {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 11px; color: var(--gold-light);
+    font-weight: 500; letter-spacing: .3px;
+  }
+
+  /* STATS */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    background: white;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .stat { padding: 14px 6px; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; color: var(--gold); line-height: 1;
+    display: block; font-weight: 700;
+  }
+  .stat-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
+
+  /* TABS */
+  .tabs {
+    display: flex; background: white;
+    border-bottom: 2px solid var(--border);
+    position: sticky; top: 0; z-index: 30;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .tab {
+    flex: 1; padding: 11px 4px; text-align: center;
+    font-size: 11px; font-weight: 500; letter-spacing: .5px;
+    text-transform: uppercase; color: var(--muted);
+    cursor: pointer; transition: all .2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-icon { font-size: 14px; display: block; margin-bottom: 2px; }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    padding: 8px 12px 4px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-input-row {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--cream); border: 1.5px solid var(--border);
+    border-radius: 24px; padding: 7px 14px;
+    transition: border-color .2s;
+  }
+  .search-input-row:focus-within { border-color: var(--gold); }
+  .search-input-row input {
+    flex: 1; border: none; background: none; outline: none;
+    font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--ink);
+  }
+  .search-input-row input::placeholder { color: var(--muted); }
+  .search-icon { color: var(--muted); font-size: 14px; flex-shrink: 0; }
+  .search-clear { cursor: pointer; color: var(--muted); font-size: 16px; display: none; }
+  .search-results {
+    position: absolute; left: 12px; right: 12px; top: 100%;
+    background: white; border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 50; max-height: 280px; overflow-y: auto;
+    border: 1px solid var(--border); margin-top: 4px;
+    display: none;
+  }
+  .search-results.open { display: block; }
+  .search-result-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; cursor: pointer; transition: background .15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-result-item:last-child { border-bottom: none; }
+  .search-result-item:hover { background: var(--gold-pale); }
+  .sri-flag { width: 28px; height: 19px; border-radius: 3px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
+  .sri-name { font-size: 13px; font-weight: 500; flex: 1; }
+  .sri-year { font-size: 11px; color: var(--muted); }
+  .sri-badge { font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 500; flex-shrink: 0; }
+  .sri-badge.visited { background: var(--gold-pale); color: var(--gold); }
+  .sri-badge.wish { background: var(--green-pale); color: var(--green); }
+  .sri-badge.explore { background: #e8f4fb; color: #1a6080; }
+
+  /* MAP */
+  .map-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; background: white;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid; transition: all .2s;
+    letter-spacing: .3px;
+  }
+  .tool-btn.visited { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+  .tool-btn.wishlist { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+  .tool-btn.active { transform: scale(1.04); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .tool-btn.visited.active { background: var(--gold); color: white; }
+  .tool-btn.wishlist.active { background: var(--green); color: white; }
+  .tool-tip { font-size: 10px; color: var(--muted); margin-left: auto; letter-spacing: .3px; font-style: italic; }
+
+  #map-wrap { width: 100%; background: var(--ocean); position: relative; overflow: hidden; }
+  #map-wrap svg { display: block; width: 100%; }
+
+  /* ZOOM CONTROLS */
+  .zoom-controls {
+    position: absolute; right: 10px; bottom: 14px; z-index: 20;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .zoom-btn {
+    width: 36px; height: 36px; background: white;
+    border: 1px solid rgba(0,0,0,0.13); border-radius: 10px;
+    font-size: 20px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14); color: #444;
+    user-select: none; -webkit-user-select: none;
+    transition: background .15s;
+  }
+  .zoom-btn:active { background: #f0f0f0; }
+  .zoom-btn.reset { font-size: 14px; color: var(--muted); }
+  .cpath { stroke: rgba(255,255,255,0.8); stroke-width: 0.35; transition: fill .15s; }
+  .cpath.vis { fill: var(--gold); cursor: pointer; }
+  .cpath.wish { fill: var(--green-light); cursor: pointer; }
+  .cpath.no { fill: #c8dbe8; }
+  .cpath.vis:hover { fill: var(--gold-light); }
+  .cpath.wish:hover { fill: var(--green); }
+  .cpath.no:hover { fill: #b8cdd8; cursor: crosshair; }
+  .graticule-line { fill: none; stroke: rgba(255,255,255,0.18); stroke-width: 0.25; pointer-events: none; }
+  .border-line { fill: none; stroke: rgba(255,255,255,0.65); stroke-width: 0.3; pointer-events: none; }
+
+  /* MAP PINS */
+  .map-pin {
+    cursor: pointer; transition: transform .15s;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  }
+  .map-pin:hover { transform: scale(1.3) translateY(-2px); }
+  .pin-circle { transition: all .15s; }
+
+  /* Visited country labels — HTML overlay (always on top, no SVG z-order issues) */
+  #visited-label-overlay { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8; }
+  .vcl {
+    position:absolute;
+    transform:translate(-50%,-50%);
+    font-family:'Outfit',sans-serif;
+    font-size:11px;
+    font-weight:900;
+    color:#fff;
+    background: rgba(140, 85, 5, 0.78);
+    border: 1px solid rgba(255,215,80,0.40);
+    border-radius: 5px;
+    padding: 2px 6px;
+    white-space:nowrap;
+    pointer-events:none;
+    letter-spacing:0.6px;
+    line-height:1.4;
+    display:none;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.38), 0 0 0 1px rgba(0,0,0,0.15);
+  }
+  .country-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 7px;
+    font-weight: 800;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+    paint-order: stroke;
+    stroke: rgba(40,15,0,0.82);
+    stroke-width: 3.5px;
+    stroke-linejoin: round;
+  }
+  .city-pin {
+    cursor: pointer;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45));
+    transition: transform .15s;
+  }
+  .city-pin:hover { transform: scale(1.4) translateY(-1px); }
+  .city-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    fill: #1a0d00;
+    text-anchor: middle;
+    dominant-baseline: auto;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: rgba(255,255,255,0.98);
+    stroke-width: 4.5px;
+    stroke-linejoin: round;
+    letter-spacing: 0.3px;
+  }
+  .city-label.capital-lbl {
+    font-weight: 800;
+    font-size: 14px;
+    fill: #1a0000;
+    stroke: rgba(255,255,255,0.98);
+    stroke-width: 5px;
+  }
+
+  .city-pin.island path.pin-body { fill: #0e7fa8; }
+  .city-pin.island circle.pin-dot { fill: white; }
+  .city-pin.island { filter: drop-shadow(0 1px 4px rgba(14,127,168,0.6)); }
+  .city-label.island-lbl {
+    fill: #ffffff;
+    font-weight: 900;
+    font-size: 13px;
+    stroke: rgba(0,45,75,0.95);
+    stroke-width: 5px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ALL-COUNTRIES LABELS */
+  .cpath.search-highlight {
+    fill: #e8f44d !important;
+    filter: drop-shadow(0 0 8px rgba(232,244,77,0.8));
+    animation: searchPulse 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes searchPulse {
+    from { fill: #e8f44d; filter: drop-shadow(0 0 6px rgba(232,244,77,0.7)); }
+    to   { fill: #f9ff80; filter: drop-shadow(0 0 14px rgba(249,255,128,1)); }
+  }
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    fill: rgba(40,20,5,0.82);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    letter-spacing: 0.3px;
+    paint-order: stroke;
+    stroke: rgba(255,255,255,0.95);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+
+  /* MAP HINT */
+  .map-hint {
+    text-align: center; font-size: 10px; color: #aaa;
+    padding: 6px; background: white;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: .4px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex; gap: 14px; justify-content: center; align-items: center;
+    padding: 8px 16px; background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid var(--border);
+    font-size: 10.5px; color: #888;
+    flex-wrap: wrap;
+  }
+  .leg { display: flex; align-items: center; gap: 5px; }
+  .leg-dot { width: 13px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* BOTTOM SHEET */
+  .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 90; backdrop-filter: blur(2px); }
+  .backdrop.on { display: block; }
+  #sheet {
+    position: fixed; bottom: -380px; left: 0; right: 0;
+    background: white; border-radius: 24px 24px 0 0;
+    padding: 16px 22px 44px;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.2);
+    transition: bottom .32s cubic-bezier(.4,0,.2,1); z-index: 100;
+    max-height: 80vh; overflow-y: auto;
+  }
+  #sheet.on { bottom: 0; }
+  .sh-handle { width: 40px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 16px; }
+  .sh-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+  #s-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.1; flex: 1; font-weight: 700; }
+  #s-close { font-size: 20px; color: #ccc; cursor: pointer; padding: 2px 4px; flex-shrink: 0; line-height: 1; }
+  #s-year { display: inline-block; background: var(--gold); color: white; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; margin: 8px 0 10px; }
+  #s-year.wish-tag { background: var(--green); }
+  #s-note { font-size: 13px; color: #666; font-style: italic; line-height: 1.55; }
+  .sh-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .sh-btn {
+    flex: 1; padding: 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid; transition: all .2s; text-align: center;
+    font-family: 'Outfit', sans-serif;
+  }
+  .sh-btn.gold { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+  .sh-btn.gold:hover { background: var(--gold); color: white; }
+  .sh-btn.green { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+  .sh-btn.green:hover { background: var(--green); color: white; }
+  .sh-btn.red { border-color: var(--red); color: var(--red); background: var(--red-pale); }
+  .sh-btn.red:hover { background: var(--red); color: white; }
+
+  /* PIN FORM */
+  #pin-form {
+    position: fixed; bottom: -400px; left: 0; right: 0;
+    background: white; border-radius: 24px 24px 0 0;
+    padding: 16px 22px 50px;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.2);
+    transition: bottom .32s cubic-bezier(.4,0,.2,1); z-index: 100;
+  }
+  #pin-form.on { bottom: 0; }
+  .form-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 5px; display: block; font-weight: 500; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 13px;
+    background: var(--cream); color: var(--ink); outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+  .form-type { display: flex; gap: 8px; margin-bottom: 14px; }
+  .type-opt {
+    flex: 1; padding: 9px; border-radius: 10px; text-align: center;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid var(--border); transition: all .2s; color: var(--muted);
+  }
+  .type-opt.sel-visited { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
+  .type-opt.sel-wishlist { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+  .submit-btn {
+    width: 100%; padding: 12px; border-radius: 12px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    border: none; transition: all .2s; margin-top: 4px;
+    font-family: 'Outfit', sans-serif; letter-spacing: .3px;
+  }
+  .submit-btn.visited { background: var(--gold); color: white; }
+  .submit-btn.wishlist { background: var(--green); color: white; }
+  .submit-btn:hover { opacity: .9; transform: translateY(-1px); }
+
+  /* TABS CONTENT */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* COUNTRY LIST */
+  .section { padding: 20px 14px; }
+  .sec-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+  .cont-group { margin-bottom: 20px; }
+  .cont-lbl {
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 2.5px;
+    color: var(--muted); font-weight: 600; margin-bottom: 9px; padding-left: 2px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    background: white; border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 5px 13px; font-size: 12px;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: transform .15s;
+    font-weight: 400;
+  }
+  .chip:hover { transform: scale(1.05); }
+  .chip.wish-chip { border-color: rgba(45,122,79,0.3); background: var(--green-pale); }
+  .cy { font-size: 10px; color: var(--muted); }
+  .azores-box {
+    background: linear-gradient(135deg, #e8f4f8, #d4eaf4);
+    border-left: 3px solid var(--ocean-deep); border-radius: 0 14px 14px 0;
+    padding: 13px 16px; margin-top: 14px;
+    font-size: 12px; color: var(--ocean-deep); line-height: 1.7;
+  }
+  .azores-box strong { display: block; margin-bottom: 5px; font-size: 13px; }
+
+  /* PINS LIST */
+  .pins-list { padding: 16px 14px; }
+  .pin-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; background: white; border-radius: 14px;
+    margin-bottom: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+  }
+  .pin-dot {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; margin-top: 1px;
+  }
+  .pin-dot.vis { background: var(--gold-pale); }
+  .pin-dot.wish { background: var(--green-pale); }
+  .pin-info { flex: 1; }
+  .pin-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+  .pin-meta { font-size: 11px; color: var(--muted); }
+  .pin-delete {
+    font-size: 16px; color: #ccc; cursor: pointer; padding: 2px 4px;
+    transition: color .15s; flex-shrink: 0; line-height: 1.8;
+  }
+  .pin-delete:hover { color: var(--red); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+  .empty-icon { font-size: 36px; display: block; margin-bottom: 10px; opacity: .4; }
+
+  /* TIMELINE */
+  .tl-section { padding: 0 14px 28px; }
+  .tl-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .tl-row {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 12px;
+  }
+  .tl-year { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--gold); min-width: 38px; flex-shrink: 0; font-weight: 700; }
+  .tl-countries { color: #555; line-height: 1.6; }
+
+  /* FLAG STRIP */
+  .flag-strip {
+    background: var(--ink);
+    padding: 14px 12px 18px;
+    overflow: hidden;
+  }
+  .flag-strip-title {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 12px;
+  }
+  .flag-scroll {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+  }
+  .flag-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer;
+  }
+  .flag-img {
+    width: 32px; height: 21px; object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    transition: transform .2s, box-shadow .2s;
+    background: #333;
+  }
+  .flag-item:hover .flag-img { transform: scale(1.2) translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
+  .flag-name {
+    font-size: 7px; color: rgba(255,255,255,0.35);
+    text-align: center; max-width: 42px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    letter-spacing: .2px;
+  }
+
+  footer {
+    background: var(--ink); color: rgba(255,255,255,0.3);
+    text-align: center; padding: 20px 16px;
+    font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase;
+  }
+  footer span { color: var(--gold); }
+
+  /* Notification */
+  .notif {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-80px);
+    background: var(--ink); color: white; padding: 10px 20px;
+    border-radius: 20px; font-size: 12px; font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 200;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap; letter-spacing: .3px;
+  }
+  .notif.show { transform: translateX(-50%) translateY(0); }
+
+  /* Wishlist section heading */
+  .wish-heading {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 9.5px; text-transform: uppercase;
+    letter-spacing: 2.5px; color: var(--green);
+    font-weight: 600; margin-bottom: 9px; padding-left: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div id="notif" class="notif">✓ Guardado!</div>
+
+<header>
+  <div class="header-eyebrow">
+    <span class="plane">✈️</span> passaporte digital de viagens <span class="plane" style="animation-delay:.7s">✈️</span>
+  </div>
+  <h1>VanBerto<span>'s</span></h1>
+  <p class="tagline">Explorar o mundo, uma aventura de cada vez</p>
+  <div class="hbadges">
+    <span class="hbadge">🌍 35 Países</span>
+    <span class="hbadge">5 Continentes</span>
+    <span class="hbadge">10 Ilhas PT</span>
+    <span class="hbadge">Desde 2007</span>
+  </div>
+</header>
+
+<div class="stats-row">
+  <div class="stat"><span class="stat-num">35</span><div class="stat-lbl">Países</div></div>
+  <div class="stat"><span class="stat-num">5</span><div class="stat-lbl">Continentes</div></div>
+  <div class="stat"><span class="stat-num">19</span><div class="stat-lbl">Anos</div></div>
+  <div class="stat"><span class="stat-num">45+</span><div class="stat-lbl">Destinos</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('map')"><span class="tab-icon">🗺️</span>Mapa</div>
+  <div class="tab" onclick="switchTab('pins')"><span class="tab-icon">📍</span>Pins</div>
+  <div class="tab" onclick="switchTab('list')"><span class="tab-icon">🌍</span>Países</div>
+  <div class="tab" onclick="switchTab('timeline')"><span class="tab-icon">📅</span>Timeline</div>
+</div>
+
+<!-- MAP TAB -->
+<div id="tab-map" class="tab-panel active">
+  <div class="search-wrap" style="position:relative;">
+    <div class="search-input-row">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="map-search" placeholder="Pesquisar país ou cidade..." autocomplete="off" autocorrect="off">
+      <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <div class="map-toolbar">
+    <button class="tool-btn visited" id="btn-pin-visited" onclick="setMode('pin-visited')">
+      📍 Pin Visitado
+    </button>
+    <button class="tool-btn wishlist" id="btn-pin-wish" onclick="setMode('pin-wish')">
+      ⭐ Quero ir
+    </button>
+    <span class="tool-tip" id="mode-tip">Toca num país para ver detalhes</span>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div>Visitado</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--green-light)"></div>Quero ir</div>
+    <div class="leg"><div class="leg-dot" style="background:#c8dbe8"></div>Por explorar</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--ocean)"></div>Oceano</div>
+  </div>
+  <div id="map-wrap">
+    <div id="map-loading" style="text-align:center;padding:50px 20px;color:#999;font-size:13px">
+      🌍 A carregar mapa…
+    </div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="mapZoomIn()" aria-label="Zoom in">+</button>
+      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Reset zoom">⊙</button>
+      <button class="zoom-btn" onclick="mapZoomOut()" aria-label="Zoom out">−</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- PINS TAB -->
+<div id="tab-pins" class="tab-panel">
+  <div class="pins-list">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="sec-title" style="margin:0">📍 Os meus pins</div>
+      <button class="tool-btn visited" style="font-size:11px;" onclick="openPinForm(null,null,'pin-visited')">+ Adicionar</button>
+    </div>
+    <div id="pins-visited-section">
+      <div class="cont-lbl">Visitados</div>
+      <div id="pins-visited-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST TAB -->
+<div id="tab-list" class="tab-panel">
+  <div class="section">
+    <div class="sec-title">🌍 Países Visitados</div>
+
+    <div class="cont-group">
+      <div class="cont-lbl">Europa · 26 países/territórios</div>
+      <div class="chips">
+        <div class="chip">🇵🇹 Portugal <span class="cy">sempre</span></div>
+        <div class="chip">🇩🇪 Alemanha <span class="cy">2019 Verão</span></div>
+        <div class="chip">🇦🇹 Áustria <span class="cy">2021 Verão</span></div>
+        <div class="chip">🇧🇪 Bélgica <span class="cy">2017 Verão</span></div>
+        <div class="chip">🇩🇰 Dinamarca <span class="cy">2022 Natal</span></div>
+        <div class="chip">🇪🇸 Espanha <span class="cy">2000–2025</span></div>
+        <div class="chip">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia <span class="cy">2024 Natal</span></div>
+        <div class="chip">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra <span class="cy">2014 Páscoa</span></div>
+        <div class="chip">🇬🇧 Irlanda do Norte <span class="cy">2025 Páscoa</span></div>
+        <div class="chip">🇫🇷 França <span class="cy">2015 Verão · 2026 Páscoa</span></div>
+        <div class="chip">🇫🇮 Finlândia <span class="cy">2018 Verão · 2021 Natal</span></div>
+        <div class="chip">🇬🇷 Grécia <span class="cy">2019 Verão</span></div>
+        <div class="chip">🇭🇺 Hungria <span class="cy">2021 Verão</span></div>
+        <div class="chip">🇮🇹 Itália <span class="cy">2016 · 2019 Verão</span></div>
+        <div class="chip">🇮🇪 Irlanda <span class="cy">2025 Páscoa</span></div>
+        <div class="chip">🇮🇸 Islândia <span class="cy">2018 Verão</span></div>
+        <div class="chip">🇲🇨 Mónaco <span class="cy">2026 Páscoa</span></div>
+        <div class="chip">🇳🇴 Noruega <span class="cy">2018 Natal</span></div>
+        <div class="chip">🇳🇱 Países Baixos <span class="cy">2017 Verão</span></div>
+        <div class="chip">🇵🇱 Polónia <span class="cy">2023 Natal</span></div>
+        <div class="chip">🇨🇿 Rep. Checa <span class="cy">2017 Verão</span></div>
+        <div class="chip">🇨🇭 Suíça <span class="cy">2017 Natal</span></div>
+        <div class="chip">🇸🇪 Suécia <span class="cy">2019 · 2022 Natal</span></div>
+        <div class="chip">🇹🇷 Turquia <span class="cy">2022 Verão</span></div>
+        <div class="chip">🇻🇦 Vaticano <span class="cy">2016 Verão</span></div>
+      </div>
+    </div>
+
+    <div class="cont-group">
+      <div class="cont-lbl">África · 4 países</div>
+      <div class="chips">
+        <div class="chip">🇨🇻 Cabo Verde <span class="cy">2024 Páscoa</span></div>
+        <div class="chip">🇪🇹 Etiópia <span class="cy">2025 Verão</span></div>
+        <div class="chip">🇲🇦 Marrocos <span class="cy">2023 Páscoa</span></div>
+        <div class="chip">🇹🇿 Tanzânia <span class="cy">2025 Verão</span></div>
+      </div>
+    </div>
+
+    <div class="cont-group">
+      <div class="cont-lbl">Américas · 2 países</div>
+      <div class="chips">
+        <div class="chip">🇨🇦 Canadá <span class="cy">2023 Verão</span></div>
+        <div class="chip">🇺🇸 EUA <span class="cy">2023 Verão</span></div>
+      </div>
+    </div>
+
+    <div class="cont-group">
+      <div class="cont-lbl">Ásia & Médio Oriente · 5 países</div>
+      <div class="chips">
+        <div class="chip">🇦🇪 Emirados Árabes <span class="cy">2024 Natal</span></div>
+        <div class="chip">🇲🇻 Maldivas <span class="cy">2024 Verão</span></div>
+        <div class="chip">🇶🇦 Qatar <span class="cy">2024 Verão</span></div>
+        <div class="chip">🇹🇭 Tailândia <span class="cy">2024 Natal</span></div>
+      </div>
+    </div>
+
+    <div class="cont-group">
+      <div class="cont-lbl">Oceania & Atlântico · 0 países</div>
+      <div class="chips" id="oceania-chips">
+        <div class="chip" style="color:var(--muted);border-style:dashed">✈️ Próximo destino?</div>
+      </div>
+    </div>
+
+    <div class="azores-box">
+      <strong>📍 Ilhas Portuguesas Visitadas (Portugal 🇵🇹)</strong>
+      São Miguel (2013 · 2014 · 2015 · 2024) · Terceira (2007 Verão) · São Jorge (2014) · Pico (2017) · Flores (2017) · Santa Maria (2018) · Graciosa (2019) · Corvo (2023 Carnaval) · Faial (2023) · Madeira (2023)
+    </div>
+    <div class="azores-box" style="border-left-color:#0e7fa8; background:linear-gradient(135deg,#e6f4f9,#cce8f2); color:#003d55; margin-top:8px;">
+      <strong>🏝️ Zanzibar · Tanzânia 🇹🇿 (2025)</strong>
+      A ilha do Índico — especiarias, praias brancas e cultura swahili
+    </div>
+
+    <!-- Wishlist countries from pins -->
+    <div id="wish-countries-section" style="margin-top:24px;display:none">
+      <div class="sec-title" style="color:var(--green)">⭐ Quero Visitar</div>
+      <div id="wish-chips" class="chips"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE TAB -->
+<div id="tab-timeline" class="tab-panel">
+  <div class="section">
+    <div class="sec-title">📅 Linha do Tempo</div>
+  </div>
+  <div class="tl-section">
+    <div class="tl-row"><div class="tl-year">2000</div><div class="tl-countries">Espanha — Loret del Mar 🇪🇸 <span style="color:var(--muted);font-size:10px">· Páscoa</span></div></div>
+    <div class="tl-row"><div class="tl-year">2007</div><div class="tl-countries">Terceira 🇵🇹 · Espanha — Benidorm 🇪🇸 <span style="color:var(--muted);font-size:10px">· Páscoa</span></div></div>
+    <div class="tl-row"><div class="tl-year">2011</div><div class="tl-countries">Espanha — Lobios, Galiza 🇪🇸 <span style="color:var(--muted);font-size:10px">· Verão</span></div></div>
+    <div class="tl-row"><div class="tl-year">2013</div><div class="tl-countries">São Miguel 🇵🇹 (1ª vez)</div></div>
+    <div class="tl-row"><div class="tl-year">2014</div><div class="tl-countries">São Jorge 🇵🇹 · São Miguel 🇵🇹 · Inglaterra — Londres 🏴󠁧󠁢󠁥󠁮󠁧󠁿 <span style="color:var(--muted);font-size:10px">· Páscoa</span></div></div>
+    <div class="tl-row"><div class="tl-year">2015</div><div class="tl-countries">França — Paris + Disneyland 🇫🇷 <span style="color:var(--muted);font-size:10px">· Verão</span> · São Miguel 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2016</div><div class="tl-countries">Itália — Roma 🇮🇹 · Vaticano 🇻🇦 <span style="color:var(--muted);font-size:10px">· Verão</span></div></div>
+    <div class="tl-row"><div class="tl-year">2017</div><div class="tl-countries">Bélgica — Bruxelas 🇧🇪 <span style="color:var(--muted);font-size:10px">Verão</span> · Países Baixos — Amesterdão 🇳🇱 <span style="color:var(--muted);font-size:10px">Verão</span> · Rep. Checa — Praga 🇨🇿 <span style="color:var(--muted);font-size:10px">Verão</span> · Suíça — Zurique 🇨🇭 <span style="color:var(--muted);font-size:10px">Natal</span> · Pico 🇵🇹 · Flores 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2018</div><div class="tl-countries">Islândia 🇮🇸 <span style="color:var(--muted);font-size:10px">Verão</span> · Noruega — Oslo 🇳🇴 <span style="color:var(--muted);font-size:10px">Natal</span> · Finlândia — Helsínquia 🇫🇮 <span style="color:var(--muted);font-size:10px">Verão</span> · Santa Maria 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2019</div><div class="tl-countries">Alemanha — Berlim 🇩🇪 <span style="color:var(--muted);font-size:10px">Verão</span> · Grécia — Atenas 🇬🇷 <span style="color:var(--muted);font-size:10px">Verão</span> · Itália — Veneza 🇮🇹 <span style="color:var(--muted);font-size:10px">Verão</span> · Suécia — Estocolmo 🇸🇪 <span style="color:var(--muted);font-size:10px">Natal</span> · Graciosa 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2021</div><div class="tl-countries">Áustria — Viena 🇦🇹 <span style="color:var(--muted);font-size:10px">Verão</span> · Finlândia — Lapónia 🇫🇮 <span style="color:var(--muted);font-size:10px">Natal</span> · Hungria — Budapeste 🇭🇺 <span style="color:var(--muted);font-size:10px">Verão</span> · São Miguel 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2022</div><div class="tl-countries">Dinamarca 🇩🇰 <span style="color:var(--muted);font-size:10px">Natal</span> · Turquia — Istambul + Capadócia 🇹🇷 <span style="color:var(--muted);font-size:10px">Verão</span> · Suécia — Malmö 🇸🇪 <span style="color:var(--muted);font-size:10px">Natal</span></div></div>
+    <div class="tl-row"><div class="tl-year">2023</div><div class="tl-countries">Canadá — Toronto + Niagara Falls 🇨🇦 <span style="color:var(--muted);font-size:10px">Verão</span> · Espanha — Barcelona 🇪🇸 <span style="color:var(--muted);font-size:10px">Páscoa</span> · EUA — Nova York 🇺🇸 <span style="color:var(--muted);font-size:10px">Verão</span> · Marrocos 🇲🇦 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Polónia 🇵🇱 <span style="color:var(--muted);font-size:10px">Natal</span> · Corvo 🇵🇹 <span style="color:var(--muted);font-size:10px">Carnaval</span> · Faial 🇵🇹 · Madeira 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2024</div><div class="tl-countries">Cabo Verde — Santiago 🇨🇻 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Emirados Árabes — Abu Dhabi 🇦🇪 <span style="color:var(--muted);font-size:10px">Natal</span> · Escócia — Edimburgo 🏴󠁧󠁢󠁳󠁣󠁴󠁿 <span style="color:var(--muted);font-size:10px">Natal</span> · Maldivas 🇲🇻 <span style="color:var(--muted);font-size:10px">Verão</span> · Qatar — Doha 🇶🇦 <span style="color:var(--muted);font-size:10px">Verão</span> · Tailândia 🇹🇭 <span style="color:var(--muted);font-size:10px">Natal</span> · São Miguel 🇵🇹</div></div>
+    <div class="tl-row"><div class="tl-year">2025</div><div class="tl-countries">Espanha — Madrid 🇪🇸 <span style="color:var(--muted);font-size:10px">Natal</span> · Etiópia — Adis Abeba 🇪🇹 <span style="color:var(--muted);font-size:10px">Verão</span> · Irlanda — Dublin 🇮🇪 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Irlanda do Norte — Belfast + Giant's Causeway 🇬🇧 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Tanzânia — Zanzibar 🇹🇿 <span style="color:var(--muted);font-size:10px">Verão</span></div></div>
+    <div class="tl-row"><div class="tl-year">2026</div><div class="tl-countries">França — Marselha & Nice 🇫🇷 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Mónaco 🇲🇨 <span style="color:var(--muted);font-size:10px">Páscoa</span></div></div>
+  </div>
+</div>
+
+<!-- BOTTOM SHEETS -->
+<div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+<div id="sheet">
+  <div class="sh-handle"></div>
+  <div class="sh-row">
+    <div id="s-name">País</div>
+    <div id="s-close" onclick="closeAll()">✕</div>
+  </div>
+  <div id="s-year"></div>
+  <div id="s-note"></div>
+  <div class="sh-actions" id="sh-actions"></div>
+</div>
+
+<div id="pin-form">
+  <div class="sh-handle"></div>
+  <div class="sh-row">
+    <div class="form-title" id="pf-title">Adicionar Pin</div>
+    <div id="pf-close" onclick="closePinForm()" style="font-size:20px;color:#ccc;cursor:pointer;padding:2px 4px;line-height:1">✕</div>
+  </div>
+
+  <div class="form-type">
+    <div class="type-opt sel-visited" id="type-vis" onclick="setPinType('pin-visited')">📍 Visitei</div>
+    <div class="type-opt" id="type-wish" onclick="setPinType('pin-wish')">⭐ Quero ir</div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Nome do local / país</label>
+    <input class="form-input" id="pf-name" type="text" placeholder="ex: Tokyo, Japão">
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Ano</label>
+      <input class="form-input" id="pf-year" type="text" placeholder="ex: 2024">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emoji / bandeira</label>
+      <input class="form-input" id="pf-emoji" type="text" placeholder="🇯🇵">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Nota pessoal (opcional)</label>
+    <input class="form-input" id="pf-note" type="text" placeholder="ex: A melhor ramen da minha vida!">
+  </div>
+  <input type="hidden" id="pf-lat">
+  <input type="hidden" id="pf-lng">
+  <input type="hidden" id="pf-edit-id">
+
+  <button class="submit-btn visited" id="pf-submit" onclick="submitPin()">Guardar Pin</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+// Fallback: if topojson not loaded from first CDN, load from unpkg
+if (typeof topojson === 'undefined') {
+  document.write('<script src="https://unpkg.com/topojson@3/dist/topojson.min.js"><\/script>');
+}
+</script>
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const VISITED = {
+  276: { name:"Alemanha 🇩🇪",           year:"2019 · Verão",       note:"Berlim — cidade que reinventou a sua história. Do Checkpoint Charlie ao Memorial do Holocausto, passando pela arte de rua, o Muro e uma vida noturna que não dorme 🍺🎨🏛️" },
+  40:  { name:"Áustria 🇦🇹",            year:"2021 · Verão",       note:"Viena — elegância imperial com café da tarde no Schönbrunn, a Ópera de Viena e Mozart em cada esquina. A cidade que inventou o refinamento europeu ☕🎶🏰" },
+  56:  { name:"Bélgica 🇧🇪",            year:"2017 · Verão",       note:"Bruxelas — a Grand-Place deslumbrante, capital da Europa, waffles quentes na rua e a melhor cerveja trapista do mundo. Pequena mas absolutamente imperdível 🍫🍺🏛️" },
+  124: { name:"Canadá 🇨🇦",             year:"2023 · Verão",       note:"Toronto — metrópole multicultural às margens do Lago Ontario com a CN Tower. Cataratas do Niagara — a maior força da natureza que já vi de perto. Nenhuma foto faz justiça 🍁💦🌆" },
+  132: { name:"Cabo Verde 🇨🇻",          year:"2024 · Páscoa",      note:"Santiago — a maior ilha e berço da cultura cabo-verdiana. Praias selvagens, mornas ao vivo, a Cidade Velha Património da Humanidade e a hospitalidade única da morabeza 🎵🌊🇵🇹" },
+  208: { name:"Dinamarca 🇩🇰",           year:"2022 · Natal",       note:"Copenhaga — a capital mais sustentável da Europa. Nyhavn a cores, gastronomia nórdica de topo, design que inspira o mundo inteiro e uma cidade onde se vive a pedalar 🚲🌈🍽️" },
+  724: { name:"Espanha 🇪🇸",             year:"2000–2025",          note:"Loret del Mar (2000 Páscoa) · Benidorm (2007 Páscoa) · Lobios/Galiza (2011 Verão) · Barcelona (2023 Páscoa) · Madrid (2025 Natal). O vizinho de sempre — sol, tapas, Gaudí e o Prado ☀️🥘🏛️" },
+  840: { name:"EUA 🇺🇸",                year:"2023 · Verão",       note:"Nova Iorque — Central Park ao amanhecer, o Brooklyn Bridge ao pôr-do-sol, Times Square às 3h da manhã e a energia de uma cidade que é literalmente um universo próprio 🗽🌆🍕" },
+  784: { name:"Emirados Árabes 🇦🇪",     year:"2024 · Natal",       note:"Abu Dhabi — a mesquita Sheikh Zayed em mármore branco deslumbrante, ilhas artificiais e o contraste fascinante entre tradição beduína milenar e modernidade futurista 🕌✨🏜️" },
+  231: { name:"Etiópia 🇪🇹",             year:"2025 · Verão",       note:"Adis Abeba — a cerimónia do café na sua origem com três chávenas rituais, mercados coloridos de Merkato, a Igreja de São Jorge e a pulsão de uma África autêntica e surpreendente ☕🌍✝️" },
+  250: { name:"França 🇫🇷",              year:"2015 · 2026",        note:"Paris (2015 Verão) — Torre Eiffel ao anoitecer, Louvre, croissants frescos e a magia da Disneyland Paris. Marselha + Nice (2026 Páscoa) — Vieux-Port e a Riviera Francesa 🗼🏰🌊🥐" },
+  246: { name:"Finlândia 🇫🇮",           year:"2018 · 2021",        note:"Helsínquia (2018 Verão) — design báltico e saunas à beira do Báltico. Helsínquia + Lapónia (2021 Natal) — caça à aurora boreal, paisagens nevadas de renas e o silêncio absoluto do Ártico 🌌🦌❄️" },
+  300: { name:"Grécia 🇬🇷",              year:"2019 · Verão",       note:"Atenas — Partenon ao pôr-do-sol, Acrópole, história antiga às camadas, gastronomia incrível e o barulho alegre do mercado Monastiraki 🫒🏛️🌅" },
+  348: { name:"Hungria 🇭🇺",             year:"2021 · Verão",       note:"Budapeste — a pérola do Danúbio. As Termas Széchenyi, o Parlamento iluminado à noite, a rua Andrássy e a vista do Bastião dos Pescadores 🏰🛁🌉" },
+  380: { name:"Itália 🇮🇹",              year:"2016 · 2019",        note:"Roma (2016 Verão) — Coliseu, Fontana di Trevi, Vaticano e a melhor pizza da vida. Veneza (2019 Verão) — góndolas, canais e a magia de uma cidade flutuante 🍕🚣🏛️" },
+  372: { name:"Irlanda 🇮🇪",             year:"2025 · Páscoa",      note:"Dublin — o Temple Bar animado, o Trinity College e o Book of Kells, Guinness na sua origem e as paisagens verdes que não acabam nunca 🍀🍺🏰" },
+  352: { name:"Islândia 🇮🇸",            year:"2018 · Verão",       note:"Anel de Ouro, cascata Skógafoss, geysers a borbulhar, praias de areia negra e o sol da meia-noite — um planeta dentro de um planeta 🌋💧🌌" },
+  504: { name:"Marrocos 🇲🇦",            year:"2023 · Páscoa",      note:"Marrakech — medina labiríntica com os souks de especiarias, a Praça Jemaa el-Fna ao anoitecer. Deserto Agafay — noite sob as estrelas no silêncio do Saara 🪔🐪🏜️" },
+  462: { name:"Maldivas 🇲🇻",            year:"2024 · Verão",       note:"Paraíso na Terra — bangalôs sobre a água turquesa, snorkeling com tubarões-baleia, pôres-do-sol cor de laranja e silêncio absoluto do Índico 🐠🌴🌅" },
+  492: { name:"Mónaco 🇲🇨",              year:"2026 · Páscoa",      note:"O principado mais glamoroso do mundo — o circuito de F1 a pé, os cassinos de Monte Carlo, o Porto Hércules cheio de iates e a vista do Rocher 🏎️✨🎰" },
+  578: { name:"Noruega 🇳🇴",             year:"2018 · Natal",       note:"Oslo — museus de vikings, a Ópera com teto caminhável, neve e fiordes no inverno. A beleza austera e majestosa do norte da Europa 🏔️❄️🛶" },
+  620: { name:"Portugal 🇵🇹",            year:"sempre",             note:"Casa. O país mais bonito do mundo — do Algarve dourado às ilhas verdes dos Açores, de Lisboa às serras 💛🌊🏔️" },
+  528: { name:"Países Baixos 🇳🇱",       year:"2017 · Verão",       note:"Amesterdão — canais ao pôr-do-sol, o Rijksmuseum, tulipas, bicicletas em todo o lado e a Anne Frank House que deixa marca para sempre 🌷🚲🏛️" },
+  616: { name:"Polónia 🇵🇱",             year:"2023 · Natal",       note:"Varsóvia — cidade reconstruída da cinza com o Casco Histórico a brilhar. Cracóvia — a Praça do Mercado medieval, o Castelo de Wawel e a memória de Auschwitz 🥟🏰❄️" },
+  634: { name:"Qatar 🇶🇦",               year:"2024 · Verão",       note:"Doha — a Corniche ao amanhecer, o souq Waqif com incenso e especiarias, os museus de arte islâmica e os arranha-céus futuristas do West Bay 🏙️🕌🌅" },
+  203: { name:"Rep. Checa 🇨🇿",          year:"2017 · Verão",       note:"Praga — a cidade das cem torres. A Ponte Carlos ao alvorecer, o Relógio Astronómico, o Castelo e o bairro judaico — história em cada pedra 🍺🏰🌉" },
+  756: { name:"Suíça 🇨🇭",               year:"2017 · Natal",       note:"Zurique — Alpes nevados na janela, chocolates nas arcadas, mercado de Natal com cheiro a glühwein e a precisão de um relógio suíço em cada detalhe ⛰️🍫❄️" },
+  752: { name:"Suécia 🇸🇪",              year:"2019 · 2022",        note:"Estocolmo (2019 Natal) — a Gamla Stan medieval, os museus Vasa e ABBA e o design nórdico elegante. Malmö (2022 Natal) — a ponte para a Dinamarca e o charme tranquilo ❄️🌲🎄" },
+  764: { name:"Tailândia 🇹🇭",           year:"2024 · Natal",       note:"Bangkok — templos dourados e caos delicioso. Phuket — praias paradisíacas. Ilhas Phi Phi — águas cristalinas de tirar o fôlego. Khao Ping Kan — a ilha de James Bond 🍜🏝️🌺" },
+  792: { name:"Turquia 🇹🇷",             year:"2022 · Verão",       note:"Istambul — Hagia Sophia, o Grande Bazar e o Bósforo entre dois mundos. Capadócia — balões ao amanhecer sobre um paisagem lunar de chaminés de fada 🕌🎈🌋" },
+  834: { name:"Tanzânia 🇹🇿",            year:"2025 · Verão",       note:"Zanzibar — a Stone Town com labirinto de ruelas históricas, especiarias aromáticas, praias infinitas e o pôr-do-sol mais belo do Índico 🏝️🌅🦁" },
+  336: { name:"Vaticano 🇻🇦",            year:"2016 · Verão",       note:"O menor estado soberano do mundo — a Basílica de São Pedro, a Pietà de Michelangelo, os Museus Vaticanos e a Capela Sistina que faz calar qualquer um 🕊️🎨✝️" },
+  826: { name:"Reino Unido 🇬🇧",         year:"2014/24/25",         note:"Inglaterra (2014 Páscoa) · Escócia (2024 Natal) · Irlanda do Norte (2025 Páscoa)" },
+};
+
+// UK sub-nations for display (share numeric ID 826 in topojson)
+const UK_DETAIL = [
+  { name:"Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", year:"2014 · Páscoa", note:"Londres — os museus gratuitos e imponentes, o West End, a Tower Bridge, Camden e um fish & chips no pub a fechar 🎭🍟🎡" },
+  { name:"Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿", year:"2024 · Natal", note:"Edimburgo — o Castelo iluminado na rocha, a Royal Mile nevada, o mercado de Natal e o whisky a aquecer a noite escocesa 🥃🏰❄️" },
+  { name:"Irlanda do Norte 🇬🇧", year:"2025 · Páscoa", note:"Belfast — o Titanic Quarter e a história do navio. Giant's Causeway — as colunas de basalto hexagonais no Atlântico, um lugar de outro mundo ☘️🌊🗿" },
+  { name:"País de Gales 🏴󠁧󠁢󠁷󠁬󠁳󠁿", year:"—", note:"Ainda por explorar 🔜" },
+];
+
+// Internal UK borders as GeoJSON LineStrings (simplified but geographically accurate)
+const UK_INTERNAL_BORDERS = {
+  type:"FeatureCollection",
+  features:[
+    { type:"Feature", properties:{n:"eng-sco"},
+      geometry:{ type:"LineString",
+        coordinates:[[-5.08,54.95],[-3.06,54.97],[-2.79,55.07],[-2.45,55.37],[-2.17,55.63],[-1.97,55.77]] }},
+    { type:"Feature", properties:{n:"eng-wal"},
+      geometry:{ type:"LineString",
+        coordinates:[[-3.04,53.35],[-3.12,52.97],[-3.0,52.7],[-2.85,52.15],[-2.7,51.78],[-2.68,51.65]] }},
+  ]
+};
+
+// UK sub-nation label positions [lng, lat, name]
+const UK_SUB_LABELS = [
+  [-1.5, 52.5, 'Inglaterra'],
+  [-4.0, 57.0, 'Escócia'],
+  [-3.8, 52.2, 'País de Gales'],
+  [-6.5, 54.7, 'Irlanda do Norte'],
+];
+
+// ─── COUNTRY LABEL POSITIONS (lng, lat) ──────────────────────────────────────
+// Manually tuned centroid overrides for better label placement
+const COUNTRY_LABEL_POS = {
+  276:[10.4,51.2], 40:[14.5,47.5], 56:[4.5,50.5], 124:[-96,60], 132:[-24,16],
+  208:[10,56], 724:[-3.7,40.4], 826:[-2.5,54], 840:[-98,39], 784:[54,24],
+  231:[36.5,8.5],  // Etiópia — parte oeste do país (mais visível em vistas de África)
+  250:[2.5,46.5], 246:[25.7,64], 300:[22,39], 348:[19,47],
+  380:[12.5,42.5], 372:[-8,53], 352:[-19,65], 504:[-7,32], 462:[73,-0.5],
+  492:[7.42,43.73], 578:[10,62], 620:[-8,39.5], 528:[5.3,52.3], 616:[19.5,52],
+  634:[51.2,25.3], 203:[15.5,49.8], 756:[8.2,46.8], 752:[18,60], 764:[101,13],
+  792:[35,39], 834:[33,-6],
+  336:[12.45,41.9],
+  // Balcãs — países pequenos que precisam de posição explícita
+  688:[20.9,44.0],   // Sérvia
+  499:[19.4,42.7],   // Montenegro
+  807:[21.7,41.6],   // Macedónia do Norte
+  383:[21.0,42.6],   // Kosovo
+  112:[28.0,53.5],   // Bielorrússia
+  428:[25.0,56.9],   // Letónia
+  // África Central — posições explícitas para países grandes
+  148:[18.5,15.5],   // Chade
+  728:[31,7.5],      // Sudão do Sul
+};
+
+// ─── PLACES VISITED per country [lng, lat, name, isCapital] ──────────────────
+const PLACES = [
+  // Alemanha
+  [13.4, 52.52, 'Berlim', true],
+  // Áustria
+  [16.37, 48.21, 'Viena', true],
+  // Bélgica
+  [4.35, 50.85, 'Bruxelas', true],
+  // Canadá
+  [-79.38, 43.65, 'Toronto', true],
+  [-79.07, 43.09, 'Niagara Falls', false],
+  // Cabo Verde — ilha de Santiago
+  [-23.51, 14.93, 'Santiago 🏝️', true, true],
+  // Dinamarca
+  [12.57, 55.68, 'Copenhaga', true],
+  // Espanha
+  [-3.7, 40.42, 'Madrid', true],
+  [2.18, 41.38, 'Barcelona', false],
+  [2.84, 41.69, 'Loret del Mar', false],
+  [-0.13, 38.54, 'Benidorm', false],
+  [-8.07, 41.85, 'Lobios', false],
+  // França
+  [2.35, 48.86, 'Paris', true],
+  [2.78, 48.87, '🏰 Disneyland Paris', false],
+  [5.37, 43.3, 'Marselha', false],
+  [7.27, 43.71, 'Nice', false],
+  // Finlândia
+  [24.94, 60.17, 'Helsínquia', true],
+  // Grécia
+  [23.72, 37.98, 'Atenas', true],
+  // Hungria
+  [19.04, 47.5, 'Budapeste', true],
+  // Islândia
+  [-21.9, 64.13, 'Reykjavik', true],
+  // Irlanda
+  [-6.26, 53.33, 'Dublin', true],
+  // Irlanda do Norte (UK)
+  [-5.93, 54.6, 'Belfast', false],
+  // Itália
+  [12.5, 41.9, 'Roma', true],
+  [12.48, 41.9, 'Vaticano', false],
+  [12.34, 45.44, 'Veneza', false],
+  // Inglaterra (UK)
+  [-0.12, 51.5, 'Londres', false],
+  // Escócia (UK)
+  [-3.19, 55.95, 'Edimburgo', false],
+  // Marrocos
+  [-7.99, 31.63, 'Marraquexe', true],
+  // Maldivas — ilha
+  [73.51, 4.17, 'Maldivas', true, true],
+  // Mónaco
+  [7.42, 43.73, 'Mónaco', true],
+  // Noruega
+  [10.74, 59.91, 'Oslo', true],
+  // Portugal
+  [-9.14, 38.72, 'Lisboa', true],
+  [-8.61, 41.15, 'Porto', false],
+  [-8.42, 37.1, 'Faro', false],
+  // Açores — todas as ilhas visitadas [lng, lat, nome, isCapital, isIsland]
+  [-25.67, 37.74, 'São Miguel 🏝️', true, true],
+  [-27.22, 38.65, 'Terceira 🏝️', false, true],
+  [-28.04, 38.53, 'Faial 🏝️', false, true],
+  [-28.42, 39.43, 'Pico 🏝️', false, true],
+  [-31.11, 39.45, 'Flores 🏝️', false, true],
+  [-28.97, 39.09, 'Graciosa 🏝️', false, true],
+  [-28.07, 36.97, 'Santa Maria 🏝️', false, true],
+  [-31.13, 39.67, 'Corvo 🏝️', false, true],
+  [-28.72, 38.65, 'São Jorge 🏝️', false, true],
+  // Madeira
+  [-16.91, 32.65, 'Madeira 🏝️', false, true],
+  // Tanzânia — Zanzibar
+  [39.2, -6.16, 'Zanzibar 🏝️', true, true],
+  // Países Baixos
+  [4.9, 52.37, 'Amesterdão', true],
+  // Polónia
+  [19.94, 50.06, 'Cracóvia', false],
+  [21.01, 52.23, 'Varsóvia', true],
+  // Qatar
+  [51.53, 25.29, 'Doha', true],
+  // Rep. Checa
+  [14.42, 50.08, 'Praga', true],
+  // Suíça
+  [8.55, 47.37, 'Zurique', true],
+  // Suécia
+  [18.07, 59.33, 'Estocolmo', true],
+  [13.0, 55.6, 'Malmö', false],
+  // Tailândia
+  [100.52, 13.75, 'Banguecoque', true],
+  [98.39, 7.88, 'Phuket', false],
+  [98.77, 7.74, 'Phi Phi 🏝️', false, true],
+  // Turquia
+  [29.05, 40.99, 'Istambul', true],
+  [34.83, 38.66, 'Capadócia', false],
+  // Etiópia
+  [38.74, 9.03, 'Adis Abeba', true],
+  // Emirados Árabes
+  [54.37, 24.47, 'Abu Dhabi', true],
+  // EUA — Nova Iorque
+  [-74.0, 40.71, 'Nova Iorque', true],
+  // Vaticano
+  [12.45, 41.9, 'Vaticano', true],
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let pins = [];
+let currentMode = 'view'; // view | pin-visited | pin-wish
+let pendingCoords = null;
+let svgRef = null;
+let gRef = null;
+let labelsG = null;
+let citiesG = null;
+let allLabelsG = null;
+let projRef = null;
+let pathRef = null;
+let currentZoomK = 1;
+let wishCountriesNumeric = new Set();
+
+// ─── STORAGE (window.storage API — works in Claude.ai) ───────────────────────
+async function savePins() {
+  try { await window.storage.set('vb-pins', JSON.stringify(pins)); } catch(e) {}
+}
+async function saveWishCountries() {
+  try { await window.storage.set('vb-wish-countries', JSON.stringify([...wishCountriesNumeric])); } catch(e) {}
+}
+async function loadState() {
+  try {
+    const p = await window.storage.get('vb-pins');
+    if (p) pins = JSON.parse(p.value || '[]');
+  } catch(e) { pins = []; }
+  try {
+    const w = await window.storage.get('vb-wish-countries');
+    if (w) wishCountriesNumeric = new Set(JSON.parse(w.value || '[]'));
+  } catch(e) { wishCountriesNumeric = new Set(); }
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['map','pins','list','timeline'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'pins') renderPinsList();
+  if (name === 'list') renderWishChips();
+  if (name === 'wish') renderWishList();
+}
+
+// ─── WORLD COUNTRY NAMES (for all-countries labels) ──────────────────────────
+const WORLD_NAMES = {
+  4:'Afeganistão',8:'Albânia',12:'Argélia',20:'Andorra',24:'Angola',
+  32:'Argentina',36:'Austrália',40:'Áustria',31:'Azerbaijão',
+  44:'Bahamas',48:'Barém',50:'Bangladesh',52:'Barbados',
+  56:'Bélgica',84:'Belize',204:'Benim',64:'Butão',
+  68:'Bolívia',70:'Bósnia',72:'Botsuana',76:'Brasil',
+  96:'Brunei',100:'Bulgária',854:'Burkina Faso',108:'Burundi',
+  116:'Camboja',120:'Camarões',124:'Canadá',140:'Rep. Centro-Africana',
+  144:'Sri Lanka',152:'Chile',156:'China',170:'Colômbia',
+  174:'Comores',178:'Congo',180:'R.D. Congo',188:'Costa Rica',
+  191:'Croácia',192:'Cuba',196:'Chipre',203:'Rep. Checa',
+  208:'Dinamarca',262:'Djibuti',212:'Dominica',214:'Rep. Dominicana',
+  218:'Equador',818:'Egipto',222:'El Salvador',226:'Guiné Equatorial',
+  232:'Eritreia',233:'Estónia',748:'Essuatíni',231:'Etiópia',
+  246:'Finlândia',250:'França',266:'Gabão',270:'Gâmbia',
+  268:'Geórgia',276:'Alemanha',288:'Gana',300:'Grécia',
+  308:'Granada',320:'Guatemala',324:'Guiné',624:'Guiné-Bissau',
+  328:'Guiana',332:'Haiti',340:'Honduras',348:'Hungria',
+  356:'Índia',360:'Indonésia',364:'Irão',368:'Iraque',
+  372:'Irlanda',376:'Israel',380:'Itália',384:'Costa do Marfim',
+  388:'Jamaica',392:'Japão',400:'Jordânia',398:'Cazaquistão',
+  404:'Quénia',408:'Coreia do Norte',410:'Coreia do Sul',
+  414:'Kuweit',417:'Quirguistão',418:'Laos',422:'Líbano',
+  426:'Lesoto',430:'Libéria',434:'Líbia',440:'Lituânia',
+  442:'Luxemburgo',450:'Madagáscar',454:'Malawi',458:'Malásia',
+  466:'Mali',470:'Malta',478:'Mauritânia',484:'México',
+  496:'Mongólia',498:'Moldávia',504:'Marrocos',508:'Moçambique',
+  516:'Namíbia',524:'Nepal',528:'Países Baixos',554:'Nova Zelândia',
+  558:'Nicarágua',562:'Níger',566:'Nigéria',578:'Noruega',
+  512:'Omã',586:'Paquistão',591:'Panamá',598:'Papua Nova Guiné',
+  600:'Paraguai',604:'Peru',608:'Filipinas',616:'Polónia',
+  620:'Portugal',634:'Qatar',642:'Roménia',643:'Rússia',
+  646:'Ruanda',682:'Arábia Saudita',686:'Senegal',694:'Serra Leoa',
+  703:'Eslováquia',705:'Eslovénia',706:'Somália',710:'África do Sul',
+  724:'Espanha',729:'Sudão',740:'Suriname',752:'Suécia',
+  756:'Suíça',760:'Síria',158:'Taiwan',762:'Tajiquistão',
+  834:'Tanzânia',764:'Tailândia',626:'Timor-Leste',768:'Togo',
+  780:'Trinidad e Tobago',788:'Tunísia',792:'Turquia',800:'Uganda',
+  804:'Ucrânia',784:'Emirados Árabes',826:'Reino Unido',840:'EUA',
+  858:'Uruguai',860:'Uzbequistão',862:'Venezuela',704:'Vietname',
+  887:'Iémen',894:'Zâmbia',716:'Zimbabué',
+  132:'Cabo Verde',462:'Maldivas',492:'Mónaco',336:'Vaticano',
+  352:'Islândia',
+  // Balcãs e Europa de Leste
+  688:'Sérvia',499:'Montenegro',807:'Macedónia do Norte',383:'Kosovo',
+  112:'Bielorrússia',428:'Letónia',703:'Eslováquia',705:'Eslovénia',
+  // África Central e Leste — frequentemente em falta
+  148:'Chade',728:'Sudão do Sul',174:'Comores',678:'São Tomé e Príncipe',
+  516:'Namíbia',426:'Lesoto',748:'Essuatíni',232:'Eritreia',
+  // Outros
+  104:'Myanmar',275:'Palestina',418:'Laos',288:'Gana',
+  384:'Costa do Marfim',180:'R.D. Congo',178:'Congo',
+  706:'Somália',626:'Timor-Leste',682:'Arábia Saudita',
+  // Ilhas e micro-estados em falta
+  28:'Antígua e Barbuda',242:'Fiji',480:'Maurícia',520:'Nauru',
+  548:'Vanuatu',583:'Micronésia',584:'Ilhas Marshall',585:'Palau',
+  659:'São Cristóvão e Neves',662:'Santa Lúcia',670:'São Vicente e Granadinas',
+  674:'São Marino',776:'Tonga',795:'Turquemenistão',798:'Tuvalu',882:'Samoa',
+  90:'Ilhas Salomão',
+};
+
+// ─── WORLD CAPITALS [iso_numeric, name_pt, lat, lng] ─────────────────────────
+const WORLD_CAPITALS = [
+  [4,'Cabul',34.52,69.18],[8,'Tirana',41.33,19.82],[12,'Argel',36.74,3.06],
+  [20,'Andorra la Velha',42.51,1.52],[24,'Luanda',-8.84,13.23],
+  [32,'Buenos Aires',-34.61,-58.38],[36,'Camberra',-35.28,149.13],
+  [40,'Viena',48.21,16.37],[31,'Baku',40.41,49.87],[44,'Nassau',25.04,-77.36],
+  [48,'Manama',26.22,50.59],[50,'Dacca',23.72,90.41],[52,'Bridgetown',13.10,-59.62],
+  [56,'Bruxelas',50.85,4.35],[84,'Belmopan',17.25,-88.77],[204,'Porto-Novo',6.37,2.62],
+  [64,'Thimphu',27.47,89.64],[68,'Sucre',-19.05,-65.26],[70,'Sarajevo',43.85,18.36],
+  [72,'Gaborone',-24.65,25.91],[76,'Brasília',-15.78,-47.93],[96,'Bandar Seri Begawan',4.94,114.95],
+  [100,'Sófia',42.70,23.32],[854,'Ouagadougou',12.37,-1.53],[108,'Bujumbura',-3.38,29.36],
+  [116,'Phnom Penh',11.57,104.92],[120,'Iacundê',3.87,11.52],[124,'Otava',45.42,-75.70],
+  [140,'Bangui',4.36,18.55],[144,'Colombo',6.93,79.85],[148,'Ndjaména',12.10,15.04],
+  [152,'Santiago',-33.46,-70.65],[156,'Pequim',39.91,116.39],[170,'Bogotá',4.71,-74.07],
+  [174,'Moroni',-11.70,43.25],[178,'Brazzaville',-4.27,15.28],[180,'Kinshasa',-4.33,15.32],
+  [188,'São José',9.93,-84.08],[191,'Zagrebe',45.81,16.0],[192,'Havana',23.13,-82.38],
+  [196,'Nicósia',35.17,33.37],[208,'Copenhaga',55.68,12.57],[262,'Jibuti',11.59,43.15],
+  [214,'Santo Domingo',18.48,-69.90],[218,'Quito',-0.22,-78.52],[818,'Cairo',30.06,31.25],
+  [222,'São Salvador',13.70,-89.20],[226,'Malabo',3.75,8.78],[232,'Asmara',15.34,38.93],
+  [233,'Taline',59.44,24.75],[748,'Mbabane',-26.32,31.14],[231,'Adis Abeba',9.03,38.74],
+  [246,'Helsínquia',60.17,24.94],[250,'Paris',48.86,2.35],[266,'Libreville',0.39,9.45],
+  [270,'Banjul',13.45,-16.58],[268,'Tbilisi',41.69,44.83],[276,'Berlim',52.52,13.40],
+  [288,'Acra',5.56,-0.20],[300,'Atenas',37.98,23.73],[320,'Cidade da Guatemala',14.64,-90.51],
+  [324,'Conacri',9.54,-13.68],[624,'Bissau',11.86,-15.60],[328,'Georgetown',6.80,-58.17],
+  [332,'Porto Príncipe',18.54,-72.34],[340,'Tegucigalpa',14.10,-87.20],
+  [348,'Budapeste',47.50,19.04],[352,'Reiquiavique',64.14,-21.94],
+  [356,'Nova Deli',28.61,77.21],[360,'Jacarta',-6.21,106.85],[364,'Teerão',35.70,51.42],
+  [368,'Bagdade',33.33,44.44],[376,'Jerusalém',31.77,35.22],[380,'Roma',41.90,12.50],
+  [388,'Kingston',17.99,-76.79],[392,'Tóquio',35.69,139.69],[400,'Amã',31.96,35.95],
+  [398,'Astana',51.17,71.45],[404,'Nairóbi',-1.28,36.82],[408,'Pyongyang',39.02,125.75],
+  [410,'Seul',37.57,126.98],[414,'Cidade do Kuwait',29.37,47.98],[417,'Bishkek',42.87,74.59],
+  [418,'Vientiane',17.97,102.60],[422,'Beirute',33.87,35.50],[426,'Maseru',-29.32,27.48],
+  [430,'Monróvia',6.30,-10.80],[434,'Trípoli',32.90,13.18],[440,'Vilnius',54.69,25.28],
+  [442,'Luxemburgo',49.61,6.13],[450,'Antananarivo',-18.91,47.53],[454,'Lilôngue',-13.97,33.79],
+  [458,'Kuala Lumpur',3.16,101.71],[466,'Bamako',12.65,-8.00],[470,'Valeta',35.90,14.51],
+  [478,'Nouakchott',18.08,-15.97],[484,'Cidade do México',19.43,-99.13],
+  [498,'Chisinau',47.00,28.86],[496,'Ulan Bator',47.91,106.88],
+  [508,'Maputo',-25.97,32.59],[516,'Windhoek',-22.56,17.09],[524,'Catmandu',27.71,85.32],
+  [528,'Amesterdão',52.37,4.89],[554,'Wellington',-41.29,174.78],
+  [558,'Manágua',12.15,-86.29],[562,'Niamei',13.51,2.11],[566,'Abuja',9.06,7.49],
+  [578,'Oslo',59.91,10.75],[512,'Mascate',23.61,58.59],[586,'Islamabade',33.72,73.06],
+  [591,'Cidade do Panamá',8.99,-79.52],[598,'Port Moresby',-9.46,147.19],
+  [600,'Assunção',-25.28,-57.65],[604,'Lima',-12.05,-77.04],[608,'Manila',14.60,120.97],
+  [616,'Varsóvia',52.23,21.01],[620,'Lisboa',38.72,-9.14],[634,'Doha',25.29,51.53],
+  [642,'Bucareste',44.44,26.10],[643,'Moscovo',55.75,37.62],[646,'Kigali',-1.95,30.06],
+  [682,'Riade',24.69,46.72],[686,'Dacar',14.69,-17.44],[694,'Freetown',8.49,-13.23],
+  [703,'Bratislava',48.15,17.12],[705,'Liubliana',46.05,14.51],[706,'Mogadíscio',2.05,45.34],
+  [710,'Pretória',-25.74,28.19],[724,'Madrid',40.42,-3.70],[729,'Cartum',15.55,32.53],
+  [740,'Paramaribo',5.87,-55.17],[752,'Estocolmo',59.33,18.07],[756,'Berna',46.95,7.45],
+  [760,'Damasco',33.51,36.29],[762,'Duchambé',38.56,68.77],[834,'Dodoma',-6.17,35.74],
+  [764,'Banguecoque',13.75,100.52],[626,'Díli',-8.56,125.58],[768,'Lomé',6.14,1.22],
+  [780,'Porto de Espanha',10.65,-61.52],[788,'Tunes',36.82,10.18],
+  [792,'Ancara',39.93,32.86],[800,'Campala',0.32,32.58],[804,'Kiev',50.43,30.52],
+  [784,'Abu Dhabi',24.47,54.37],[826,'Londres',51.51,-0.12],[840,'Washington',38.91,-77.04],
+  [858,'Montevideu',-34.86,-56.17],[860,'Tashkente',41.30,69.27],
+  [862,'Caracas',10.49,-66.88],[704,'Hanói',21.03,105.85],[887,'Sanaa',15.35,44.21],
+  [894,'Lusaka',-15.42,28.28],[716,'Harare',-17.83,31.05],
+];
+
+// ─── ISO numeric → alpha-2 code (para bandeiras) ─────────────────────────────
+const NUM_TO_CODE = {
+  4:'af',8:'al',12:'dz',20:'ad',24:'ao',32:'ar',36:'au',40:'at',31:'az',
+  44:'bs',48:'bh',50:'bd',52:'bb',56:'be',84:'bz',204:'bj',64:'bt',68:'bo',
+  70:'ba',72:'bw',76:'br',96:'bn',100:'bg',854:'bf',108:'bi',116:'kh',
+  120:'cm',124:'ca',140:'cf',144:'lk',148:'td',152:'cl',156:'cn',170:'co',
+  174:'km',178:'cg',180:'cd',188:'cr',191:'hr',192:'cu',196:'cy',203:'cz',
+  208:'dk',262:'dj',212:'dm',214:'do',218:'ec',818:'eg',222:'sv',226:'gq',
+  232:'er',233:'ee',748:'sz',231:'et',246:'fi',250:'fr',266:'ga',270:'gm',
+  268:'ge',276:'de',288:'gh',300:'gr',308:'gd',320:'gt',324:'gn',624:'gw',
+  328:'gy',332:'ht',340:'hn',348:'hu',356:'in',360:'id',364:'ir',368:'iq',
+  372:'ie',376:'il',380:'it',384:'ci',388:'jm',392:'jp',400:'jo',398:'kz',
+  404:'ke',408:'kp',410:'kr',414:'kw',417:'kg',418:'la',422:'lb',426:'ls',
+  430:'lr',434:'ly',440:'lt',442:'lu',450:'mg',454:'mw',458:'my',466:'ml',
+  470:'mt',478:'mr',484:'mx',498:'md',496:'mn',504:'ma',508:'mz',516:'na',
+  524:'np',528:'nl',554:'nz',558:'ni',562:'ne',566:'ng',578:'no',512:'om',
+  586:'pk',591:'pa',598:'pg',600:'py',604:'pe',608:'ph',616:'pl',620:'pt',
+  634:'qa',642:'ro',643:'ru',646:'rw',682:'sa',686:'sn',694:'sl',703:'sk',
+  705:'si',706:'so',710:'za',724:'es',729:'sd',740:'sr',752:'se',756:'ch',
+  760:'sy',158:'tw',762:'tj',834:'tz',764:'th',626:'tl',768:'tg',780:'tt',
+  788:'tn',792:'tr',800:'ug',804:'ua',784:'ae',826:'gb',840:'us',858:'uy',
+  860:'uz',862:'ve',704:'vn',887:'ye',894:'zm',716:'zw',132:'cv',462:'mv',
+  492:'mc',336:'va',352:'is',
+};
+
+// ─── Posições de capitais por ID (para zoom em países não-visitados) ──────────
+const WORLD_CAP_POS = {};
+WORLD_CAPITALS.forEach(([id,,lat,lng]) => { WORLD_CAP_POS[id] = [lng, lat]; });
+
+// ─── Sub-national boundaries: embedded simplified polygons ───────────────────
+
+function setMode(mode) {
+  if (currentMode === mode) {
+    currentMode = 'view';
+    document.getElementById('btn-pin-visited').classList.remove('active');
+    document.getElementById('btn-pin-wish').classList.remove('active');
+    document.getElementById('mode-tip').textContent = 'Toca num país para ver detalhes';
+    document.getElementById('map-hint').textContent = 'Toca nos países dourados para detalhes · Dois dedos para zoom';
+    return;
+  }
+  currentMode = mode;
+  document.getElementById('btn-pin-visited').classList.toggle('active', mode === 'pin-visited');
+  document.getElementById('btn-pin-wish').classList.toggle('active', mode === 'pin-wish');
+  if (mode === 'pin-visited') {
+    document.getElementById('mode-tip').textContent = '📍 Toca num país ou sítio para marcar como visitado';
+    document.getElementById('map-hint').textContent = 'Modo pin ativo — toca no mapa para colocar um pin';
+  } else {
+    document.getElementById('mode-tip').textContent = '⭐ Toca num país que queres visitar';
+    document.getElementById('map-hint').textContent = 'Modo wishlist ativo — toca num país para adicionar';
+  }
+}
+
+// ─── MAP ─────────────────────────────────────────────────────────────────────
+async function initMap() {
+  try {
+    // Ensure map-wrap has layout before measuring
+    const wrap = document.getElementById('map-wrap');
+    wrap.style.minHeight = '220px';
+
+    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const el = document.getElementById('map-loading');
+    if (el) el.remove();
+
+    const W = wrap.offsetWidth || wrap.clientWidth || 360;
+    const H = Math.round(W * 0.62);
+    wrap.style.height = H + 'px';
+
+    const proj = d3.geoNaturalEarth1().scale(W / 6.28).translate([W / 2, H / 2]);
+    const path = d3.geoPath().projection(proj);
+    projRef = proj; pathRef = path;
+
+    const svg = d3.select('#map-wrap').append('svg')
+      .attr('width', W).attr('height', H)
+      .attr('viewBox', `0 0 ${W} ${H}`);
+    svgRef = svg;
+
+    svg.append('path').datum({type:'Sphere'}).attr('d', path).attr('fill', '#a8cfe8');
+    svg.append('path').datum(d3.geoGraticule()()).attr('class','graticule-line').attr('d', path);
+
+    const g = svg.append('g');
+    gRef = g;
+
+    // Countries
+    g.selectAll('.cpath')
+      .data(topojson.feature(world, world.objects.countries).features)
+      .join('path')
+      .attr('class', d => {
+        const id = +d.id;
+        if (VISITED[id]) return 'cpath vis';
+        if (wishCountriesNumeric.has(id)) return 'cpath wish';
+        return 'cpath no';
+      })
+      .attr('d', path)
+      .attr('data-id', d => d.id)
+      .on('click touchend', function(evt, d) {
+        evt.stopPropagation(); evt.preventDefault();
+        const id = +d.id;
+        const centroid = path.centroid(d);
+        const coords = proj.invert(centroid);
+
+        if (currentMode === 'pin-visited') {
+          openPinForm(coords[1], coords[0], 'pin-visited', id);
+          return;
+        }
+        if (currentMode === 'pin-wish') {
+          if (VISITED[id]) { showNotif('Já visitaste este país! 🌟'); return; }
+          wishCountriesNumeric.add(id);
+          saveWishCountries(); // async, fire-and-forget is fine
+          d3.select(this).attr('class', 'cpath wish');
+          showNotif('⭐ Adicionado à wishlist!');
+          renderWishList();
+          renderWishChips();
+          return;
+        }
+        // view mode
+        const info = VISITED[id];
+        if (info) {
+          if (id === 826) {
+            openUKSheet();
+          } else {
+            openSheet(info, id);
+          }
+        } else if (wishCountriesNumeric.has(id)) {
+          const name = getCountryName(id);
+          openSheetWish({ name: name || `País ${id}`, id });
+        }
+      });
+
+    g.append('path')
+      .datum(topojson.mesh(world, world.objects.countries, (a,b) => a !== b))
+      .attr('class','border-line').attr('d', path);
+
+    // ── Country labels — stored for HTML overlay (SVG labels had z-order issues) ─
+    labelsG = g.append('g').attr('class','labels-layer'); // keep as empty placeholder
+    window._visitedLabelData = [];
+
+    const visitedFeatures = topojson.feature(world, world.objects.countries).features
+      .filter(d => VISITED[+d.id]);
+
+    // Large/medium visited countries for proportional label sizing
+    const VISITED_LARGE  = new Set([124, 840, 643, 250, 356, 764, 792]);
+    const VISITED_MEDIUM = new Set([276, 724, 380, 300, 246, 372, 352, 504, 578, 616, 616, 528, 203, 208, 040, 756, 752, 372, 834, 231, 132]);
+
+    visitedFeatures.forEach(d => {
+      const id = +d.id;
+      const geo = COUNTRY_LABEL_POS[id] || null;
+      const svgPos = geo ? proj(geo) : path.centroid(d);
+      if (!svgPos || isNaN(svgPos[0]) || isNaN(svgPos[1])) return;
+      const info = VISITED[id];
+      const name = info.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0073}\u{E0063}\u{E0074}\u{E007F}]+/gu,'').trim();
+      const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
+      window._visitedLabelData.push({ id, svgPos, name, tier });
+    });
+
+    // Micro-state fallbacks
+    const MICRO_STATES = [
+      { id:492, pos:[7.42,43.73], name:'Mónaco' },
+      { id:336, pos:[12.45,41.9], name:'Vaticano' },
+      { id:462, pos:[73.5,3.2], name:'Maldivas' },
+      { id:634, pos:[51.5,25.35], name:'Qatar' },
+    ];
+    MICRO_STATES.forEach(({id, pos, name}) => {
+      if (!VISITED[id]) return;
+      if (window._visitedLabelData.some(d => d.id === id)) return;
+      const svgPos = proj(pos);
+      if (!svgPos || isNaN(svgPos[0])) return;
+      window._visitedLabelData.push({ id, svgPos, name });
+    });
+    allLabelsG = g.append('g').attr('class','all-labels-layer');
+
+    // Country area → label size tier (bigger country = bigger label)
+    const LARGE_COUNTRIES  = new Set([124,840,643,036,076,356,156,818,012,504,364,792,250,862,484,702,566,012,288]);
+    const MEDIUM_COUNTRIES = new Set([276,724,752,578,246,616,380,300,528,203,208,040,756,372,624,348,620,072,800,404,710,144,231,834,764,104,116]);
+
+    topojson.feature(world, world.objects.countries).features
+      .filter(d => !VISITED[+d.id])
+      .forEach(d => {
+        const id = +d.id;
+        const name = WORLD_NAMES[id];
+        if (!name) return;
+        const pos = path.centroid(d);
+        if (!pos || isNaN(pos[0]) || isNaN(pos[1])) return;
+        const tier = LARGE_COUNTRIES.has(id) ? 'large' : MEDIUM_COUNTRIES.has(id) ? 'medium' : 'small';
+        allLabelsG.append('text')
+          .attr('class', 'all-country-label')
+          .attr('x', pos[0])
+          .attr('y', pos[1])
+          .attr('data-id', id)
+          .attr('data-tier', tier)
+          .style('fill', '#c17f24')
+          .style('stroke', 'rgba(255,255,255,0.95)')
+          .style('paint-order', 'stroke')
+          .style('display', 'none') // hidden until zoom ≥ 2.5
+          .text(name);
+      });
+
+    // ── French Guiana: accurate border polygon (not a rectangle) ─────────────
+    const fgCoords = [
+      [-54.6,5.95],[-54.0,5.9],[-53.5,5.8],[-52.9,5.65],
+      [-52.3,5.4],[-51.8,5.0],[-51.6,4.5],[-51.65,4.0],
+      [-51.8,3.5],[-52.0,2.9],[-52.3,2.3],[-52.7,2.1],
+      [-53.5,2.0],[-54.1,2.1],[-54.45,2.7],[-54.5,3.5],
+      [-54.5,4.5],[-54.55,5.2],[-54.6,5.95]
+    ];
+    const fgFeature = {
+      type:'Feature', geometry:{ type:'Polygon', coordinates:[fgCoords] }
+    };
+    // Insert before .labels-layer so it sits on top of country fills but under labels
+    const fgGroup = g.insert('g', '.labels-layer').attr('class','fg-overlay');
+    fgGroup.append('path')
+      .datum(fgFeature).attr('d', path)
+      .attr('fill', 'hsl(210,35%,82%)')
+      .attr('stroke', 'white')
+      .attr('stroke-width', 0.6)
+      .attr('pointer-events', 'none');
+
+    // Add "Guiana Francesa" label in allLabelsG
+    const fgLabelPos = proj([-53.2, 3.9]);
+    if (allLabelsG && fgLabelPos && !isNaN(fgLabelPos[0])) {
+      allLabelsG.append('text')
+        .attr('class', 'all-country-label')
+        .attr('x', fgLabelPos[0]).attr('y', fgLabelPos[1])
+        .attr('data-fg', '1')
+        .attr('data-tier', 'small')
+        .style('fill', '#c17f24')
+        .style('stroke', 'rgba(255,255,255,0.95)')
+        .style('paint-order', 'stroke')
+        .style('display', 'none')
+        .text('Guiana Francesa');
+    }
+
+    // ── World Capitals layer (subtle dots + names) ────────────────────────────
+    let capsG = g.append('g').attr('class','caps-layer');
+    const visitedCapNames = new Set(
+      (window._placesLoaded || PLACES).map(([,,name]) => name.replace(/\s*🏝️/,'').trim())
+    );
+    WORLD_CAPITALS.forEach(([id, capName, lat, lng]) => {
+      // Skip if visited countries already have a teardrop pin for this capital
+      if (VISITED[id] && visitedCapNames.has(capName)) return;
+      const pos = proj([lng, lat]);
+      if (!pos || isNaN(pos[0])) return;
+      const cg = capsG.append('g')
+        .attr('class','cap-dot')
+        .attr('data-x', pos[0]).attr('data-y', pos[1])
+        .attr('transform', `translate(${pos[0]},${pos[1]})`);
+      cg.append('circle')
+        .attr('r', 1.2).attr('cx', 0).attr('cy', 0)
+        .attr('fill', VISITED[id] ? '#8B2500' : 'rgba(60,40,0,0.55)')
+        .attr('stroke', 'rgba(255,255,255,0.8)')
+        .attr('stroke-width', 0.4)
+        .attr('pointer-events', 'none');
+      cg.append('text')
+        .attr('y', -2.5)
+        .style('font-family', "'Outfit',sans-serif")
+        .style('font-size', '4px')
+        .style('font-weight', '600')
+        .style('fill', VISITED[id] ? '#3a1000' : 'rgba(50,30,0,0.75)')
+        .style('stroke', 'rgba(255,255,255,0.9)')
+        .style('stroke-width', '1.8px')
+        .style('stroke-linejoin', 'round')
+        .style('paint-order', 'stroke')
+        .style('text-anchor', 'middle')
+        .style('pointer-events', 'none')
+        .text(capName);
+    });
+    window._capsG = capsG;
+
+    // ── City / place pin layer ────────────────────────────────────────────────
+    citiesG = g.append('g').attr('class','cities-layer');
+    PLACES.forEach(([lng, lat, name, isCap, isIsland]) => {
+      const pos = proj([lng, lat]);
+      if (!pos || isNaN(pos[0])) return;
+      const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
+      const fillColor = isIsland ? '#0e7fa8' : (isCap ? '#8B2500' : '#c9951a');
+      const cg = citiesG.append('g')
+        .attr('class', `city-pin${isCap ? ' capital' : ''}${isIsland ? ' island' : ''}`)
+        .attr('transform', `translate(${pos[0]},${pos[1]})`)
+        .attr('data-x', pos[0])
+        .attr('data-y', pos[1])
+        .attr('data-always', isIsland ? '1' : '0')
+        .on('click', (evt) => { evt.stopPropagation(); });
+
+      // Subtle halo ring for islands — only for locating them at world zoom
+      if (isIsland) {
+        cg.append('circle')
+          .attr('class', 'island-halo')
+          .attr('cx', 0)
+          .attr('cy', -baseR * 2.5)
+          .attr('r', baseR * 1.1)
+          .attr('fill', 'rgba(14,127,168,0.15)')
+          .attr('stroke', 'rgba(14,127,168,0.4)')
+          .attr('stroke-width', 0.5);
+      }
+
+      // Pin body (teardrop)
+      cg.append('path')
+        .attr('class', 'pin-body')
+        .attr('d', makeTeardrop(baseR))
+        .attr('fill', fillColor)
+        .attr('stroke', 'white')
+        .attr('stroke-width', isIsland ? 1.2 : 0.8);
+
+      // Inner white dot on head
+      cg.append('circle')
+        .attr('class', 'pin-dot')
+        .attr('cx', 0)
+        .attr('cy', -baseR * 2.5)
+        .attr('r', baseR * 0.38)
+        .attr('fill', 'white')
+        .attr('opacity', 0.9);
+
+      // City label — strip the 🏝️ emoji for clean display
+      const displayName = name.replace('🏝️', '').trim();
+      cg.append('text')
+        .attr('class', `city-label${isCap ? ' capital-lbl' : ''}${isIsland ? ' island-lbl' : ''}`)
+        .attr('x', 0)
+        .attr('y', -(baseR * 2.5 + baseR + 1.5))
+        .text(displayName);
+    });
+
+    // ── Açores region label — shown at low zoom on the ocean ──────────────────
+    const azoresRegionG = g.append('g').attr('class','azores-region-label');
+    window._azoresRegionG = azoresRegionG;
+    const azoresLabelPos = proj([-29.5, 38.2]);
+    if (azoresLabelPos && !isNaN(azoresLabelPos[0])) {
+      azoresRegionG.append('text')
+        .attr('x', azoresLabelPos[0])
+        .attr('y', azoresLabelPos[1])
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .style('font-family', "'Outfit', sans-serif")
+        .style('font-size', '6px')
+        .style('font-weight', '700')
+        .style('fill', 'rgba(0,60,100,0.70)')
+        .style('letter-spacing', '2px')
+        .style('text-transform', 'uppercase')
+        .style('paint-order', 'stroke')
+        .style('stroke', 'rgba(168,207,232,0.9)')
+        .style('stroke-width', '2.5px')
+        .style('pointer-events', 'none')
+        .text('AÇORES');
+    }
+    (function initVisitedLabelOverlay() {
+      const existing = document.getElementById('visited-label-overlay');
+      if (existing) existing.remove();
+      const mapWrap = document.getElementById('map-wrap');
+      const overlay = document.createElement('div');
+      overlay.id = 'visited-label-overlay';
+      mapWrap.style.position = 'relative';
+      mapWrap.appendChild(overlay);
+      window._vclOverlay = overlay;
+
+      // Build divs for each label
+      (window._visitedLabelData || []).forEach(({ id, name, tier }) => {
+        const div = document.createElement('div');
+        div.className = 'vcl';
+        div.dataset.id = id;
+        div.dataset.tier = tier || 'small';
+        div.textContent = name;
+        overlay.appendChild(div);
+      });
+
+      // Also add UK sub-nation labels
+      const UK_LABELS = [
+        { name:'Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿', svgGeo:[-1.5,52.5] },
+        { name:'Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿', svgGeo:[-4.0,57.0] },
+        { name:'País de Gales 🏴󠁧󠁢󠁷󠁬󠁳󠁿', svgGeo:[-3.8,52.2] },
+        { name:'Irlanda do Norte 🇬🇧', svgGeo:[-6.5,54.7] },
+      ];
+      UK_LABELS.forEach(({ name, svgGeo }) => {
+        const svgPos = projRef ? projRef(svgGeo) : null;
+        if (!svgPos) return;
+        const div = document.createElement('div');
+        div.className = 'vcl vcl-uk';
+        div.dataset.geo = JSON.stringify(svgGeo);
+        div.textContent = name;
+        div.style.fontSize = '6px';
+        div.style.display = 'none';
+        overlay.appendChild(div);
+      });
+    })();
+
+    window._updateVCL = function(transform) {
+      const overlay = window._vclOverlay;
+      if (!overlay || !projRef) return;
+      const { k, x, y } = transform;
+
+      const svgEl  = document.querySelector('#map-wrap svg');
+      const wrapEl = document.getElementById('map-wrap');
+      if (!svgEl || !wrapEl) return;
+
+      const sr = svgEl.getBoundingClientRect();
+      const wr = wrapEl.getBoundingClientRect();
+      const offX = sr.left - wr.left;
+      const offY = sr.top  - wr.top;
+
+      // Projection may have been created with wrong dimensions (clientWidth=0 at init).
+      // Compute scale factor to map projection coords → actual SVG pixels.
+      const W_proj = projRef.translate()[0] * 2; // width used when projection was created
+      const H_proj = projRef.translate()[1] * 2;
+      const scX = sr.width  / W_proj;
+      const scY = sr.height / H_proj;
+
+      function toCSS(svgPos) {
+        return [
+          (svgPos[0] * scX) * k + x + offX,
+          (svgPos[1] * scY) * k + y + offY
+        ];
+      }
+
+      // Main visited country labels — hide at low zoom, show when zoomed
+      (window._visitedLabelData || []).forEach(({ id, svgPos }) => {
+        const div = overlay.querySelector(`.vcl[data-id="${id}"]`);
+        if (!div) return;
+        const [sx, sy] = toCSS(svgPos);
+        div.style.left = sx + 'px';
+        div.style.top  = sy + 'px';
+        if (k < 2.5) { div.style.display = 'none'; return; }
+        const tier = div.dataset.tier || 'small';
+        // Base sizes at k=2.5: large=9, medium=7, small=5.5
+        const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
+        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.5, 0.5)));
+        div.style.fontSize = fs + 'px';
+        div.style.padding = k < 4 ? '1px 4px' : '2px 6px';
+        div.style.borderRadius = k < 4 ? '3px' : '5px';
+        div.style.display = 'block';
+      });
+
+      // UK sub-nation labels — same logic as visited country labels
+      overlay.querySelectorAll('.vcl-uk').forEach(div => {
+        const geo = JSON.parse(div.dataset.geo || 'null');
+        if (!geo) return;
+        const sp = projRef(geo);
+        if (!sp || isNaN(sp[0])) return;
+        const [sx, sy] = toCSS(sp);
+        div.style.left = sx + 'px';
+        div.style.top  = sy + 'px';
+        // Only show when zoomed in enough to read comfortably
+        if (k < 2.5) { div.style.display = 'none'; return; }
+        div.style.display = 'block';
+        const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
+        div.style.fontSize = fs + 'px';
+        div.style.padding = k < 4 ? '1px 4px' : '2px 5px';
+      });
+    };
+
+    const zoom = d3.zoom().scaleExtent([1, 20])
+      .on('zoom', ({transform}) => {
+        g.attr('transform', transform);
+        currentZoomK = transform.k;
+        if (window._capsG) window._capsG.lower();
+        updateLabelsVisibility(transform.k);
+        if (window._updateVCL) window._updateVCL(transform);
+      });
+    svg.call(zoom);
+    window._mapZoom = zoom; // expose for zoomToCountry
+
+    // Click on ocean to close / place pin
+    svg.on('click', (evt) => {
+      if (evt.target.tagName === 'svg' || (evt.target.tagName === 'path' && !evt.target.classList.contains('cpath'))) {
+        if (currentMode === 'pin-visited' || currentMode === 'pin-wish') {
+          const [mx, my] = d3.pointer(evt);
+          const coords = proj.invert([mx, my]);
+          if (currentMode === 'pin-visited') {
+            openPinForm(coords[1], coords[0], 'pin-visited');
+          }
+        }
+      }
+    });
+
+    renderMapPins();
+
+    // ── UK internal borders (England/Scotland/Wales/N.Ireland divisions) ───────
+    let ukBordersG = null, ukSubLabelsG = null;
+    if (VISITED[826]) {
+      ukBordersG = g.append('g').attr('class','uk-borders');
+      UK_INTERNAL_BORDERS.features.forEach(f => {
+        ukBordersG.append('path')
+          .datum(f)
+          .attr('d', path)
+          .attr('fill', 'none')
+          .attr('stroke', 'rgba(255,255,255,0.7)')
+          .attr('stroke-width', 0.7)
+          .attr('stroke-dasharray', '2.5,2')
+          .attr('pointer-events', 'none');
+      });
+
+      ukSubLabelsG = g.append('g').attr('class','uk-sublabels');
+      UK_SUB_LABELS.forEach(([lng, lat, name]) => {
+        const pos = proj([lng, lat]);
+        if (!pos || isNaN(pos[0])) return;
+        ukSubLabelsG.append('text')
+          .attr('x', pos[0]).attr('y', pos[1])
+          .attr('data-lng', lng).attr('data-lat', lat)
+          .style('font-family', "'Outfit', sans-serif")
+          .style('font-size', '5px')
+          .style('font-weight', '700')
+          .style('fill', 'rgba(255,255,255,0.88)')
+          .style('stroke', 'rgba(30,10,0,0.6)')
+          .style('stroke-width', '2px')
+          .style('stroke-linejoin', 'round')
+          .style('paint-order', 'stroke')
+          .style('text-anchor', 'middle')
+          .style('dominant-baseline', 'middle')
+          .style('pointer-events', 'none')
+          .text(name);
+      });
+    }
+
+    // Store references for updateLabelsVisibility
+    window._ukBordersG = ukBordersG;
+    window._ukSubLabelsG = ukSubLabelsG;
+
+    // ── Raise visited-country labels to TOP of z-order (above cities + all-labels) ──
+    labelsG.raise();
+    updateLabelsVisibility(1);
+    // Defer VCL initial positions until after DOM renders fully
+    requestAnimationFrame(() => {
+      if (window._updateVCL) window._updateVCL({k:1,x:0,y:0});
+    });
+
+  } catch(err) {
+    const el = document.getElementById('map-loading');
+    if (el) el.textContent = '⚠️ Erro ao carregar o mapa. Verifica a ligação.';
+    console.error(err);
+  }
+}
+
+function pinPath(r) {
+  // Teardrop SVG path centered at (0,0), tip pointing down at (0, r*2.2)
+  // r = radius of the head circle
+  const tipY = r * 2.2;
+  return `M 0,${-tipY} C ${-r*1.1},${-tipY} ${-r},${-tipY+r*0.3} ${-r},${-tipY+r*1.0} A ${r},${r} 0 1,0 ${r},${-tipY+r*1.0} C ${r},${-tipY+r*0.3} ${r*1.1},${-tipY} 0,${-tipY}`;
+}
+
+// Better: use a clean teardrop path defined from scratch
+function makeTeardrop(r) {
+  // Pin shape: circle on top, pointed bottom. Tip at (0,0), body going UP.
+  // Using a simple path that looks like a map marker
+  const h = r * 2.5; // total height of pin above tip
+  const cx = 0, cy = -h; // center of circle head
+  return `M 0 0 C ${-r*0.6} ${-h*0.3} ${-r} ${-h*0.55} ${-r} ${cy} A ${r} ${r} 0 1 1 ${r} ${cy} C ${r} ${-h*0.55} ${r*0.6} ${-h*0.3} 0 0 Z`;
+}
+
+function updateLabelsVisibility(k) {
+  if (!labelsG || !citiesG) return;
+
+  // ── Country labels now handled by HTML overlay (_updateVCL) ─────────────────
+  if (allLabelsG) {
+    allLabelsG.selectAll('.all-country-label').each(function() {
+      const el = d3.select(this);
+      if (k < 2.5) { el.style('display','none'); return; }
+      el.style('display', null);
+      const tier = el.attr('data-tier') || 'small';
+      // Same base sizes as visited VCL labels: large=9, medium=7, small=5.5
+      const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
+      const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.5, 0.5)));
+      // Divide by k because these are SVG elements inside the zoomed group
+      el.style('font-size', (fs / k) + 'px')
+        .style('stroke-width', (2.5 / k) + 'px')
+        .style('font-weight', tier === 'large' ? '700' : tier === 'medium' ? '600' : '500')
+        .style('fill', '#c17f24')
+        .style('stroke', 'rgba(255,255,255,0.95)');
+    });
+  }
+
+  // ── World capitals: show at zoom ≥ 2.5 to reduce clutter ────────────────
+  const capsLayer = window._capsG;
+  if (capsLayer) {
+    const showCaps = k >= 2.5;
+    capsLayer.selectAll('.cap-dot').each(function() {
+      const sel = d3.select(this);
+      sel.style('display', showCaps ? null : 'none');
+      if (!showCaps) return;
+      const px = +sel.attr('data-x');
+      const py = +sel.attr('data-y');
+      sel.attr('transform', `translate(${px},${py}) scale(${1/k})`);
+    });
+  }
+
+  // ── City pins: inverse scale for constant screen size ───────────────────────
+  const showAllCities = k >= 2.0;
+  const showIslandFull = k >= 1.0;
+  // Text labels only visible when sufficiently zoomed in
+  const showCityText   = k >= 3.5;
+  const showIslandText = k >= 2.0;
+  const showCapText    = k >= 2.5;
+
+  citiesG.selectAll('.city-pin').each(function() {
+    const isCap = this.classList.contains('capital');
+    const isIsland = this.classList.contains('island');
+    const visible = isIsland || isCap || showAllCities;
+    const sel = d3.select(this);
+    sel.style('display', visible ? null : 'none');
+    if (!visible) return;
+
+    const px = +sel.attr('data-x');
+    const py = +sel.attr('data-y');
+
+    // Pin size: small but fixed in screen pixels via scale(1/k)
+    const baseR = isIsland ? 5.5 : (isCap ? 5.0 : 4.5);
+
+    if (isIsland && !showIslandFull) {
+      sel.attr('transform', `translate(${px},${py})`);
+      sel.select('circle.island-halo')
+        .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
+        .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
+      sel.select('path.pin-body').style('display', 'none');
+      sel.select('circle.pin-dot').attr('r', 0);
+      sel.select('text').style('display', 'none');
+    } else {
+      sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
+      if (isIsland) {
+        sel.select('circle.island-halo')
+          .attr('fill', 'rgba(14,127,168,0.15)').attr('stroke', 'rgba(14,127,168,0.45)')
+          .attr('stroke-width', 0.5).attr('r', baseR * 1.1).attr('cy', -baseR * 2.5);
+      }
+      sel.select('path.pin-body').style('display', null).attr('d', makeTeardrop(baseR));
+      sel.select('circle.pin-dot').style('display', null)
+        .attr('r', baseR * 0.38).attr('cy', -baseR * 2.5);
+
+      // Text: only show when zoomed enough
+      const showTxt = isIsland ? showIslandText : (isCap ? showCapText : showCityText);
+      sel.select('text')
+        .style('display', showTxt ? null : 'none')
+        .attr('y', -(baseR * 2.5 + baseR + 2));
+    }
+  });
+
+
+  if (gRef) {
+    gRef.selectAll('.map-pin').each(function() {
+      const sel = d3.select(this);
+      const px = +sel.attr('data-x');
+      const py = +sel.attr('data-y');
+      if (!isNaN(px) && !isNaN(py)) {
+        sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
+      }
+    });
+  }
+
+  // ── UK sub-nation SVG labels — hidden (replaced by vcl-uk HTML overlay) ──────
+  const ukSubG = window._ukSubLabelsG;
+  if (ukSubG) ukSubG.style('display', 'none');
+
+  // ── UK internal borders: scale stroke-width inversely ─────────────────────
+  const ukBrdG = window._ukBordersG;
+  if (ukBrdG) {
+    ukBrdG.selectAll('path')
+      .attr('stroke-width', 0.7 / k)
+      .attr('stroke-dasharray', `${2.5 / k},${2 / k}`);
+  }
+
+  // ── Açores region label: visible at low zoom (< 3), hidden when zoomed in ──
+  const azRG = window._azoresRegionG;
+  if (azRG) {
+    azRG.style('display', k < 3 ? null : 'none');
+    azRG.select('text')
+      .style('font-size', (6 / k) + 'px')
+      .style('letter-spacing', (2 / k) + 'px')
+      .style('stroke-width', (2.5 / k) + 'px');
+  }
+}
+
+function getCountryName(numericId) {
+  // Rough lookup table for wishlist display
+  const names = {
+    392:'Japão 🇯🇵', 356:'Índia 🇮🇳', 76:'Brasil 🇧🇷', 36:'Austrália 🇦🇺',
+    554:'Nova Zelândia 🇳🇿', 710:'África do Sul 🇿🇦', 818:'Egito 🇪🇬',
+    760:'Síria 🇸🇾', 702:'Singapura 🇸🇬', 410:'Coreia do Sul 🇰🇷',
+    156:'China 🇨🇳', 840:'EUA 🇺🇸', 484:'México 🇲🇽', 152:'Chile 🇨🇱',
+    32:'Argentina 🇦🇷', 604:'Peru 🇵🇪', 170:'Colômbia 🇨🇴',
+    566:'Nigéria 🇳🇬', 404:'Quénia 🇰🇪', 288:'Ghana 🇬🇭',
+    682:'Arábia Saudita 🇸🇦', 364:'Irão 🇮🇷', 586:'Paquistão 🇵🇰',
+    50:'Bangladesh 🇧🇩', 144:'Sri Lanka 🇱🇰', 104:'Myanmar 🇲🇲',
+    116:'Camboja 🇰🇭', 418:'Laos 🇱🇦', 704:'Vietnam 🇻🇳',
+    458:'Malásia 🇲🇾', 360:'Indonésia 🇮🇩', 608:'Filipinas 🇵🇭',
+  };
+  return names[numericId] || null;
+}
+
+// ─── SHEETS ───────────────────────────────────────────────────────────────────
+function openSheet(info, numericId) {
+  document.getElementById('s-name').textContent = info.name;
+  const yr = document.getElementById('s-year');
+  yr.textContent = '📅 ' + info.year;
+  yr.className = '';
+  document.getElementById('s-note').textContent = info.note || '';
+  const actions = document.getElementById('sh-actions');
+  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinFormFromSheet(${numericId})">📍 Adicionar pin de local</button>`;
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+}
+
+function openUKSheet() {
+  document.getElementById('s-name').textContent = 'Reino Unido 🇬🇧';
+  const yr = document.getElementById('s-year');
+  yr.textContent = '📅 2014 / 2024 / 2025';
+  yr.className = '';
+  document.getElementById('s-note').textContent = UK_DETAIL.map(u => `${u.name} (${u.year}) — ${u.note}`).join('\n');
+  const actions = document.getElementById('sh-actions');
+  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinForm(null,null,'pin-visited')">📍 Adicionar pin</button>`;
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+}
+
+function openSheetWish(info) {
+  document.getElementById('s-name').textContent = info.name;
+  const yr = document.getElementById('s-year');
+  yr.textContent = '⭐ Wishlist';
+  yr.className = 'wish-tag';
+  document.getElementById('s-note').textContent = 'Ainda não visitado — está na lista de sonhos!';
+  const actions = document.getElementById('sh-actions');
+  actions.innerHTML = `
+    <button class="sh-btn red" onclick="removeWishCountry(${info.id})">🗑️ Remover</button>
+  `;
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+}
+
+function openPinFormFromSheet(numericId) {
+  closeAll();
+  setTimeout(() => openPinForm(null, null, 'pin-visited'), 100);
+}
+
+async function removeWishCountry(id) {
+  wishCountriesNumeric.delete(id);
+  await saveWishCountries();
+  d3.selectAll('.cpath').filter(d => +d.id === id).attr('class', 'cpath no');
+  closeAll();
+  showNotif('Removido da wishlist');
+  renderWishList();
+  renderWishChips();
+}
+
+function closeAll() {
+  document.getElementById('sheet').classList.remove('on');
+  document.getElementById('backdrop').classList.remove('on');
+  document.getElementById('pin-form').classList.remove('on');
+}
+
+// ─── PIN FORM ─────────────────────────────────────────────────────────────────
+let currentPinType = 'pin-visited';
+
+function openPinForm(lat, lng, type, numericId) {
+  document.getElementById('pf-name').value = '';
+  document.getElementById('pf-year').value = '';
+  document.getElementById('pf-emoji').value = '';
+  document.getElementById('pf-note').value = '';
+  document.getElementById('pf-lat').value = lat || '';
+  document.getElementById('pf-lng').value = lng || '';
+  document.getElementById('pf-edit-id').value = '';
+  setPinType(type || 'pin-visited');
+  document.getElementById('pin-form').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+  setTimeout(() => document.getElementById('pf-name').focus(), 350);
+}
+
+function closePinForm() {
+  document.getElementById('pin-form').classList.remove('on');
+  document.getElementById('backdrop').classList.remove('on');
+}
+
+function setPinType(type) {
+  currentPinType = type;
+  document.getElementById('type-vis').className = 'type-opt' + (type === 'pin-visited' ? ' sel-visited' : '');
+  document.getElementById('type-wish').className = 'type-opt' + (type === 'pin-wish' ? ' sel-wishlist' : '');
+  const btn = document.getElementById('pf-submit');
+  btn.className = 'submit-btn ' + (type === 'pin-visited' ? 'visited' : 'wishlist');
+  btn.textContent = type === 'pin-visited' ? '📍 Guardar Pin Visitado' : '⭐ Guardar na Wishlist';
+}
+
+function submitPin() {
+  const name = document.getElementById('pf-name').value.trim();
+  if (!name) { document.getElementById('pf-name').focus(); return; }
+  const editId = document.getElementById('pf-edit-id').value;
+  const pin = {
+    id: editId || Date.now().toString(),
+    name,
+    year: document.getElementById('pf-year').value.trim(),
+    emoji: document.getElementById('pf-emoji').value.trim() || (currentPinType === 'pin-visited' ? '📍' : '⭐'),
+    note: document.getElementById('pf-note').value.trim(),
+    lat: parseFloat(document.getElementById('pf-lat').value) || null,
+    lng: parseFloat(document.getElementById('pf-lng').value) || null,
+    type: currentPinType,
+  };
+  if (editId) {
+    const idx = pins.findIndex(p => p.id === editId);
+    if (idx > -1) pins[idx] = pin;
+  } else {
+    pins.push(pin);
+  }
+  savePins(); // async fire-and-forget
+  closePinForm();
+  renderMapPins();
+  renderPinsList();
+  renderWishList();
+  showNotif(currentPinType === 'pin-visited' ? '📍 Pin guardado!' : '⭐ Adicionado à wishlist!');
+}
+
+// ─── MAP PINS RENDER ──────────────────────────────────────────────────────────
+function renderMapPins() {
+  if (!gRef || !projRef) return;
+  gRef.selectAll('.map-pin').remove();
+  const pinsWithCoords = pins.filter(p => p.lat != null && p.lng != null);
+  pinsWithCoords.forEach(pin => {
+    const [x, y] = projRef([pin.lng, pin.lat]);
+    if (isNaN(x) || isNaN(y)) return;
+    const col = pin.type === 'pin-visited' ? '#1a6bb5' : '#2d7a4f';
+    const r = 4.5;
+    const pg = gRef.append('g')
+      .attr('class', 'map-pin')
+      .attr('transform', `translate(${x},${y}) scale(${1/currentZoomK})`)
+      .attr('data-x', x)
+      .attr('data-y', y)
+      .style('filter', 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))')
+      .on('click', (evt) => {
+        evt.stopPropagation();
+        openPinDetail(pin);
+      });
+
+    // Teardrop pin body
+    pg.append('path')
+      .attr('d', makeTeardrop(r))
+      .attr('fill', col)
+      .attr('stroke', 'white')
+      .attr('stroke-width', 1);
+
+    // Inner dot
+    pg.append('circle')
+      .attr('cx', 0).attr('cy', -r * 2.5)
+      .attr('r', r * 0.38)
+      .attr('fill', 'white').attr('opacity', 0.9);
+
+    // Label above pin
+    pg.append('text')
+      .attr('x', 0).attr('y', -(r * 2.5 + r + 2))
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '6px')
+      .attr('font-family', 'Outfit, sans-serif')
+      .attr('font-weight', '600')
+      .attr('fill', col)
+      .attr('paint-order', 'stroke')
+      .attr('stroke', 'rgba(255,255,255,0.95)')
+      .attr('stroke-width', '2.5px')
+      .attr('stroke-linejoin', 'round')
+      .text(pin.name.length > 16 ? pin.name.slice(0,14)+'…' : pin.name);
+  });
+}
+
+// ─── PIN DETAIL ───────────────────────────────────────────────────────────────
+function openPinDetail(pin) {
+  document.getElementById('s-name').textContent = `${pin.emoji} ${pin.name}`;
+  const yr = document.getElementById('s-year');
+  yr.textContent = pin.type === 'pin-visited' ? (pin.year ? `📅 ${pin.year}` : '📅 —') : '⭐ Wishlist';
+  yr.className = pin.type === 'pin-wish' ? 'wish-tag' : '';
+  document.getElementById('s-note').textContent = pin.note || '';
+  const actions = document.getElementById('sh-actions');
+  actions.innerHTML = `
+    <button class="sh-btn gold" onclick="editPin('${pin.id}')">✏️ Editar</button>
+    <button class="sh-btn red" onclick="deletePin('${pin.id}')">🗑️ Apagar</button>
+  `;
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+}
+
+function editPin(id) {
+  const pin = pins.find(p => p.id === id);
+  if (!pin) return;
+  closeAll();
+  setTimeout(() => {
+    document.getElementById('pf-name').value = pin.name;
+    document.getElementById('pf-year').value = pin.year || '';
+    document.getElementById('pf-emoji').value = pin.emoji || '';
+    document.getElementById('pf-note').value = pin.note || '';
+    document.getElementById('pf-lat').value = pin.lat || '';
+    document.getElementById('pf-lng').value = pin.lng || '';
+    document.getElementById('pf-edit-id').value = pin.id;
+    setPinType(pin.type);
+    document.getElementById('pin-form').classList.add('on');
+    document.getElementById('backdrop').classList.add('on');
+  }, 120);
+}
+
+async function deletePin(id) {
+  pins = pins.filter(p => p.id !== id);
+  await savePins();
+  closeAll();
+  renderMapPins();
+  renderPinsList();
+  renderWishList();
+  renderWishChips();
+  showNotif('Pin removido');
+}
+
+// ─── PINS LIST RENDER ─────────────────────────────────────────────────────────
+// Countries to display specially in pins tab
+const VISITED_PINS_LIST = [
+  // Portugal
+  { name:'Portugal 🇵🇹', year:'sempre', note:'Casa. O país mais bonito do mundo 💛', code:'pt' },
+  // Europa
+  { name:'Alemanha 🇩🇪', year:'2019', note:'Europa Central — cerveja, castelos e história 🍺🏰', code:'de' },
+  { name:'Áustria 🇦🇹', year:'2021', note:'Viena e as montanhas dos Alpes ⛰️', code:'at' },
+  { name:'Bélgica 🇧🇪', year:'2017', note:'Bruges, Bruxelas e o melhor chocolate do mundo 🍫', code:'be' },
+  { name:'Dinamarca 🇩🇰', year:'2022', note:'Copenhaga — design nórdico e bicicletas 🚲', code:'dk' },
+  { name:'Espanha 🇪🇸', year:'2023/25', note:'Vizinho sempre presente — sol, tapas e cultura ☀️🥘', code:'es' },
+  { name:'Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿', year:'2014', note:'Londres — museus, teatros e fish & chips 🎭🍟', code:'gb-eng' },
+  { name:'Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿', year:'2024', note:'Highlands, castelos e whisky 🥃🏰', code:'gb-sct' },
+  { name:'Irlanda do Norte 🇬🇧', year:'2025', note:'Belfast e a Giant\'s Causeway ☘️🌊', code:'gb' },
+  { name:'Finlândia 🇫🇮', year:'2021', note:'Saunas, florestas e aurora boreal 🌌❄️', code:'fi' },
+  { name:'França 🇫🇷', year:'2015/26', note:'Paris + Disneyland (2015) · Marselha & Nice (2026) 🗼🏰', code:'fr' },
+  { name:'Grécia 🇬🇷', year:'2019', note:'Ilhas, história antiga e gastronomia incrível 🫒🏛️', code:'gr' },
+  { name:'Hungria 🇭🇺', year:'2021', note:'Budapeste — a pérola do Danúbio 🏰', code:'hu' },
+  { name:'Irlanda 🇮🇪', year:'2025', note:'Paisagens verdes infinitas e Guinness 🍀🍺', code:'ie' },
+  { name:'Islândia 🇮🇸', year:'2018', note:'Vulcões, cascatas e aurora boreal 🌋🌌', code:'is' },
+  { name:'Itália 🇮🇹', year:'2016/19', note:'Roma, Vaticano, arte, pizza e gelado 🍕🍦', code:'it' },
+  { name:'Mónaco 🇲🇨', year:'2026', note:'O principado mais glamoroso — F1 e cassinos ✨🏎️', code:'mc' },
+  { name:'Noruega 🇳🇴', year:'2018', note:'Fiordes majestosos e natureza épica do norte 🏔️', code:'no' },
+  { name:'Países Baixos 🇳🇱', year:'2017', note:'Amesterdão, tulipas e moinhos históricos 🌷🚲', code:'nl' },
+  { name:'Polónia 🇵🇱', year:'2023', note:'Cracóvia — história, arquitetura e pierogis 🥟🏰', code:'pl' },
+  { name:'Rep. Checa 🇨🇿', year:'2017', note:'Praga — a cidade das cem torres 🍺🏰', code:'cz' },
+  { name:'Suécia 🇸🇪', year:'2019', note:'Estocolmo e o charme escandinavo ❄️🌲', code:'se' },
+  { name:'Suíça 🇨🇭', year:'2017', note:'Alpes, chocolate, relógios e precisão suíça ⛰️🍫', code:'ch' },
+  { name:'Turquia 🇹🇷', year:'2022', note:'Istambul — onde a Europa encontra a Ásia 🕌🌉', code:'tr' },
+  { name:'Vaticano 🇻🇦', year:'2016', note:'O menor estado soberano do mundo 🕊️🎨', code:'va' },
+  // África
+  { name:'Cabo Verde 🇨🇻', year:'2024', note:'Ilhas atlânticas de língua portuguesa 🌊🇵🇹', code:'cv' },
+  { name:'Etiópia 🇪🇹', year:'2025', note:'África oriental — cultura milenar e café ☕', code:'et' },
+  { name:'Marrocos 🇲🇦', year:'2023', note:'Deserto do Sahara, medinas coloridas e tajine 🪔🐪', code:'ma' },
+  { name:'Tanzânia 🇹🇿', year:'2025', note:'Safari no Serengeti + Zanzibar 🦁🏝️', code:'tz' },
+  // Américas — especificando região exata
+  { name:'Nova Iorque 🗽', year:'2023', note:'EUA · Nova Iorque — a cidade que nunca dorme 🇺🇸', code:'us' },
+  { name:'Ontário 🍁', year:'2023', note:'Canadá · Toronto e Cataratas do Niágara 🇨🇦', code:'ca' },
+  // Ásia & Médio Oriente
+  { name:'Emirados Árabes 🇦🇪', year:'2024', note:'Dubai — o futuro a acontecer agora ✨🏙️', code:'ae' },
+  { name:'Maldivas 🇲🇻', year:'2024', note:'Paraíso na Terra — água turquesa e areia branca 🐠🌴', code:'mv' },
+  { name:'Qatar 🇶🇦', year:'2024', note:'Doha — modernidade árabe e surpreendente 🏙️', code:'qa' },
+  { name:'Tailândia 🇹🇭', year:'2024', note:'Templos dourados, praias e street food 🍜🛕', code:'th' },
+];
+
+// ─── RENDER WISH LIST (standalone — called on every wishlist change) ──────────
+function renderWishList() {
+  const wishList = document.getElementById('pins-wish-list');
+  if (!wishList) return;
+  const wish = pins.filter(p => p.type === 'pin-wish');
+
+  if (wishCountriesNumeric.size === 0 && wish.length === 0) {
+    wishList.innerHTML = '<div class="empty-state"><span class="empty-icon">⭐</span>Sem destinos na wishlist.</div>';
+    return;
+  }
+
+  const countryItems = [...wishCountriesNumeric].map(id => {
+    const name = getCountryName(id) || `País ${id}`;
+    const code = FLAG_CODES[id] || '';
+    const flag = code ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '⭐ ';
+    return `<div class="pin-item" onclick="openSheetWish({name:'${name.replace(/'/g,"\\'")}',id:${id}})">
+      <div class="pin-dot wish" style="font-size:18px;">${flag ? '🌍' : '⭐'}</div>
+      <div class="pin-info">
+        <div class="pin-name">${flag}${name}</div>
+        <div class="pin-meta">Quero visitar!</div>
+      </div>
+      <div class="pin-delete" onclick="event.stopPropagation();removeWishCountry(${id})">✕</div>
+    </div>`;
+  });
+
+  const pinItems = wish.map(p => `
+    <div class="pin-item">
+      <div class="pin-dot wish">${p.emoji || '⭐'}</div>
+      <div class="pin-info">
+        <div class="pin-name">${p.name}</div>
+        <div class="pin-meta">${p.note || 'Quero visitar!'}</div>
+      </div>
+      <div class="pin-delete" onclick="deletePin('${p.id}')">✕</div>
+    </div>
+  `);
+
+  wishList.innerHTML = [...countryItems, ...pinItems].join('');
+}
+
+function renderPinsList() {
+  const userVisited = pins.filter(p => p.type === 'pin-visited');
+  const visList = document.getElementById('pins-visited-list');
+  if (!visList) return;
+
+  const countryPinsHTML = VISITED_PINS_LIST.map(p => `
+    <div class="pin-item">
+      <img src="https://flagcdn.com/w40/${p.code}.png" 
+           style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" 
+           onerror="this.style.display='none'" alt="">
+      <div class="pin-info">
+        <div class="pin-name">${p.name}</div>
+        <div class="pin-meta">${p.year} · ${p.note}</div>
+      </div>
+      <div style="font-size:10px;color:var(--gold);font-weight:600;flex-shrink:0;">✓</div>
+    </div>
+  `).join('');
+
+  const userPinsHTML = userVisited.length > 0 ? `
+    <div class="cont-lbl" style="margin-top:14px;margin-bottom:8px;">📍 Pins personalizados</div>
+    ${userVisited.map(p => `
+      <div class="pin-item">
+        <div class="pin-dot vis">${p.emoji || '📍'}</div>
+        <div class="pin-info">
+          <div class="pin-name">${p.name}</div>
+          <div class="pin-meta">${p.year ? p.year + ' · ' : ''}${p.note || 'Sem nota'}</div>
+        </div>
+        <div class="pin-delete" onclick="deletePin('${p.id}')">✕</div>
+      </div>
+    `).join('')}
+  ` : '';
+
+  visList.innerHTML = countryPinsHTML + userPinsHTML;
+}
+
+// ─── WISH CHIPS IN LIST TAB ───────────────────────────────────────────────────
+function renderWishChips() {
+  const section = document.getElementById('wish-countries-section');
+  const container = document.getElementById('wish-chips');
+  const wishPins = pins.filter(p => p.type === 'pin-wish');
+
+  if (wishCountriesNumeric.size === 0 && wishPins.length === 0) {
+    section.style.display = 'none'; return;
+  }
+  section.style.display = 'block';
+  const countryNames = [...wishCountriesNumeric].map(id => {
+    const n = getCountryName(id);
+    return n ? `<div class="chip wish-chip">${n}</div>` : '';
+  }).filter(Boolean);
+
+  const pinChips = wishPins.map(p =>
+    `<div class="chip wish-chip">${p.emoji || '⭐'} ${p.name}</div>`
+  );
+  container.innerHTML = [...countryNames, ...pinChips].join('');
+}
+
+// ─── COUNTRY FLAG CODES (ISO 3166-1 alpha-2 for flagcdn.com) ─────────────────
+const FLAG_CODES = {
+  276:'de', 40:'at', 56:'be', 124:'ca', 132:'cv', 208:'dk', 724:'es',
+  826:'gb', 840:'us', 784:'ae', 231:'et', 250:'fr', 246:'fi', 300:'gr',
+  348:'hu', 380:'it', 372:'ie', 352:'is', 504:'ma', 462:'mv', 492:'mc',
+  578:'no', 620:'pt', 528:'nl', 616:'pl', 634:'qa', 203:'cz', 756:'ch',
+  752:'se', 764:'th', 792:'tr', 834:'tz', 336:'va',
+};
+
+// Scotland / England / N.Ireland use GB flag
+const SUB_FLAGS = { 'Scotland':'gb-sct', 'England':'gb-eng', 'Northern Ireland':'gb' };
+
+function flagUrl(code) {
+  return `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+}
+
+// ─── SEARCH DATA ─────────────────────────────────────────────────────────────
+const SEARCH_DATA = [
+  // Visited countries — numeric ID for zoom
+  {name:'Portugal 🇵🇹', year:'sempre', id:620, type:'visited', code:'pt'},
+  {name:'Alemanha 🇩🇪', year:'2019', id:276, type:'visited', code:'de'},
+  {name:'Áustria 🇦🇹', year:'2021', id:40, type:'visited', code:'at'},
+  {name:'Bélgica 🇧🇪', year:'2017', id:56, type:'visited', code:'be'},
+  {name:'Canadá 🇨🇦', year:'2023', id:124, type:'visited', code:'ca'},
+  {name:'Cabo Verde 🇨🇻', year:'2024', id:132, type:'visited', code:'cv'},
+  {name:'Dinamarca 🇩🇰', year:'2022', id:208, type:'visited', code:'dk'},
+  {name:'Espanha 🇪🇸', year:'2023/25', id:724, type:'visited', code:'es'},
+  {name:'Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿', year:'2024', id:826, type:'visited', code:'gb-sct'},
+  {name:'Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿', year:'2014', id:826, type:'visited', code:'gb-eng'},
+  {name:'Irlanda do Norte 🇬🇧', year:'2025', id:826, type:'visited', code:'gb'},
+  {name:'EUA 🇺🇸', year:'2023', id:840, type:'visited', code:'us'},
+  {name:'Emirados Árabes 🇦🇪', year:'2024', id:784, type:'visited', code:'ae'},
+  {name:'Etiópia 🇪🇹', year:'2025', id:231, type:'visited', code:'et'},
+  {name:'França 🇫🇷', year:'2015/26', id:250, type:'visited', code:'fr'},
+  {name:'Finlândia 🇫🇮', year:'2021', id:246, type:'visited', code:'fi'},
+  {name:'Grécia 🇬🇷', year:'2019', id:300, type:'visited', code:'gr'},
+  {name:'Hungria 🇭🇺', year:'2021', id:348, type:'visited', code:'hu'},
+  {name:'Itália 🇮🇹', year:'2016/19', id:380, type:'visited', code:'it'},
+  {name:'Irlanda 🇮🇪', year:'2025', id:372, type:'visited', code:'ie'},
+  {name:'Islândia 🇮🇸', year:'2018', id:352, type:'visited', code:'is'},
+  {name:'Marrocos 🇲🇦', year:'2023', id:504, type:'visited', code:'ma'},
+  {name:'Maldivas 🇲🇻', year:'2024', id:462, type:'visited', code:'mv'},
+  {name:'Mónaco 🇲🇨', year:'2026', id:492, type:'visited', code:'mc'},
+  {name:'Noruega 🇳🇴', year:'2018', id:578, type:'visited', code:'no'},
+  {name:'Países Baixos 🇳🇱', year:'2017', id:528, type:'visited', code:'nl'},
+  {name:'Polónia 🇵🇱', year:'2023', id:616, type:'visited', code:'pl'},
+  {name:'Qatar 🇶🇦', year:'2024', id:634, type:'visited', code:'qa'},
+  {name:'Rep. Checa 🇨🇿', year:'2017', id:203, type:'visited', code:'cz'},
+  {name:'Suíça 🇨🇭', year:'2017', id:756, type:'visited', code:'ch'},
+  {name:'Suécia 🇸🇪', year:'2019', id:752, type:'visited', code:'se'},
+  {name:'Tailândia 🇹🇭', year:'2024', id:764, type:'visited', code:'th'},
+  {name:'Turquia 🇹🇷', year:'2022', id:792, type:'visited', code:'tr'},
+  {name:'Tanzânia 🇹🇿', year:'2025', id:834, type:'visited', code:'tz'},
+  {name:'Vaticano 🇻🇦', year:'2016', id:336, type:'visited', code:'va'},
+  // Cities
+  {name:'Lisboa', year:'capital · sempre', id:620, lat:38.72, lng:-9.14, type:'city', code:'pt'},
+  {name:'Porto', year:'Portugal · sempre', id:620, lat:41.15, lng:-8.61, type:'city', code:'pt'},
+  {name:'Berlim', year:'Alemanha · 2019 Verão', id:276, lat:52.52, lng:13.4, type:'city', code:'de'},
+  {name:'Viena', year:'Áustria · 2021 Verão', id:40, lat:48.21, lng:16.37, type:'city', code:'at'},
+  {name:'Bruxelas', year:'Bélgica · 2017 Verão', id:56, lat:50.85, lng:4.35, type:'city', code:'be'},
+  {name:'Toronto', year:'Canadá · 2023 Verão', id:124, lat:43.65, lng:-79.38, type:'city', code:'ca'},
+  {name:'Niagara Falls', year:'Canadá · 2023 Verão', id:124, lat:43.09, lng:-79.07, type:'city', code:'ca'},
+  {name:'Copenhaga', year:'Dinamarca · 2022 Natal', id:208, lat:55.68, lng:12.57, type:'city', code:'dk'},
+  {name:'Madrid', year:'Espanha · 2025 Natal', id:724, lat:40.42, lng:-3.7, type:'city', code:'es'},
+  {name:'Barcelona', year:'Espanha · 2023 Páscoa', id:724, lat:41.38, lng:2.18, type:'city', code:'es'},
+  {name:'Loret del Mar', year:'Espanha · 2000 Páscoa', id:724, lat:41.69, lng:2.84, type:'city', code:'es'},
+  {name:'Benidorm', year:'Espanha · 2007 Páscoa', id:724, lat:38.54, lng:-0.13, type:'city', code:'es'},
+  {name:'Lobios', year:'Espanha · Galiza · 2011 Verão', id:724, lat:41.85, lng:-8.07, type:'city', code:'es'},
+  {name:'Edimburgo', year:'Escócia · 2024 Natal', id:826, lat:55.95, lng:-3.19, type:'city', code:'gb-sct'},
+  {name:'Londres', year:'Inglaterra · 2014 Páscoa', id:826, lat:51.5, lng:-0.12, type:'city', code:'gb-eng'},
+  {name:'Belfast', year:'Irlanda do Norte · 2025 Páscoa', id:826, lat:54.6, lng:-5.93, type:'city', code:'gb'},
+  {name:'Nova Iorque', year:'EUA · 2023 Verão', id:840, lat:40.71, lng:-74.0, type:'city', code:'us'},
+  {name:'Abu Dhabi', year:'Emirados Árabes · 2024 Natal', id:784, lat:24.47, lng:54.37, type:'city', code:'ae'},
+  {name:'Adis Abeba', year:'Etiópia · 2025 Verão', id:231, lat:9.03, lng:38.74, type:'city', code:'et'},
+  {name:'Paris', year:'França · 2015 Verão', id:250, lat:48.86, lng:2.35, type:'city', code:'fr'},
+  {name:'Disneyland Paris', year:'França · 2015 Verão', id:250, lat:48.87, lng:2.78, type:'city', code:'fr'},
+  {name:'Marselha', year:'França · 2026 Páscoa', id:250, lat:43.3, lng:5.37, type:'city', code:'fr'},
+  {name:'Nice', year:'França · 2026 Páscoa', id:250, lat:43.71, lng:7.27, type:'city', code:'fr'},
+  {name:'Helsínquia', year:'Finlândia · 2018 Verão · 2021 Natal', id:246, lat:60.17, lng:24.94, type:'city', code:'fi'},
+  {name:'Atenas', year:'Grécia · 2019 Verão', id:300, lat:37.98, lng:23.72, type:'city', code:'gr'},
+  {name:'Budapeste', year:'Hungria · 2021 Verão', id:348, lat:47.5, lng:19.04, type:'city', code:'hu'},
+  {name:'Roma', year:'Itália · 2016 Verão', id:380, lat:41.9, lng:12.5, type:'city', code:'it'},
+  {name:'Veneza', year:'Itália · 2019 Verão', id:380, lat:45.44, lng:12.34, type:'city', code:'it'},
+  {name:'Dublin', year:'Irlanda · 2025 Páscoa', id:372, lat:53.33, lng:-6.26, type:'city', code:'ie'},
+  {name:'Reykjavik', year:'Islândia · 2018 Verão', id:352, lat:64.13, lng:-21.9, type:'city', code:'is'},
+  {name:'Marraquexe', year:'Marrocos · 2023 Páscoa', id:504, lat:31.63, lng:-7.99, type:'city', code:'ma'},
+  {name:'Malé', year:'Maldivas · 2024 Verão', id:462, lat:4.17, lng:73.51, type:'city', code:'mv'},
+  {name:'Oslo', year:'Noruega · 2018 Natal', id:578, lat:59.91, lng:10.74, type:'city', code:'no'},
+  {name:'Amesterdão', year:'Países Baixos · 2017 Verão', id:528, lat:52.37, lng:4.9, type:'city', code:'nl'},
+  {name:'Cracóvia', year:'Polónia · 2023 Natal', id:616, lat:50.06, lng:19.94, type:'city', code:'pl'},
+  {name:'Varsóvia', year:'Polónia · 2023 Natal', id:616, lat:52.23, lng:21.01, type:'city', code:'pl'},
+  {name:'Doha', year:'Qatar · 2024 Verão', id:634, lat:25.29, lng:51.53, type:'city', code:'qa'},
+  {name:'Praga', year:'Rep. Checa · 2017 Verão', id:203, lat:50.08, lng:14.42, type:'city', code:'cz'},
+  {name:'Zurique', year:'Suíça · 2017 Natal', id:756, lat:47.37, lng:8.55, type:'city', code:'ch'},
+  {name:'Estocolmo', year:'Suécia · 2019 Natal', id:752, lat:59.33, lng:18.07, type:'city', code:'se'},
+  {name:'Malmö', year:'Suécia · 2022 Natal', id:752, lat:55.6, lng:13.0, type:'city', code:'se'},
+  {name:'Banguecoque', year:'Tailândia · 2024 Natal', id:764, lat:13.75, lng:100.52, type:'city', code:'th'},
+  {name:'Phuket', year:'Tailândia · 2024 Natal', id:764, lat:7.88, lng:98.39, type:'city', code:'th'},
+  {name:'Phi Phi', year:'Tailândia · 2024 Natal', id:764, lat:7.74, lng:98.77, type:'city', code:'th'},
+  {name:'Istambul', year:'Turquia · 2022 Verão', id:792, lat:40.99, lng:29.05, type:'city', code:'tr'},
+  {name:'Capadócia', year:'Turquia · 2022 Verão', id:792, lat:38.66, lng:34.83, type:'city', code:'tr'},
+  {name:'Zanzibar', year:'Tanzânia · 2025 Verão', id:834, lat:-6.16, lng:39.2, type:'city', code:'tz'},
+  {name:'Funchal', year:'Madeira · 2023', id:620, lat:32.65, lng:-16.91, type:'city', code:'pt'},
+  {name:'Ponta Delgada', year:'São Miguel · Açores', id:620, lat:37.74, lng:-25.67, type:'city', code:'pt'},
+  {name:'São Miguel', year:'Açores · 2013 · 2014 · 2015 · 2024', id:620, lat:37.77, lng:-25.5, type:'city', code:'pt'},
+  {name:'Terceira', year:'Açores · 2007 Verão', id:620, lat:38.65, lng:-27.22, type:'city', code:'pt'},
+  {name:'Faial', year:'Açores · 2023', id:620, lat:38.53, lng:-28.7, type:'city', code:'pt'},
+  {name:'Pico', year:'Açores · 2017', id:620, lat:38.47, lng:-28.33, type:'city', code:'pt'},
+  {name:'Flores', year:'Açores · 2017', id:620, lat:39.45, lng:-31.11, type:'city', code:'pt'},
+  {name:'Graciosa', year:'Açores · 2019', id:620, lat:39.05, lng:-28.01, type:'city', code:'pt'},
+  {name:'Santa Maria', year:'Açores · 2018', id:620, lat:36.97, lng:-25.17, type:'city', code:'pt'},
+  {name:'Corvo', year:'Açores · 2023 Carnaval', id:620, lat:39.67, lng:-31.13, type:'city', code:'pt'},
+  {name:'São Jorge', year:'Açores · 2014', id:620, lat:38.65, lng:-28.07, type:'city', code:'pt'},
+  {name:'Santiago (Cabo Verde)', year:'Cabo Verde · 2024 Páscoa', id:132, lat:14.93, lng:-23.51, type:'city', code:'cv'},
+  {name:'Vaticano', year:'Vaticano · 2016 Verão', id:336, lat:41.9, lng:12.45, type:'city', code:'va'},
+];
+
+// ─── ZOOM CONTROLS ───────────────────────────────────────────────────────────
+function mapZoomIn() {
+  if (!window._mapZoom) return;
+  d3.select('#map-wrap svg').transition().duration(280)
+    .call(window._mapZoom.scaleBy, 1.8);
+}
+function mapZoomOut() {
+  if (!window._mapZoom) return;
+  d3.select('#map-wrap svg').transition().duration(280)
+    .call(window._mapZoom.scaleBy, 1 / 1.8);
+}
+function mapZoomReset() {
+  if (!window._mapZoom) return;
+  d3.select('#map-wrap svg').transition().duration(400).ease(d3.easeCubicInOut)
+    .call(window._mapZoom.transform, d3.zoomIdentity);
+}
+
+// ─── ZOOM TO COUNTRY ─────────────────────────────────────────────────────────
+function zoomToCountry(numericId, lat, lng) {
+  if (!svgRef || !projRef || !gRef || !window._mapZoom) return;
+
+  const svgEl = document.querySelector('#map-wrap svg');
+  if (!svgEl) return;
+  const W = svgEl.clientWidth  || svgEl.getBoundingClientRect().width  || 360;
+  const H = svgEl.clientHeight || svgEl.getBoundingClientRect().height || 200;
+
+  // Determine target point
+  let targetPos;
+  if (lat != null && lng != null) {
+    targetPos = projRef([lng, lat]);
+  } else if (COUNTRY_LABEL_POS[numericId]) {
+    targetPos = projRef(COUNTRY_LABEL_POS[numericId]);
+  } else if (WORLD_CAP_POS[numericId]) {
+    targetPos = projRef(WORLD_CAP_POS[numericId]);
+  }
+  if (!targetPos || isNaN(targetPos[0])) return;
+
+  // Pick zoom scale based on country/city size
+  const LARGE_SCALE  = new Set([124,840,643,036,076,356,156]); // Canada, USA, Russia, Australia, Brazil, India, China
+  const MEDIUM_SCALE = new Set([276,724,250,380,752,578,246,616,504,764,792,834,231,372,352]); // Germany, Spain, France etc.
+  const MICRO_SCALE  = new Set([492,336,462,634]);              // Monaco, Vatican, Maldives, Qatar
+
+  let scale;
+  if (lat != null && lng != null) {
+    // City/specific point — zoom in closely
+    scale = 7;
+  } else if (LARGE_SCALE.has(numericId)) {
+    scale = 2.5;
+  } else if (MICRO_SCALE.has(numericId)) {
+    scale = 12;
+  } else if (MEDIUM_SCALE.has(numericId)) {
+    scale = 4;
+  } else {
+    scale = 5;
+  }
+
+  // Clamp to zoom extent [1, 20]
+  scale = Math.min(20, Math.max(1, scale));
+
+  // Calculate translate so targetPos lands exactly in the center of the viewport
+  const tx = W / 2 - scale * targetPos[0];
+  const ty = H / 2 - scale * targetPos[1];
+
+  d3.select('#map-wrap svg')
+    .transition().duration(750).ease(d3.easeCubicInOut)
+    .call(window._mapZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+}
+
+// ─── SEARCH UI ───────────────────────────────────────────────────────────────
+function initSearch() {
+  const input = document.getElementById('map-search');
+  const results = document.getElementById('search-results');
+  const clearBtn = document.getElementById('search-clear');
+
+  // Build comprehensive search index: visited + all countries + all capitals
+  const visitedIds = new Set(SEARCH_DATA.map(d => d.id));
+  const extraCountries = Object.entries(WORLD_NAMES)
+    .filter(([id]) => !visitedIds.has(+id))
+    .map(([id, name]) => ({
+      name, year: '—', id: +id, type: 'country',
+      code: NUM_TO_CODE[+id] || 'un',
+      lat: WORLD_CAP_POS[+id] ? WORLD_CAP_POS[+id][1] : null,
+      lng: WORLD_CAP_POS[+id] ? WORLD_CAP_POS[+id][0] : null,
+    }));
+  const extraCaps = WORLD_CAPITALS
+    .filter(([id]) => !SEARCH_DATA.some(d => d.type === 'city' && d.id === id))
+    .map(([id, name, lat, lng]) => ({
+      name, year: WORLD_NAMES[id] || '—', id, type: 'city',
+      code: NUM_TO_CODE[id] || 'un', lat, lng,
+    }));
+  const ALL_SEARCH = [...SEARCH_DATA, ...extraCountries, ...extraCaps];
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,''); // strip accents for comparison
+    clearBtn.style.display = q ? 'block' : 'none';
+    if (!q || q.length < 2) { results.classList.remove('open'); return; }
+
+    // Aliases: common alternative spellings → canonical name
+    const ALIASES = {
+      'egipto':'egipto','egito':'egipto','egypt':'egipto',
+      'eua':'eua','usa':'eua','estados unidos':'eua','america':'eua',
+      'uk':'reino unido','inglaterra':'reino unido','grã-bretanha':'reino unido',
+      'escocia':'escócia','escocoa':'escócia',
+      'mocambique':'moçambique','mozambique':'moçambique',
+      'tailandia':'tailândia','thailand':'tailândia',
+      'malasia':'malásia','malaysia':'malásia',
+      'hungria':'hungria','budapest':'budapeste',
+      'alemanha':'alemanha','germany':'alemanha',
+      'franca':'frança','france':'frança',
+      'espana':'espanha','spain':'espanha',
+      'italia':'itália','italy':'itália',
+      'belgica':'bélgica','belgium':'bélgica',
+      'suecia':'suécia','sweden':'suécia',
+      'suica':'suíça','switzerland':'suíça',
+      'turquia':'turquia','turkey':'turquia',
+      'grecia':'grécia','greece':'grécia',
+      'polonia':'polónia','poland':'polónia',
+      'romenia':'roménia','romania':'roménia',
+      'croacia':'croácia','croatia':'croácia',
+      'servia':'sérvia','serbia':'sérvia',
+      'eslovenia':'eslovénia','slovakia':'eslováquia',
+      'noruega':'noruega','norway':'noruega',
+      'dinamarca':'dinamarca','denmark':'dinamarca',
+      'finlandia':'finlândia','finland':'finlândia',
+      'islandia':'islândia','iceland':'islândia',
+      'marrocos':'marrocos','morocco':'marrocos','marraquexe':'marraquexe',
+      'canada':'canadá','toronto':'toronto',
+      'russia':'rússia','russia':'rússia',
+      'austria':'áustria','vienna':'viena','wien':'viena',
+      'emirados':'emirados árabes','abu dhabi':'abu dhabi','dubai':'abu dhabi',
+      'cabo verde':'cabo verde','cape verde':'cabo verde',
+      'tanzania':'tanzânia','zanzibar':'zanzibar',
+      'tailandia':'tailândia','bangkok':'banguecoque','phuket':'phuket',
+      'maldivas':'maldivas','maldives':'maldivas',
+    };
+
+    const normalizedQ = q.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const aliasMatch = Object.entries(ALIASES).find(([k]) => k.startsWith(normalizedQ) || normalizedQ.startsWith(k));
+
+    const matches = ALL_SEARCH.filter(d => {
+      const name = d.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const yr = (d.year || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return name.includes(normalizedQ) || yr.includes(normalizedQ) ||
+             (aliasMatch && name.includes(aliasMatch[1].normalize('NFD').replace(/[\u0300-\u036f]/g,'')));
+    }).slice(0, 10);
+
+    if (matches.length === 0) { results.classList.remove('open'); return; }
+
+    results.innerHTML = matches.map(m => `
+      <div class="search-result-item" onclick="selectSearchResult(${JSON.stringify(m).replace(/"/g,'&quot;')})">
+        <img class="sri-flag" src="https://flagcdn.com/w40/${m.code.toLowerCase()}.png" onerror="this.style.display='none'" alt="">
+        <div class="sri-name">${m.name}</div>
+        <div class="sri-year">${m.year}</div>
+        <div class="sri-badge ${m.type === 'city' ? (VISITED[m.id] ? 'visited' : 'explore') : m.type === 'visited' ? 'visited' : m.type === 'wishlist' ? 'wishlist' : 'explore'}">
+          ${m.type === 'city' ? '📍' : m.type === 'visited' ? '✓ visitado' : m.type === 'wishlist' ? '⭐ wishlist' : '🌍 explorar'}
+        </div>
+      </div>
+    `).join('');
+    results.classList.add('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) results.classList.remove('open');
+  });
+}
+
+function selectSearchResult(item) {
+  const input = document.getElementById('map-search');
+  const results = document.getElementById('search-results');
+  input.value = item.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{5}/gu, '').trim();
+  results.classList.remove('open');
+
+  switchTab('map');
+  zoomToCountry(item.id, item.lat || null, item.lng || null);
+
+  // Highlight the country with a pulse effect
+  const paths = d3.selectAll('.cpath').filter(d => +d.id === item.id);
+  if (!paths.empty()) {
+    const originalClass = paths.attr('class');
+    paths.classed('search-highlight', true);
+    // Remove highlight after 2.5s
+    setTimeout(() => paths.classed('search-highlight', false), 2500);
+  }
+
+  setTimeout(() => {
+    if (item.type !== 'city') {
+      const info = VISITED[item.id];
+      if (info) {
+        if (item.id === 826) openUKSheet();
+        else openSheet(info, item.id);
+      }
+    }
+  }, 800);
+}
+
+function clearSearch() {
+  document.getElementById('map-search').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-results').classList.remove('open');
+}
+
+// ─── FLAG STRIP RENDERER ─────────────────────────────────────────────────────
+function renderFlagStrip() {
+  const strip = document.getElementById('flag-strip-row');
+  if (!strip) return;
+  const countries = SEARCH_DATA.filter(d => d.type === 'visited' && !['Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿','Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿','Irlanda do Norte 🇬🇧'].includes(d.name));
+
+  strip.innerHTML = countries.map(c => {
+    const shortName = c.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|🏴[\s\S]{0,10}/gu, '').trim().split(' ')[0];
+    return `<div class="flag-item" onclick="flagStripClick(${c.id}, ${JSON.stringify(c.code)})" title="${c.name} · ${c.year}">
+      <img class="flag-img" src="https://flagcdn.com/w40/${c.code}.png" alt="${shortName}" loading="lazy">
+      <div class="flag-name">${shortName}</div>
+    </div>`;
+  }).join('');
+
+  // Also add Scotland/England/N.Ireland separately
+  const ukExtra = [
+    {name:'Escócia', code:'gb-sct', id:826},
+    {name:'Inglaterra', code:'gb-eng', id:826},
+    {name:'Irlanda Norte', code:'gb', id:826},
+  ];
+  strip.innerHTML += ukExtra.map(u =>
+    `<div class="flag-item" onclick="flagStripClick(${u.id}, '${u.code}')" title="${u.name}">
+      <img class="flag-img" src="https://flagcdn.com/w40/${u.code}.png" alt="${u.name}" loading="lazy">
+      <div class="flag-name">${u.name}</div>
+    </div>`
+  ).join('');
+}
+
+function flagStripClick(numericId, code) {
+  switchTab('map');
+  setTimeout(() => zoomToCountry(numericId, null, null), 100);
+}
+
+// ─── NOTIFICATION ─────────────────────────────────────────────────────────────
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function _init() {
+  await loadState();
+  initMap();
+  renderPinsList();
+  initSearch();
+  renderFlagStrip();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _init);
+} else {
+  _init();
+}
+</script>
+
+<div class="flag-strip">
+  <div class="flag-strip-title">✈️ países visitados · toca para ver no mapa</div>
+  <div class="flag-scroll" id="flag-strip-row">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<footer><span>VanBerto's</span> · Passaporte Digital · 2000 – 2026</footer>
+
+</body>
+</html>
