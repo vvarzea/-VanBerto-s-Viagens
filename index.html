@@ -1946,11 +1946,20 @@ let currentPinType = 'pin-visited';
 
 // ─── UPDATE MAP COUNTRY COLORS ────────────────────────────────────────────────
 function updateMapColors() {
-  // Build set of numeric IDs from user pins marked as visited
-  const userVisitedIds = new Set(
-    pins.filter(p => p.type === 'pin-visited' && p.countryId)
-        .map(p => +p.countryId)
-  );
+  // Build set of numeric IDs from user visited pins
+  const userVisitedIds = new Set();
+  pins.filter(p => p.type === 'pin-visited').forEach(p => {
+    // Match by countryId if available
+    if (p.countryId) { userVisitedIds.add(+p.countryId); return; }
+    // Otherwise match by name against WORLD_NAMES
+    const nameNorm = (p.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    Object.entries(WORLD_NAMES).forEach(([id, wname]) => {
+      const wnorm = wname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      if (wnorm === nameNorm || nameNorm.includes(wnorm) || wnorm.includes(nameNorm)) {
+        userVisitedIds.add(+id);
+      }
+    });
+  });
 
   d3.selectAll('.cpath').each(function() {
     const id = +this.getAttribute('data-id');
