@@ -79,13 +79,14 @@
   }
   header h1 span { font-style: italic; font-weight: 400; color: var(--gold-light); }
   header .tagline { font-size: 11px; opacity: .35; letter-spacing: 2.5px; text-transform: uppercase; color: white; margin-bottom: 16px; }
-  .hbadges { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
+  .hbadges { display: flex; justify-content: center; flex-wrap: nowrap; gap: 5px; }
   .hbadge {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.13);
-    border-radius: 20px; padding: 5px 14px;
-    font-size: 11px; color: var(--gold-light);
-    font-weight: 500; letter-spacing: .3px;
+    border-radius: 20px; padding: 4px 9px;
+    font-size: 10px; color: var(--gold-light);
+    font-weight: 500; letter-spacing: .2px;
+    white-space: nowrap;
   }
 
   /* STATS */
@@ -533,6 +534,29 @@
   }
   .notif.show { transform: translateX(-50%) translateY(0); }
 
+  .home-pin { filter: drop-shadow(0 2px 6px rgba(192,57,43,0.55)); transition: transform .15s; }
+  .home-pin:hover { transform: scale(1.25) translateY(-2px); }
+
+  #home-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 200;
+    align-items: flex-end; justify-content: center;
+  }
+  #home-modal-box {
+    background: white; border-radius: 24px 24px 0 0;
+    padding: 20px 24px 48px; width: 100%; max-width: 540px;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.22);
+    text-align: center;
+  }
+  #home-modal-icon { font-size: 48px; margin-bottom: 10px; display: block; }
+  #home-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: #7a0000; margin-bottom: 6px; }
+  #home-modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  #home-modal-close {
+    padding: 10px 32px; background: #c0392b; color: white;
+    border: none; border-radius: 12px; font-size: 13px;
+    font-family: 'Outfit', sans-serif; font-weight: 600;
+    cursor: pointer; transition: opacity .2s;
+  }
   /* Wishlist section heading */
   .wish-heading {
     display: flex; align-items: center; gap: 8px;
@@ -543,6 +567,15 @@
 </style>
 </head>
 <body>
+
+<div id="home-modal" onclick="if(event.target===this)this.style.display='none'">
+  <div id="home-modal-box">
+    <span id="home-modal-icon">🏠</span>
+    <div id="home-modal-title"></div>
+    <div id="home-modal-sub"></div>
+    <button id="home-modal-close" onclick="document.getElementById('home-modal').style.display='none'">Fechar</button>
+  </div>
+</div>
 
 <div id="notif" class="notif">✓ Guardado!</div>
 
@@ -855,7 +888,7 @@ const VISITED = {
   784: { name:"Emirados Árabes 🇦🇪",     year:"2024 · Natal",       note:"Abu Dhabi — a mesquita Sheikh Zayed em mármore branco deslumbrante, ilhas artificiais e o contraste fascinante entre tradição beduína milenar e modernidade futurista 🕌✨🏜️" },
   231: { name:"Etiópia 🇪🇹",             year:"2025 · Verão",       note:"Adis Abeba — a cerimónia do café na sua origem com três chávenas rituais, mercados coloridos de Merkato, a Igreja de São Jorge e a pulsão de uma África autêntica e surpreendente ☕🌍✝️" },
   250: { name:"França 🇫🇷",              year:"2015 · 2026",        note:"Paris (2015 Verão) — Torre Eiffel ao anoitecer, Louvre, croissants frescos e a magia da Disneyland Paris. Marselha + Nice (2026 Páscoa) — Vieux-Port e a Riviera Francesa 🗼🏰🌊🥐" },
-  246: { name:"Finlândia 🇫🇮",           year:"2018 · 2021",        note:"Helsínquia (2018 Verão) — design báltico e saunas à beira do Báltico. Helsínquia + Lapónia (2021 Natal) — caça à aurora boreal, paisagens nevadas de renas e o silêncio absoluto do Ártico 🌌🦌❄️" },
+  246: { name:"Finlândia 🇫🇮",           year:"2018 · 2021",        note:"Helsínquia (2018 Verão) — design nórdico e saunas à beira do Báltico. Rovaniemi / Lapónia (2021 Natal) — a terra do Pai Natal 🎅, caça à aurora boreal, paisagens nevadas de renas e o silêncio absoluto do Ártico 🌌🦌❄️" },
   300: { name:"Grécia 🇬🇷",              year:"2019 · Verão",       note:"Atenas — Partenon ao pôr-do-sol, Acrópole, história antiga às camadas, gastronomia incrível e o barulho alegre do mercado Monastiraki 🫒🏛️🌅" },
   348: { name:"Hungria 🇭🇺",             year:"2021 · Verão",       note:"Budapeste — a pérola do Danúbio. As Termas Széchenyi, o Parlamento iluminado à noite, a rua Andrássy e a vista do Bastião dos Pescadores 🏰🛁🌉" },
   380: { name:"Itália 🇮🇹",              year:"2016 · 2019",        note:"Roma (2016 Verão) — Coliseu, Fontana di Trevi, Vaticano e a melhor pizza da vida. Veneza (2019 Verão) — góndolas, canais e a magia de uma cidade flutuante 🍕🚣🏛️" },
@@ -960,6 +993,7 @@ const PLACES = [
   [7.27, 43.71, 'Nice', false],
   // Finlândia
   [24.94, 60.17, 'Helsínquia', true],
+  [25.72, 66.50, 'Rovaniemi 🎅', false],
   // Grécia
   [23.72, 37.98, 'Atenas', true],
   // Hungria
@@ -1524,6 +1558,65 @@ async function initMap() {
         .text(displayName);
     });
 
+    // ── 🏠 Nossas Casas — pins especiais ─────────────────────────────────────
+    const HOMES = [
+      { lng: -27.22, lat: 38.65, name: 'Angra do Heroísmo\n🏠 Nossa Casa', sub: 'Ilha Terceira · Açores' },
+      { lng: -9.33,  lat: 39.36, name: 'Baleal / Peniche\n🏠 Nossa Casa',  sub: 'Leiria · Portugal Continental' },
+    ];
+    const homesG = g.append('g').attr('class','homes-layer');
+    HOMES.forEach(({ lng, lat, name, sub }) => {
+      const pos = proj([lng, lat]);
+      if (!pos || isNaN(pos[0])) return;
+      const R = 5.5;
+      const hg = homesG.append('g')
+        .attr('class','home-pin')
+        .attr('transform', `translate(${pos[0]},${pos[1]})`)
+        .attr('data-x', pos[0]).attr('data-y', pos[1])
+        .attr('data-always','1')
+        .style('cursor','pointer')
+        .on('click', (evt) => {
+          evt.stopPropagation();
+          const modal = document.getElementById('home-modal');
+          document.getElementById('home-modal-title').textContent = name.replace('\n🏠 Nossa Casa','');
+          document.getElementById('home-modal-sub').textContent = sub;
+          modal.style.display = 'flex';
+        });
+      // Pulsing halo
+      hg.append('circle')
+        .attr('cx',0).attr('cy', -R*2.5).attr('r', R*1.9)
+        .attr('fill','rgba(192,57,43,0.12)')
+        .attr('stroke','rgba(192,57,43,0.35)')
+        .attr('stroke-width',0.8)
+        .attr('pointer-events','none');
+      // Pin body — red teardrop
+      hg.append('path')
+        .attr('d', makeTeardrop(R))
+        .attr('fill','#c0392b')
+        .attr('stroke','white')
+        .attr('stroke-width',1.2);
+      // House emoji inside pin head
+      hg.append('text')
+        .attr('x',0).attr('y', -(R*2.5 - R*0.38))
+        .attr('text-anchor','middle')
+        .attr('dominant-baseline','middle')
+        .style('font-size', R*1.1 + 'px')
+        .style('pointer-events','none')
+        .text('🏠');
+      // Label — pequeno e escondido, aparece com zoom
+      const displayName = name.split('\n')[0];
+      hg.append('text')
+        .attr('class','city-label home-lbl')
+        .attr('x',0)
+        .attr('y', -(R*2.5 + R + 2.5))
+        .style('fill','#7a0000')
+        .style('stroke','rgba(255,255,255,0.98)')
+        .style('stroke-width','4px')
+        .style('font-size','7px')
+        .style('display','none')
+        .text(displayName);
+    });
+    window._homesG = homesG;
+
     // ── Açores region label — shown at low zoom on the ocean ──────────────────
     const azoresRegionG = g.append('g').attr('class','azores-region-label');
     window._azoresRegionG = azoresRegionG;
@@ -1833,6 +1926,18 @@ function updateLabelsVisibility(k) {
     }
   });
 
+
+  // ── Home pins: sempre visíveis, label aparece ao zoom ≥ 3 ───────────────────
+  if (window._homesG) {
+    const showHomeText = k >= 3.0;
+    window._homesG.selectAll('.home-pin').each(function() {
+      const sel = d3.select(this);
+      const px = +sel.attr('data-x');
+      const py = +sel.attr('data-y');
+      sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
+      sel.select('text.home-lbl').style('display', showHomeText ? null : 'none');
+    });
+  }
 
   if (gRef) {
     gRef.selectAll('.map-pin').each(function() {
@@ -2532,6 +2637,7 @@ const SEARCH_DATA = [
   {name:'Marselha', year:'França · 2026 Páscoa', id:250, lat:43.3, lng:5.37, type:'city', code:'fr'},
   {name:'Nice', year:'França · 2026 Páscoa', id:250, lat:43.71, lng:7.27, type:'city', code:'fr'},
   {name:'Helsínquia', year:'Finlândia · 2018 Verão · 2021 Natal', id:246, lat:60.17, lng:24.94, type:'city', code:'fi'},
+  {name:'Rovaniemi 🎅', year:'Finlândia · Lapónia · 2021 Natal', id:246, lat:66.50, lng:25.72, type:'city', code:'fi'},
   {name:'Atenas', year:'Grécia · 2019 Verão', id:300, lat:37.98, lng:23.72, type:'city', code:'gr'},
   {name:'Budapeste', year:'Hungria · 2021 Verão', id:348, lat:47.5, lng:19.04, type:'city', code:'hu'},
   {name:'Roma', year:'Itália · 2016 Verão', id:380, lat:41.9, lng:12.5, type:'city', code:'it'},
