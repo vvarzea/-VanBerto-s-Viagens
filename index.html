@@ -195,18 +195,54 @@
   .zoom-controls {
     position: absolute; right: 10px; bottom: 14px; z-index: 20;
     display: flex; flex-direction: column; gap: 5px;
+    align-items: center;
   }
   .zoom-btn {
-    width: 36px; height: 36px; background: white;
-    border: 1px solid rgba(0,0,0,0.13); border-radius: 10px;
-    font-size: 20px; line-height: 1; cursor: pointer;
+    width: 42px; height: 42px; background: white;
+    border: 1px solid rgba(0,0,0,0.13); border-radius: 12px;
+    font-size: 22px; line-height: 1; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.14); color: #444;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18); color: #333;
     user-select: none; -webkit-user-select: none;
-    transition: background .15s;
+    transition: background .12s, transform .1s, box-shadow .12s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .zoom-btn:active { background: #f0f0f0; }
-  .zoom-btn.reset { font-size: 14px; color: var(--muted); }
+  .zoom-btn:active { background: #ececec; transform: scale(0.93); box-shadow: 0 1px 5px rgba(0,0,0,0.13); }
+  .zoom-btn.reset { font-size: 15px; color: var(--muted); height: 36px; }
+  .zoom-level {
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px; color: var(--muted);
+    background: white; border-radius: 8px;
+    padding: 2px 6px; letter-spacing: .5px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    border: 1px solid rgba(0,0,0,0.08);
+    min-width: 36px; text-align: center;
+  }
+  .zoom-slider {
+    -webkit-appearance: none; appearance: none;
+    writing-mode: vertical-lr; direction: rtl;
+    width: 6px; height: 80px;
+    background: transparent; cursor: pointer;
+    outline: none; padding: 0;
+  }
+  .zoom-slider::-webkit-slider-runnable-track {
+    width: 4px; background: #e0dbd4; border-radius: 2px;
+  }
+  .zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--gold); border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    margin-left: -6px; cursor: grab;
+  }
+  .zoom-slider::-moz-range-track {
+    width: 4px; background: #e0dbd4; border-radius: 2px;
+  }
+  .zoom-slider::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--gold); border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25); cursor: grab;
+  }
   .cpath { stroke: rgba(255,255,255,0.8); stroke-width: 0.35; transition: fill .15s; }
   .cpath.vis { fill: var(--gold); cursor: pointer; }
   .cpath.wish { fill: var(--green-light); cursor: pointer; }
@@ -267,36 +303,30 @@
   .city-pin:hover { transform: scale(1.4) translateY(-1px); }
   .city-label {
     font-family: 'Outfit', sans-serif;
-    font-size: 13px;
     font-weight: 700;
     fill: #1a0d00;
     text-anchor: middle;
-    dominant-baseline: auto;
+    dominant-baseline: text-after-edge;
     pointer-events: none;
     paint-order: stroke;
     stroke: rgba(255,255,255,0.98);
-    stroke-width: 4.5px;
     stroke-linejoin: round;
-    letter-spacing: 0.3px;
+    letter-spacing: 0;
   }
   .city-label.capital-lbl {
     font-weight: 800;
-    font-size: 14px;
     fill: #1a0000;
     stroke: rgba(255,255,255,0.98);
-    stroke-width: 5px;
   }
 
   .city-pin.island path.pin-body { fill: #0e7fa8; }
   .city-pin.island circle.pin-dot { fill: white; }
   .city-pin.island { filter: drop-shadow(0 1px 4px rgba(14,127,168,0.6)); }
   .city-label.island-lbl {
-    fill: #ffffff;
+    fill: #003050;
     font-weight: 900;
-    font-size: 13px;
-    stroke: rgba(0,45,75,0.95);
-    stroke-width: 5px;
-    letter-spacing: 0.5px;
+    stroke: rgba(255,255,255,0.98);
+    letter-spacing: 0;
   }
 
   /* ALL-COUNTRIES LABELS */
@@ -637,9 +667,13 @@
       🌍 A carregar mapa…
     </div>
     <div class="zoom-controls">
-      <button class="zoom-btn" onclick="mapZoomIn()" aria-label="Zoom in">+</button>
+      <button class="zoom-btn" id="zbtn-in" aria-label="Zoom in">+</button>
+      <input type="range" id="zoom-slider" class="zoom-slider"
+             min="0" max="4.906890595" step="0.01" value="0"
+             oninput="mapZoomSlider(this.value)" aria-label="Zoom level">
+      <div class="zoom-level" id="zoom-level-indicator">1×</div>
       <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Reset zoom">⊙</button>
-      <button class="zoom-btn" onclick="mapZoomOut()" aria-label="Zoom out">−</button>
+      <button class="zoom-btn" id="zbtn-out" aria-label="Zoom out">−</button>
     </div>
   </div>
 
@@ -994,6 +1028,7 @@ const PLACES = [
   // Finlândia
   [24.94, 60.17, 'Helsínquia', true],
   [25.72, 66.50, 'Rovaniemi 🎅', false],
+  [26.0, 68.5, 'Lapónia 🦌', false, true],
   // Grécia
   [23.72, 37.98, 'Atenas', true],
   // Hungria
@@ -1028,10 +1063,10 @@ const PLACES = [
   [-25.67, 37.74, 'São Miguel 🏝️', true, true],
   [-27.22, 38.65, 'Terceira 🏝️', false, true],
   [-28.04, 38.53, 'Faial 🏝️', false, true],
-  [-28.42, 39.43, 'Pico 🏝️', false, true],
+  [-28.33, 38.47, 'Pico 🏝️', false, true],
   [-31.11, 39.45, 'Flores 🏝️', false, true],
   [-28.97, 39.09, 'Graciosa 🏝️', false, true],
-  [-28.07, 36.97, 'Santa Maria 🏝️', false, true],
+  [-25.17, 36.97, 'Santa Maria 🏝️', false, true],
   [-31.13, 39.67, 'Corvo 🏝️', false, true],
   [-28.72, 38.65, 'São Jorge 🏝️', false, true],
   // Madeira
@@ -1505,19 +1540,26 @@ async function initMap() {
     });
     window._capsG = capsG;
 
+
     // ── City / place pin layer ────────────────────────────────────────────────
     citiesG = g.append('g').attr('class','cities-layer');
     PLACES.forEach(([lng, lat, name, isCap, isIsland]) => {
       const pos = proj([lng, lat]);
       if (!pos || isNaN(pos[0])) return;
       const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
-      const fillColor = isIsland ? '#0e7fa8' : (isCap ? '#8B2500' : '#c9951a');
+      const isLaponia = isIsland && name.includes('Lapónia');
+      const fillColor = isLaponia ? '#6b3fa0' : isIsland ? '#0e7fa8' : (isCap ? '#8B2500' : '#c9951a');
+      const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
+      const haloStroke = isLaponia ? 'rgba(107,63,160,0.45)' : 'rgba(14,127,168,0.45)';
+      const dropShadow = isLaponia ? 'drop-shadow(0 1px 4px rgba(107,63,160,0.6))' : 'drop-shadow(0 1px 4px rgba(14,127,168,0.6))';
       const cg = citiesG.append('g')
         .attr('class', `city-pin${isCap ? ' capital' : ''}${isIsland ? ' island' : ''}`)
         .attr('transform', `translate(${pos[0]},${pos[1]})`)
         .attr('data-x', pos[0])
         .attr('data-y', pos[1])
+        .attr('data-baser', baseR)
         .attr('data-always', isIsland ? '1' : '0')
+        .style('filter', isIsland ? dropShadow : null)
         .on('click', (evt) => { evt.stopPropagation(); });
 
       // Subtle halo ring for islands — only for locating them at world zoom
@@ -1527,8 +1569,8 @@ async function initMap() {
           .attr('cx', 0)
           .attr('cy', -baseR * 2.5)
           .attr('r', baseR * 1.1)
-          .attr('fill', 'rgba(14,127,168,0.15)')
-          .attr('stroke', 'rgba(14,127,168,0.4)')
+          .attr('fill', haloFill)
+          .attr('stroke', haloStroke)
           .attr('stroke-width', 0.5);
       }
 
@@ -1549,14 +1591,34 @@ async function initMap() {
         .attr('fill', 'white')
         .attr('opacity', 0.9);
 
-      // City label — strip the 🏝️ emoji for clean display
+      // Store display name on the group; label is rendered as a sibling (not inside scaled group)
       const displayName = name.replace('🏝️', '').trim();
-      cg.append('text')
-        .attr('class', `city-label${isCap ? ' capital-lbl' : ''}${isIsland ? ' island-lbl' : ''}`)
-        .attr('x', 0)
-        .attr('y', -(baseR * 2.5 + baseR + 1.5))
-        .text(displayName);
+      cg.attr('data-label', displayName)
+        .attr('data-iscap', isCap ? '1' : '0')
+        .attr('data-isisland', isIsland ? '1' : '0');
     });
+
+    // ── City labels layer — sibling to pin groups, NOT inside scaled groups ──
+    window._cityLabelsG = g.append('g').attr('class', 'city-labels-layer');
+    citiesG.selectAll('.city-pin').each(function() {
+      const d = d3.select(this);
+      const lbl = d.attr('data-label');
+      if (!lbl) return;
+      const isCap = d.attr('data-iscap') === '1';
+      const isIsl = d.attr('data-isisland') === '1';
+      window._cityLabelsG.append('text')
+        .attr('class', `city-label${isCap ? ' capital-lbl' : ''}${isIsl ? ' island-lbl' : ''}`)
+        .attr('data-pinx', d.attr('data-x'))
+        .attr('data-piny', d.attr('data-y'))
+        .attr('data-baser', d.attr('data-baser'))
+        .attr('data-iscap', d.attr('data-iscap'))
+        .attr('data-isisland', d.attr('data-isisland'))
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'text-after-edge')
+        .style('display', 'none')
+        .text(lbl);
+    });
+    // window._cityLabelsG already set above
 
     // ── 🏠 Nossas Casas — pins especiais ─────────────────────────────────────
     const HOMES = [
@@ -1743,16 +1805,91 @@ async function initMap() {
       });
     };
 
-    const zoom = d3.zoom().scaleExtent([1, 20])
+    // ── Zoom with smooth momentum on wheel ──────────────────────────────────
+    let _wheelTarget = 1, _wheelCx = null, _wheelCy = null, _wheelRaf = null;
+    function _momentumStep(svgEl, zoomBeh) {
+      const cur = d3.zoomTransform(svgEl);
+      const ratio = _wheelTarget / cur.k;
+      if (Math.abs(ratio - 1) < 0.0008) { _wheelRaf = null; return; }
+      const newK = cur.k * Math.pow(ratio, 0.16);
+      const cx = _wheelCx != null ? _wheelCx : (svgEl.clientWidth  || 360) / 2;
+      const cy = _wheelCy != null ? _wheelCy : (svgEl.clientHeight || 200) / 2;
+      const tx = cx - newK * (cx - cur.x) / cur.k;
+      const ty = cy - newK * (cy - cur.y) / cur.k;
+      d3.select(svgEl).call(zoomBeh.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
+      _wheelRaf = requestAnimationFrame(() => _momentumStep(svgEl, zoomBeh));
+    }
+
+    const zoom = d3.zoom()
+      .scaleExtent([1, 30])
+      .filter(evt => {
+        if (evt.type === 'wheel') return true;
+        if (evt.type === 'touchstart') return evt.touches.length >= 2;
+        return !evt.button;
+      })
+      .wheelDelta(evt => {
+        const svgEl = document.querySelector('#map-wrap svg');
+        if (!svgEl) return 0;
+        const cur = d3.zoomTransform(svgEl);
+        const raw = evt.deltaMode === 1 ? evt.deltaY * 33 : evt.deltaMode === 2 ? evt.deltaY * 800 : evt.deltaY;
+        const factor = Math.pow(0.9985, raw);
+        _wheelTarget = Math.min(30, Math.max(1, (_wheelTarget || cur.k) * factor));
+        const rect = svgEl.getBoundingClientRect();
+        _wheelCx = evt.clientX - rect.left;
+        _wheelCy = evt.clientY - rect.top;
+        if (!_wheelRaf) _wheelRaf = requestAnimationFrame(() => _momentumStep(svgEl, zoom));
+        return 0;
+      })
       .on('zoom', ({transform}) => {
         g.attr('transform', transform);
         currentZoomK = transform.k;
+        _wheelTarget = transform.k;
         if (window._capsG) window._capsG.lower();
         updateLabelsVisibility(transform.k);
         if (window._updateVCL) window._updateVCL(transform);
+        const zl = document.getElementById('zoom-level-indicator');
+        if (zl) zl.textContent = (transform.k < 10 ? transform.k.toFixed(1) : Math.round(transform.k)) + '×';
+        const sl = document.getElementById('zoom-slider');
+        if (sl) sl.value = Math.log2(transform.k);
       });
     svg.call(zoom);
-    window._mapZoom = zoom; // expose for zoomToCountry
+    window._mapZoom = zoom;
+
+    // ── Helper: zoom centred on a screen point ───────────────────────────────
+    function _zoomAtPoint(mx, my, factor) {
+      const svgEl = document.querySelector('#map-wrap svg');
+      const cur = d3.zoomTransform(svgEl);
+      const newK = Math.min(30, Math.max(1, cur.k * factor));
+      const tx = mx - newK * (mx - cur.x) / cur.k;
+      const ty = my - newK * (my - cur.y) / cur.k;
+      _wheelTarget = newK;
+      d3.select(svgEl).transition().duration(280).ease(d3.easeCubicOut)
+        .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
+    }
+    window._zoomAtPoint = _zoomAtPoint;
+
+    // ── Double-tap (mobile): zoom 2.5× at touch point ───────────────────────
+    let _lastTap = 0;
+    svg.on('touchend.doubletap', function(evt) {
+      const now = Date.now();
+      const gap = now - _lastTap;
+      if (gap < 280 && gap > 0 && evt.changedTouches.length === 1) {
+        evt.preventDefault();
+        const t = evt.changedTouches[0];
+        const rect = this.getBoundingClientRect();
+        _zoomAtPoint(t.clientX - rect.left, t.clientY - rect.top, 2.5);
+      }
+      _lastTap = now;
+    });
+
+    // ── Double-click (desktop): zoom 2.5×; Shift+dblclick: zoom out ─────────
+    svg.on('dblclick.zoom', null);
+    svg.on('dblclick', function(evt) {
+      if (evt.target.tagName === 'svg' || evt.target.classList.contains('cpath')) {
+        const [mx, my] = d3.pointer(evt);
+        _zoomAtPoint(mx, my, evt.shiftKey ? 1 / 2.5 : 2.5);
+      }
+    });
 
     // Click on ocean to close / place pin
     svg.on('click', (evt) => {
@@ -1896,8 +2033,8 @@ function updateLabelsVisibility(k) {
     const px = +sel.attr('data-x');
     const py = +sel.attr('data-y');
 
-    // Pin size: small but fixed in screen pixels via scale(1/k)
-    const baseR = isIsland ? 5.5 : (isCap ? 5.0 : 4.5);
+    // Pin size: read from data-baser set during initial render (consistent with pin shape)
+    const baseR = +sel.attr('data-baser') || (isIsland ? 3.8 : (isCap ? 3.8 : 2.8));
 
     if (isIsland && !showIslandFull) {
       sel.attr('transform', `translate(${px},${py})`);
@@ -1910,21 +2047,46 @@ function updateLabelsVisibility(k) {
     } else {
       sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
       if (isIsland) {
+        const hFill = sel.select('circle.island-halo').attr('fill') || 'rgba(14,127,168,0.15)';
+        const hStroke = sel.select('circle.island-halo').attr('stroke') || 'rgba(14,127,168,0.45)';
         sel.select('circle.island-halo')
-          .attr('fill', 'rgba(14,127,168,0.15)').attr('stroke', 'rgba(14,127,168,0.45)')
           .attr('stroke-width', 0.5).attr('r', baseR * 1.1).attr('cy', -baseR * 2.5);
       }
       sel.select('path.pin-body').style('display', null).attr('d', makeTeardrop(baseR));
       sel.select('circle.pin-dot').style('display', null)
         .attr('r', baseR * 0.38).attr('cy', -baseR * 2.5);
 
-      // Text: only show when zoomed enough
-      const showTxt = isIsland ? showIslandText : (isCap ? showCapText : showCityText);
-      sel.select('text')
-        .style('display', showTxt ? null : 'none')
-        .attr('y', -(baseR * 2.5 + baseR + 2));
     }
   });
+
+  // ── Position city labels (separate layer, not inside scaled groups) ────────
+  if (window._cityLabelsG) {
+    const showCityText2   = k >= 3.5;
+    const showIslandText2 = k >= 2.0;
+    const showCapText2    = k >= 2.5;
+    window._cityLabelsG.selectAll('text').each(function() {
+      const sel = d3.select(this);
+      const isIsl = sel.attr('data-isisland') === '1';
+      const isCp  = sel.attr('data-iscap')    === '1';
+      const show  = isIsl ? showIslandText2 : (isCp ? showCapText2 : showCityText2);
+      sel.style('display', show ? null : 'none');
+      if (!show) return;
+      const pinX = +sel.attr('data-pinx');
+      const pinY = +sel.attr('data-piny');
+      const br   = +sel.attr('data-baser') || 3.8;
+      // pin tip is at (pinX, pinY); pin head centre is at pinY - br*2.5 (in SVG coords)
+      // after scale(1/k) the pin head is at screen y = (pinY - br*2.5/k)*k ≈ pinY*k - br*2.5
+      // But we're in SVG map coords (no extra scale), so label sits at:
+      // label in unscaled SVG coords → divide all px values by k
+      const fontSize = (isIsl ? 11 : (isCp ? 12 : 10)) / k;
+      const strokeW  = (isIsl ? 4 : 4.5) / k;
+      const labelY   = pinY - (br * 2.5 + br + 2) / k;
+      sel.attr('x', pinX)
+         .attr('y', labelY)
+         .style('font-size',   fontSize + 'px')
+         .style('stroke-width', strokeW + 'px');
+    });
+  }
 
 
   // ── Home pins: sempre visíveis, label aparece ao zoom ≥ 3 ───────────────────
@@ -2638,6 +2800,7 @@ const SEARCH_DATA = [
   {name:'Nice', year:'França · 2026 Páscoa', id:250, lat:43.71, lng:7.27, type:'city', code:'fr'},
   {name:'Helsínquia', year:'Finlândia · 2018 Verão · 2021 Natal', id:246, lat:60.17, lng:24.94, type:'city', code:'fi'},
   {name:'Rovaniemi 🎅', year:'Finlândia · Lapónia · 2021 Natal', id:246, lat:66.50, lng:25.72, type:'city', code:'fi'},
+  {name:'Lapónia 🦌', year:'Finlândia · 2021 Natal', id:246, lat:68.5, lng:26.0, type:'city', code:'fi'},
   {name:'Atenas', year:'Grécia · 2019 Verão', id:300, lat:37.98, lng:23.72, type:'city', code:'gr'},
   {name:'Budapeste', year:'Hungria · 2021 Verão', id:348, lat:47.5, lng:19.04, type:'city', code:'hu'},
   {name:'Roma', year:'Itália · 2016 Verão', id:380, lat:41.9, lng:12.5, type:'city', code:'it'},
@@ -2677,21 +2840,54 @@ const SEARCH_DATA = [
 ];
 
 // ─── ZOOM CONTROLS ───────────────────────────────────────────────────────────
-function mapZoomIn() {
+function _zoomCentre(factor) {
   if (!window._mapZoom) return;
-  d3.select('#map-wrap svg').transition().duration(280)
-    .call(window._mapZoom.scaleBy, 1.8);
+  const svgEl = document.querySelector('#map-wrap svg');
+  const W = (svgEl.clientWidth  || 360) / 2;
+  const H = (svgEl.clientHeight || 200) / 2;
+  if (window._zoomAtPoint) window._zoomAtPoint(W, H, factor);
 }
-function mapZoomOut() {
-  if (!window._mapZoom) return;
-  d3.select('#map-wrap svg').transition().duration(280)
-    .call(window._mapZoom.scaleBy, 1 / 1.8);
-}
+function mapZoomIn()  { _zoomCentre(2.2); }
+function mapZoomOut() { _zoomCentre(1 / 2.2); }
 function mapZoomReset() {
   if (!window._mapZoom) return;
-  d3.select('#map-wrap svg').transition().duration(400).ease(d3.easeCubicInOut)
+  d3.select('#map-wrap svg').transition().duration(380).ease(d3.easeCubicInOut)
     .call(window._mapZoom.transform, d3.zoomIdentity);
 }
+function mapZoomSlider(val) {
+  if (!window._mapZoom) return;
+  const svgEl = document.querySelector('#map-wrap svg');
+  const cur = d3.zoomTransform(svgEl);
+  const newK = Math.pow(2, parseFloat(val));
+  const W = (svgEl.clientWidth  || 360) / 2;
+  const H = (svgEl.clientHeight || 200) / 2;
+  const tx = W - newK * (W - cur.x) / cur.k;
+  const ty = H - newK * (H - cur.y) / cur.k;
+  d3.select(svgEl).call(window._mapZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
+}
+
+// Long-press on zoom buttons for continuous zoom
+(function() {
+  let _interval = null;
+  function _start(factor) {
+    _zoomCentre(factor);
+    _interval = setInterval(() => _zoomCentre(factor), 160);
+  }
+  function _stop() { clearInterval(_interval); _interval = null; }
+  function _attach(id, factor) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('mousedown',  () => _start(factor));
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); _start(factor); }, { passive: false });
+    ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => btn.addEventListener(ev, _stop));
+    // Prevent single-click firing twice (already handled by mousedown)
+    btn.onclick = e => e.preventDefault();
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    _attach('zbtn-in',  2.2);
+    _attach('zbtn-out', 1 / 2.2);
+  });
+})();
 
 // ─── ZOOM TO COUNTRY ─────────────────────────────────────────────────────────
 function zoomToCountry(numericId, lat, lng) {
@@ -2721,7 +2917,7 @@ function zoomToCountry(numericId, lat, lng) {
   let scale;
   if (lat != null && lng != null) {
     // City/specific point — zoom in closely
-    scale = 7;
+    scale = 9;
   } else if (LARGE_SCALE.has(numericId)) {
     scale = 2.5;
   } else if (MICRO_SCALE.has(numericId)) {
@@ -2732,8 +2928,8 @@ function zoomToCountry(numericId, lat, lng) {
     scale = 5;
   }
 
-  // Clamp to zoom extent [1, 20]
-  scale = Math.min(20, Math.max(1, scale));
+  // Clamp to zoom extent [1, 30]
+  scale = Math.min(30, Math.max(1, scale));
 
   // Calculate translate so targetPos lands exactly in the center of the viewport
   const tx = W / 2 - scale * targetPos[0];
