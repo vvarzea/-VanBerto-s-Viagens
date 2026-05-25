@@ -353,6 +353,43 @@
     stroke-linejoin: round;
   }
 
+  /* COUNTRY TOOLTIP */
+  #country-tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15,12,7,0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 10px;
+    padding: 6px 11px 6px 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    transform: translate(-50%, -130%);
+    transition: opacity .12s;
+    white-space: nowrap;
+  }
+  #country-tooltip.visible { display: flex; }
+  #ct-flag {
+    width: 26px; height: 18px;
+    border-radius: 3px; object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.18);
+    flex-shrink: 0;
+  }
+  #ct-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: #fff; letter-spacing: .2px;
+  }
+  #ct-status {
+    font-size: 10px;
+    margin-left: 2px;
+    opacity: .75;
+  }
+
   /* MAP HINT */
   .map-hint {
     text-align: center; font-size: 10px; color: #aaa;
@@ -817,6 +854,12 @@
 </div>
 
 <!-- BOTTOM SHEETS -->
+<div id="country-tooltip">
+  <img id="ct-flag" src="" alt="">
+  <span id="ct-name"></span>
+  <span id="ct-status"></span>
+</div>
+
 <div class="backdrop" id="backdrop" onclick="closeAll()"></div>
 
 <div id="sheet">
@@ -1398,6 +1441,31 @@ async function initMap() {
           const name = getCountryName(id);
           openSheetWish({ name: name || `País ${id}`, id });
         }
+      })
+      .on('mouseover', function(evt, d) {
+        const _tt = document.getElementById('country-tooltip');
+        const id = +d.id;
+        const name = WORLD_NAMES[id] || (id === 826 ? 'Reino Unido' : `País ${id}`);
+        const code = (id === 826 ? 'gb' : NUM_TO_CODE[id]) || 'un';
+        const flag = document.getElementById('ct-flag');
+        flag.src = `https://flagcdn.com/w40/${code}.png`;
+        flag.style.display = '';
+        document.getElementById('ct-name').textContent = name;
+        const st = document.getElementById('ct-status');
+        if (VISITED[id]) { st.textContent = '✓'; st.style.color = '#f0c84a'; }
+        else if (wishCountriesNumeric.has(id)) { st.textContent = '⭐'; st.style.color = '#5db882'; }
+        else { st.textContent = ''; }
+        _tt.style.left = evt.clientX + 'px';
+        _tt.style.top  = evt.clientY + 'px';
+        _tt.classList.add('visible');
+      })
+      .on('mousemove', function(evt) {
+        const _tt = document.getElementById('country-tooltip');
+        _tt.style.left = evt.clientX + 'px';
+        _tt.style.top  = evt.clientY + 'px';
+      })
+      .on('mouseout', function() {
+        document.getElementById('country-tooltip').classList.remove('visible');
       });
 
     g.append('path')
@@ -1854,6 +1922,9 @@ async function initMap() {
         if (zl) zl.textContent = (transform.k < 10 ? transform.k.toFixed(1) : Math.round(transform.k)) + '×';
         const sl = document.getElementById('zoom-slider');
         if (sl) sl.value = Math.log2(transform.k);
+        // Hide tooltip during pan/zoom
+        const tt = document.getElementById('country-tooltip');
+        if (tt) tt.classList.remove('visible');
       });
     svg.call(zoom);
     window._mapZoom = zoom;
