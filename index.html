@@ -1673,44 +1673,40 @@ async function initMap() {
         .replace(/[\uFE0F]/g, '')
         .trim();
       const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
-      window._visitedLabelData.push({ id, svgPos, name, tier });
+      // Store geo coords for dynamic reprojection at any zoom level
+      const geoPos = geo ? geo : Array.from(proj.invert(svgPos));
+      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name, tier });
     });
 
     // Kosovo, Macedónia e Sérvia têm posições incorrectas em alguns topojson
     // (o topojson inclui Kosovo dentro da Sérvia, deslocando o centróide)
     window._visitedLabelData = window._visitedLabelData.filter(d => d.id !== 383 && d.id !== 807 && d.id !== 688);
 
-    // Micro-state fallbacks
+    // Micro-state fallbacks — store geo coords for accurate dynamic reprojection
     const MICRO_STATES = [
-      { id:492, pos:[7.42,43.73], name:'M\u00F3naco' },
-      { id:336, pos:[12.45,41.9], name:'Vaticano' },
-      { id:462, pos:[73.51,4.17], name:'Maldivas' },
-      { id:634, pos:[51.5,25.35], name:'Qatar' },
-      // Kosovo — fica entre a Sérvia (N), Macedónia (S), Albânia (W)
-      // A área branca na imagem está centrada em ~lng 20.9, lat 42.6
-      { id:383, pos:[20.92,42.60], name:'Kosovo' },
-      // Macedónia do Norte — país dourado em baixo, centro visible ~lng 21.7, lat 41.6
-      { id:807, pos:[21.72,41.60], name:'Maced\u00F3nia do Norte' },
-      // Sérvia — o topojson inclui Kosovo na Sérvia, o centróide fica muito a oeste
-      // Forçar posição dentro da Sérvia (excluindo Kosovo): ~lng 21.0, lat 44.0
-      { id:688, pos:[21.00,44.00], name:'S\u00E9rvia' },
+      { id:492, geo:[7.42,43.73], name:'M\u00F3naco' },
+      { id:336, geo:[12.45,41.9], name:'Vaticano' },
+      { id:462, geo:[73.51,4.17], name:'Maldivas' },
+      { id:634, geo:[51.5,25.35], name:'Qatar' },
+      { id:383, geo:[20.92,42.60], name:'Kosovo' },
+      { id:807, geo:[21.72,41.60], name:'Maced\u00F3nia do Norte' },
+      { id:688, geo:[21.00,44.00], name:'S\u00E9rvia' },
     ];
-    MICRO_STATES.forEach(({id, pos, name}) => {
+    MICRO_STATES.forEach(({id, geo: geoPos, name}) => {
       if (!VISITED[id]) return;
       if (window._visitedLabelData.some(d => d.id === id)) return;
-      const svgPos = proj(pos);
+      const svgPos = proj(geoPos);
       if (!svgPos || isNaN(svgPos[0])) return;
-      window._visitedLabelData.push({ id, svgPos, name });
+      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name });
     });
 
     // ── Passagem final: garantir que TODOS os países do VISITED têm entrada ──
-    // Cobre casos em que o topojson não tem a feature (países muito pequenos, etc.)
     Object.keys(VISITED).forEach(idStr => {
       const id = +idStr;
-      if (window._visitedLabelData.some(d => d.id === id)) return; // já existe
-      const geo = COUNTRY_LABEL_POS[id] || WORLD_CAP_POS[id] || null;
-      if (!geo) return;
-      const svgPos = proj(geo);
+      if (window._visitedLabelData.some(d => d.id === id)) return;
+      const geoPos = COUNTRY_LABEL_POS[id] || WORLD_CAP_POS[id] || null;
+      if (!geoPos) return;
+      const svgPos = proj(geoPos);
       if (!svgPos || isNaN(svgPos[0])) return;
       const info = VISITED[id];
       const name = WORLD_NAMES[id] || info.name
@@ -1719,7 +1715,7 @@ async function initMap() {
         .replace(/[\uFE0F]/g, '')
         .trim();
       const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
-      window._visitedLabelData.push({ id, svgPos, name, tier });
+      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name, tier });
     });
     allLabelsG = g.append('g').attr('class','all-labels-layer');
 
@@ -1747,6 +1743,42 @@ async function initMap() {
           .style('display', 'none') // hidden until zoom ≥ 2.5
           .text(name);
       });
+
+    // ── Kosovo: polygon overlay (not present as separate feature in countries-50m) ──
+    // Simplified border polygon in [lng, lat] order
+    const kosovoCoords = [
+      [20.76,43.19],[21.00,43.07],[21.56,43.12],[21.78,43.27],[22.06,43.26],
+      [22.07,43.12],[21.94,42.87],[21.63,42.67],[21.56,42.42],[21.33,42.20],
+      [21.14,42.21],[20.96,42.31],[20.63,42.54],[20.52,42.69],[20.49,42.88],
+      [20.57,43.11],[20.76,43.19]
+    ];
+    const kosovoFeature = {
+      type:'Feature', geometry:{ type:'Polygon', coordinates:[kosovoCoords] }
+    };
+    // Insert before .labels-layer
+    const kosovoGroup = g.insert('g', '.labels-layer').attr('class','kosovo-overlay');
+    kosovoGroup.append('path')
+      .datum(kosovoFeature).attr('d', path)
+      .attr('fill', VISITED[383] ? 'var(--gold)' : '#c8dbe8')
+      .attr('stroke', 'rgba(255,255,255,0.8)')
+      .attr('stroke-width', 0.35)
+      .attr('class', 'cpath' + (VISITED[383] ? ' vis' : ' no'))
+      .attr('data-id', '383')
+      .style('cursor', VISITED[383] ? 'pointer' : 'crosshair')
+      .on('click touchend', function(evt, d) {
+        if (evt.type === 'touchend' && window._touchDragged) return;
+        evt.stopPropagation(); evt.preventDefault();
+        const id = 383;
+        const info = VISITED[id];
+        if (currentMode === 'pin-visited') {
+          const centroid = path.centroid(kosovoFeature);
+          const coords = proj.invert(centroid);
+          openPinForm(coords[1], coords[0], 'pin-visited', id);
+        } else if (info) {
+          openSheet(info, id);
+        }
+      });
+    window._kosovoGroup = kosovoGroup;
 
     // ── French Guiana: accurate border polygon (not a rectangle) ─────────────
     const fgCoords = [
@@ -2078,16 +2110,29 @@ async function initMap() {
       const offX = sr.left - wr.left;
       const offY = sr.top  - wr.top;
 
-      const W_proj = projRef.translate()[0] * 2;
-      const H_proj = projRef.translate()[1] * 2;
-      const scX = sr.width  / W_proj;
-      const scY = sr.height / H_proj;
+      // SVG has width:100% CSS but width=W attribute with viewBox="0 0 W H"
+      // So there's a scaling factor between SVG internal coords and CSS pixels
+      const svgAttrW = svgEl.viewBox.baseVal.width  || svgEl.getAttribute('width')  || sr.width;
+      const svgAttrH = svgEl.viewBox.baseVal.height || svgEl.getAttribute('height') || sr.height;
+      const scX = sr.width  / svgAttrW;
+      const scY = sr.height / svgAttrH;
 
+      // Convert SVG-internal coordinates to CSS pixels relative to the overlay.
+      // D3 zoom transform (k, x, y) is in SVG-internal space, then viewBox scales to CSS.
+      // CSS_x = (svgPx * k + x) * scX + offX
       function toCSS(svgPos) {
         return [
-          (svgPos[0] * scX) * k + x + offX,
-          (svgPos[1] * scY) * k + y + offY
+          (svgPos[0] * k + x) * scX + offX,
+          (svgPos[1] * k + y) * scY + offY
         ];
+      }
+
+      // Reproject geo coords through the live projection to get accurate SVG position
+      // This ensures labels stay centred on their country at any zoom level
+      function geotoCSS(geoPos) {
+        const sp = projRef(geoPos);
+        if (!sp || isNaN(sp[0])) return null;
+        return toCSS(sp);
       }
 
       // Zoom thresholds
@@ -2099,7 +2144,9 @@ async function initMap() {
         const id = flagEl.dataset.id;
         const entry = (window._visitedLabelData || []).find(d => String(d.id) === String(id));
         if (!entry) { flagEl.style.display = 'none'; return; }
-        const [sx, sy] = toCSS(entry.svgPos);
+        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
+        if (!cssPos) { flagEl.style.display = 'none'; return; }
+        const [sx, sy] = cssPos;
 
         // Hide when out of viewport
         if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
@@ -2119,10 +2166,12 @@ async function initMap() {
       });
 
       // ── Labels (bandeira inline + nome, zoom alto) ───────────────────────────
-      (window._visitedLabelData || []).forEach(({ id, svgPos }) => {
+      (window._visitedLabelData || []).forEach(({ id, svgPos, geo: geoPos }) => {
         const div = overlay.querySelector(`.vcl:not(.vcl-uk)[data-id="${id}"]`);
         if (!div) return;
-        const [sx, sy] = toCSS(svgPos);
+        const cssPos = geoPos ? geotoCSS(geoPos) : toCSS(svgPos);
+        if (!cssPos) { div.style.display = 'none'; return; }
+        const [sx, sy] = cssPos;
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
 
