@@ -399,6 +399,13 @@
     letter-spacing: 0;
   }
 
+  /* Non-visited country labels — same structure as .vcl but muted blue-grey style */
+  .vcl.vcl-all {
+    background: rgba(30, 60, 90, 0.72);
+    border: 1px solid rgba(140, 190, 220, 0.35);
+    color: #e8f2fa;
+  }
+
   /* ALL-COUNTRIES LABELS */
   .cpath.search-highlight {
     fill: #e8f44d !important;
@@ -1719,30 +1726,30 @@ async function initMap() {
     });
     allLabelsG = g.append('g').attr('class','all-labels-layer');
 
-    // Country area → label size tier (bigger country = bigger label)
-    // Declaradas fora do initMap para ficarem acessíveis ao initWorldFlagsOverlay
-
+    // Store non-visited country label data for HTML overlay (same system as visited)
+    window._allCountryLabelData = [];
     topojson.feature(world, world.objects.countries).features
       .filter(d => !VISITED[+d.id])
       .forEach(d => {
         const id = +d.id;
         const name = WORLD_NAMES[id];
         if (!name) return;
-        const pos = path.centroid(d);
+        const geoOverride = COUNTRY_LABEL_POS[id] || null;
+        const pos = geoOverride ? proj(geoOverride) : path.centroid(d);
         if (!pos || isNaN(pos[0]) || isNaN(pos[1])) return;
+        const geoPos = geoOverride ? geoOverride : Array.from(proj.invert(pos));
         const tier = LARGE_COUNTRIES.has(id) ? 'large' : MEDIUM_COUNTRIES.has(id) ? 'medium' : 'small';
-        allLabelsG.append('text')
-          .attr('class', 'all-country-label')
-          .attr('x', pos[0])
-          .attr('y', pos[1])
-          .attr('data-id', id)
-          .attr('data-tier', tier)
-          .style('fill', '#c17f24')
-          .style('stroke', 'rgba(255,255,255,0.95)')
-          .style('paint-order', 'stroke')
-          .style('display', 'none') // hidden until zoom ≥ 2.5
-          .text(name);
+        const code = NUM_TO_CODE[id] || '';
+        window._allCountryLabelData.push({ id, svgPos: pos, geo: geoPos, name, tier, code });
       });
+    // Add Guiana Francesa (not in topojson as own feature)
+    (() => {
+      const fgGeo = [-53.2, 3.9];
+      const fgPos = proj(fgGeo);
+      if (fgPos && !isNaN(fgPos[0])) {
+        window._allCountryLabelData.push({ id:'fg', svgPos:fgPos, geo:fgGeo, name:'Guiana Francesa', tier:'small', code:'fr' });
+      }
+    })();
 
     // ── Kosovo: polygon overlay (not present as separate feature in countries-50m) ──
     // Simplified border polygon in [lng, lat] order
@@ -1800,20 +1807,7 @@ async function initMap() {
       .attr('stroke-width', 0.6)
       .attr('pointer-events', 'none');
 
-    // Add "Guiana Francesa" label in allLabelsG
-    const fgLabelPos = proj([-53.2, 3.9]);
-    if (allLabelsG && fgLabelPos && !isNaN(fgLabelPos[0])) {
-      allLabelsG.append('text')
-        .attr('class', 'all-country-label')
-        .attr('x', fgLabelPos[0]).attr('y', fgLabelPos[1])
-        .attr('data-fg', '1')
-        .attr('data-tier', 'small')
-        .style('fill', '#c17f24')
-        .style('stroke', 'rgba(255,255,255,0.95)')
-        .style('paint-order', 'stroke')
-        .style('display', 'none')
-        .text('Guiana Francesa');
-    }
+    // Guiana Francesa label is handled via _allCountryLabelData HTML overlay
 
     // ── World Capitals layer (subtle dots + names) ────────────────────────────
     let capsG = g.append('g').attr('class','caps-layer');
@@ -2096,6 +2090,44 @@ async function initMap() {
       });
     })();
 
+    // ── HTML overlay for ALL countries (flag + name, same system as visited) ──
+    (function initAllCountryLabelOverlay() {
+      const overlay = window._vclOverlay;
+      if (!overlay) return;
+      (window._allCountryLabelData || []).forEach(({ id, name, tier, code }) => {
+        // Small flag-only marker for intermediate zoom
+        if (code) {
+          const flagEl = document.createElement('img');
+          flagEl.className = 'vcl-flag vcl-flag-all';
+          flagEl.dataset.allId = id;
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.alt = name;
+          overlay.appendChild(flagEl);
+        }
+        // Flag + name label for high zoom
+        const div = document.createElement('div');
+        div.className = 'vcl vcl-all';
+        div.dataset.allId = id;
+        div.dataset.tier = tier || 'small';
+        if (code) {
+          const flagImg = document.createElement('img');
+          flagImg.className = 'vcl-flag-inline';
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.alt = '';
+          div.appendChild(flagImg);
+        }
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        div.appendChild(nameSpan);
+        div.style.display = 'none';
+        overlay.appendChild(div);
+      });
+    })();
+
+    // Cache DOM references for all-country label overlay (perf: avoid repeated querySelectorAll)
+    window._allFlagEls  = Array.from(document.querySelectorAll('#visited-label-overlay .vcl-flag-all'));
+    window._allLabelEls = Array.from(document.querySelectorAll('#visited-label-overlay .vcl-all'));
+
     window._updateVCL = function(transform) {
       const overlay = window._vclOverlay;
       if (!overlay || !projRef) return;
@@ -2239,6 +2271,55 @@ async function initMap() {
         const flagImg = div.querySelector('.vcl-flag-inline');
         if (flagImg) {
           const flagW = Math.round(Math.min(18, Math.max(9, fs * 1.5)));
+          flagImg.style.width  = flagW + 'px';
+          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
+        }
+      });
+
+      // ── All-country labels (non-visited): flag-only at k≥1.4, flag+name at k≥2.8 ──
+      const allData = window._allCountryLabelData || [];
+
+      // Flag-only markers (intermediate zoom) — use cached array for performance
+      (window._allFlagEls || []).forEach(flagEl => {
+        const allId = flagEl.dataset.allId;
+        const entry = allData.find(d => String(d.id) === String(allId));
+        if (!entry) { flagEl.style.display = 'none'; return; }
+        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
+        if (!cssPos) { flagEl.style.display = 'none'; return; }
+        const [sx, sy] = cssPos;
+        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
+        const flagW = Math.round(Math.min(22, Math.max(10, 9 * k)));
+        const flagH = Math.round(flagW * 0.67);
+        flagEl.style.left   = sx + 'px';
+        flagEl.style.top    = sy + 'px';
+        flagEl.style.width  = flagW + 'px';
+        flagEl.style.height = flagH + 'px';
+        flagEl.style.display = 'block';
+      });
+
+      // Flag + name labels (high zoom) — use cached array for performance
+      (window._allLabelEls || []).forEach(div => {
+        const allId = div.dataset.allId;
+        const entry = allData.find(d => String(d.id) === String(allId));
+        if (!entry) { div.style.display = 'none'; return; }
+        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
+        if (!cssPos) { div.style.display = 'none'; return; }
+        const [sx, sy] = cssPos;
+        div.style.left = sx + 'px';
+        div.style.top  = sy + 'px';
+        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
+        const tier = div.dataset.tier || 'small';
+        const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
+        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.8, 0.5)));
+        div.style.fontSize = fs + 'px';
+        div.style.padding = k < 4 ? '2px 4px 2px 2px' : '2px 5px 2px 3px';
+        div.style.borderRadius = k < 4 ? '3px' : '5px';
+        div.style.display = 'flex';
+        const flagImg = div.querySelector('.vcl-flag-inline');
+        if (flagImg) {
+          const flagW = Math.round(Math.min(20, Math.max(10, fs * 1.5)));
           flagImg.style.width  = flagW + 'px';
           flagImg.style.height = Math.round(flagW * 0.67) + 'px';
         }
@@ -2440,24 +2521,8 @@ function makeTeardrop(r) {
 function updateLabelsVisibility(k) {
   if (!labelsG || !citiesG) return;
 
-  // ── Country labels now handled by HTML overlay (_updateVCL) ─────────────────
-  if (allLabelsG) {
-    allLabelsG.selectAll('.all-country-label').each(function() {
-      const el = d3.select(this);
-      if (k < 2.5) { el.style('display','none'); return; }
-      el.style('display', null);
-      const tier = el.attr('data-tier') || 'small';
-      // Same base sizes as visited VCL labels: large=9, medium=7, small=5.5
-      const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
-      const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.5, 0.5)));
-      // Divide by k because these are SVG elements inside the zoomed group
-      el.style('font-size', (fs / k) + 'px')
-        .style('stroke-width', (2.5 / k) + 'px')
-        .style('font-weight', tier === 'large' ? '700' : tier === 'medium' ? '600' : '500')
-        .style('fill', '#c17f24')
-        .style('stroke', 'rgba(255,255,255,0.95)');
-    });
-  }
+  // ── All-country labels now handled by HTML overlay (_updateAllCountryLabels) ──
+  // (SVG text labels replaced by HTML flag+name divs for consistency with visited labels)
 
   // ── World capitals: show at zoom ≥ 2.5 to reduce clutter ────────────────
   const capsLayer = window._capsG;
