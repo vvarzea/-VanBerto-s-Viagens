@@ -298,6 +298,97 @@
   .graticule-line { fill: none; stroke: rgba(255,255,255,0.18); stroke-width: 0.25; pointer-events: none; }
   .border-line { fill: none; stroke: rgba(255,255,255,0.65); stroke-width: 0.3; pointer-events: none; }
 
+  /* MAP TOOLTIP */
+  #map-tooltip {
+    position: absolute;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .18s ease, transform .18s ease;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.28));
+  }
+  #map-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .tt-inner {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 10px 13px;
+    min-width: 140px;
+    max-width: 220px;
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .tt-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  .tt-flag {
+    width: 26px;
+    height: 17px;
+    border-radius: 3px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.18);
+    flex-shrink: 0;
+  }
+  .tt-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .tt-capital {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: .3px;
+    margin-bottom: 6px;
+    padding-left: 1px;
+  }
+  .tt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .tt-badge.visited {
+    background: rgba(201,149,26,0.22);
+    color: var(--gold-light);
+    border: 1px solid rgba(201,149,26,0.35);
+  }
+  .tt-badge.wish {
+    background: rgba(93,184,130,0.18);
+    color: #7de0a8;
+    border: 1px solid rgba(93,184,130,0.3);
+  }
+  .tt-badge.explore {
+    background: rgba(168,207,232,0.12);
+    color: rgba(168,207,232,0.75);
+    border: 1px solid rgba(168,207,232,0.2);
+  }
+  .tt-year {
+    font-size: 9px;
+    color: rgba(255,255,255,0.28);
+    margin-left: auto;
+    font-weight: 400;
+  }
+  /* Arrow pointing down from tooltip */
+  .tt-arrow {
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid var(--ink);
+    margin: 0 auto;
+    position: relative;
+  }
+
   /* MAP PINS */
   .map-pin {
     cursor: pointer; transition: transform .15s;
@@ -776,6 +867,19 @@
       <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Repor zoom" title="Repor zoom">⊙</button>
       <button class="zoom-btn" id="zbtn-out" aria-label="Afastar (zoom out)" title="Afastar">−</button>
     </div>
+
+    <!-- MAP TOOLTIP -->
+    <div id="map-tooltip">
+      <div class="tt-inner">
+        <div class="tt-header">
+          <img class="tt-flag" id="tt-flag-img" src="" alt="">
+          <div class="tt-name" id="tt-name"></div>
+        </div>
+        <div class="tt-capital" id="tt-capital"></div>
+        <div id="tt-badge-wrap"></div>
+      </div>
+      <div class="tt-arrow"></div>
+    </div>
   </div>
 
 </div>
@@ -814,7 +918,7 @@
     <div class="sec-title">🌍 Países Visitados</div>
 
     <div class="cont-group">
-      <div class="cont-lbl" id="lbl-europa">Europa · 26 países/territórios</div>
+      <div class="cont-lbl" id="lbl-europa">Europa · 29 países/territórios</div>
       <div class="chips" id="chips-europa">
         <div class="chip">🇵🇹 Portugal <span class="cy">sempre</span></div>
         <div class="chip">🇩🇪 Alemanha <span class="cy">2019 Verão</span></div>
@@ -832,11 +936,14 @@
         <div class="chip">🇮🇹 Itália <span class="cy">2016 · 2019 Verão</span></div>
         <div class="chip">🇮🇪 Irlanda <span class="cy">2025 Páscoa</span></div>
         <div class="chip">🇮🇸 Islândia <span class="cy">2018 Verão</span></div>
+        <div class="chip">🇽🇰 Kosovo <span class="cy">2026 Verão</span></div>
+        <div class="chip">🇲🇰 Macedónia do Norte <span class="cy">2026 Verão</span></div>
         <div class="chip">🇲🇨 Mónaco <span class="cy">2026 Páscoa</span></div>
         <div class="chip">🇳🇴 Noruega <span class="cy">2018 Natal</span></div>
         <div class="chip">🇳🇱 Países Baixos <span class="cy">2017 Verão</span></div>
         <div class="chip">🇵🇱 Polónia <span class="cy">2023 Natal</span></div>
         <div class="chip">🇨🇿 Rep. Checa <span class="cy">2017 Verão</span></div>
+        <div class="chip">🇷🇸 Sérvia <span class="cy">2026 Verão</span></div>
         <div class="chip">🇨🇭 Suíça <span class="cy">2017 Natal</span></div>
         <div class="chip">🇸🇪 Suécia <span class="cy">2019 · 2022 Natal</span></div>
         <div class="chip">🇹🇷 Turquia <span class="cy">2022 Verão</span></div>
@@ -976,7 +1083,7 @@
     <div class="tl-row"><div class="tl-year">2023</div><div class="tl-countries">Canadá — Toronto + Niagara Falls 🇨🇦 <span style="color:var(--muted);font-size:10px">Verão</span> · Espanha — Barcelona 🇪🇸 <span style="color:var(--muted);font-size:10px">Páscoa</span> · EUA — Nova York 🇺🇸 <span style="color:var(--muted);font-size:10px">Verão</span> · Marrocos 🇲🇦 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Polónia 🇵🇱 <span style="color:var(--muted);font-size:10px">Natal</span> · Corvo 🇵🇹 <span style="color:var(--muted);font-size:10px">Carnaval</span> · Faial 🇵🇹 · Madeira 🇵🇹</div></div>
     <div class="tl-row"><div class="tl-year">2024</div><div class="tl-countries">Cabo Verde — Santiago 🇨🇻 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Emirados Árabes — Abu Dhabi 🇦🇪 <span style="color:var(--muted);font-size:10px">Natal</span> · Escócia — Edimburgo 🇬🇧 <span style="color:var(--muted);font-size:10px">Natal</span> · Maldivas 🇲🇻 <span style="color:var(--muted);font-size:10px">Verão</span> · Qatar — Doha 🇶🇦 <span style="color:var(--muted);font-size:10px">Verão</span> · Tailândia 🇹🇭 <span style="color:var(--muted);font-size:10px">Natal</span> · São Miguel 🇵🇹</div></div>
     <div class="tl-row"><div class="tl-year">2025</div><div class="tl-countries">Espanha — Madrid 🇪🇸 <span style="color:var(--muted);font-size:10px">Natal</span> · Etiópia — Adis Abeba 🇪🇹 <span style="color:var(--muted);font-size:10px">Verão</span> · Irlanda — Dublin 🇮🇪 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Irlanda do Norte — Belfast + Giant's Causeway 🇬🇧 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Tanzânia — Zanzibar 🇹🇿 <span style="color:var(--muted);font-size:10px">Verão</span></div></div>
-    <div class="tl-row"><div class="tl-year">2026</div><div class="tl-countries">França — Marselha & Nice 🇫🇷 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Mónaco 🇲🇨 <span style="color:var(--muted);font-size:10px">Páscoa</span></div></div>
+    <div class="tl-row"><div class="tl-year">2026</div><div class="tl-countries">França — Marselha &amp; Nice 🇫🇷 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Mónaco 🇲🇨 <span style="color:var(--muted);font-size:10px">Páscoa</span> · Sérvia — Belgrado 🇷🇸 <span style="color:var(--muted);font-size:10px">Verão</span> · Macedónia do Norte — Escópia + Ohrid 🇲🇰 <span style="color:var(--muted);font-size:10px">Verão</span> · Kosovo — Pristina 🇽🇰 <span style="color:var(--muted);font-size:10px">Verão</span></div></div>
   </div>
 </div>
 
@@ -1657,6 +1764,14 @@ async function initMap() {
     // Apply colors based on VISITED + user pins loaded from storage
     updateMapColors();
 
+    // ── Tooltip: hover on any country path ───────────────────────────────────
+    g.selectAll('.cpath')
+      .on('mousemove.tt', function(evt, d) {
+        if (window._touchDragged) return;
+        showMapTooltip(evt, +d.id);
+      })
+      .on('mouseleave.tt', hideMapTooltip);
+
     // ── Country labels — stored for HTML overlay (SVG labels had z-order issues) ─
     labelsG = g.append('g').attr('class','labels-layer'); // keep as empty placeholder
     window._visitedLabelData = [];
@@ -1784,7 +1899,9 @@ async function initMap() {
         } else if (info) {
           openSheet(info, id);
         }
-      });
+      })
+      .on('mousemove.tt', function(evt) { showMapTooltip(evt, 383); })
+      .on('mouseleave.tt', hideMapTooltip);
     window._kosovoGroup = kosovoGroup;
 
     // ── French Guiana: accurate border polygon (not a rectangle) ─────────────
@@ -2659,6 +2776,92 @@ function updateLabelsVisibility(k) {
   }
 }
 
+// ─── MAP TOOLTIP ─────────────────────────────────────────────────────────────
+// Build capital name lookup from WORLD_CAPITALS: [id, name, lat, lng]
+const CAPITAL_NAMES = {};
+if (typeof WORLD_CAPITALS !== 'undefined') {
+  WORLD_CAPITALS.forEach(([id, name]) => { CAPITAL_NAMES[id] = name; });
+}
+
+let _ttHideTimer = null;
+
+function showMapTooltip(evt, id) {
+  const tt = document.getElementById('map-tooltip');
+  if (!tt) return;
+
+  // Don't show tooltip if a sheet/modal is open
+  if (document.getElementById('sheet')?.classList.contains('open')) return;
+
+  const isVisited = !!VISITED[id];
+  const isWish    = typeof wishCountriesNumeric !== 'undefined' && wishCountriesNumeric.has(id);
+
+  // Country name (clean, no flag emoji)
+  const rawName = (isVisited ? VISITED[id]?.name : null)
+    || (typeof WORLD_NAMES !== 'undefined' ? WORLD_NAMES[id] : null)
+    || (typeof getCountryName === 'function' ? getCountryName(id)?.replace(/[\uD83C][\uDDE0-\uDDFF]{2}/g,'').trim() : null)
+    || `País ${id}`;
+  const name = rawName
+    .replace(/[\uD83C][\uDDE0-\uDDFF]{2}/g, '')
+    .replace(/[\uD83C][\uDFF4]/g, '')
+    .replace(/[\uFE0F]/g, '')
+    .trim();
+
+  const capital = CAPITAL_NAMES[id] || '';
+  const code    = (typeof FLAG_CODES !== 'undefined' ? FLAG_CODES[id] : null)
+               || (typeof NUM_TO_CODE !== 'undefined' ? NUM_TO_CODE[id] : null)
+               || '';
+  const year    = isVisited ? (VISITED[id]?.year || '') : '';
+
+  // Fill content
+  const flagImg = document.getElementById('tt-flag-img');
+  if (code) {
+    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+    flagImg.style.display = 'block';
+  } else {
+    flagImg.style.display = 'none';
+  }
+  document.getElementById('tt-name').textContent = name;
+  document.getElementById('tt-capital').textContent = capital ? `🏛 ${capital}` : '';
+
+  const badgeWrap = document.getElementById('tt-badge-wrap');
+  if (isVisited) {
+    badgeWrap.innerHTML = `<span class="tt-badge visited">✓ visitado${year ? `<span class="tt-year">${year}</span>` : ''}</span>`;
+  } else if (isWish) {
+    badgeWrap.innerHTML = `<span class="tt-badge wish">⭐ wishlist</span>`;
+  } else {
+    badgeWrap.innerHTML = `<span class="tt-badge explore">🌍 por explorar</span>`;
+  }
+
+  // Position tooltip above cursor, clamped to viewport
+  const margin = 12;
+  const wrap   = document.getElementById('map-wrap');
+  const wr     = wrap ? wrap.getBoundingClientRect() : { left:0, top:0, width: window.innerWidth, height: window.innerHeight };
+  const ttW    = tt.offsetWidth  || 200;
+  const ttH    = tt.offsetHeight || 90;
+
+  let left = evt.clientX - wr.left - ttW / 2;
+  let top  = evt.clientY - wr.top  - ttH - 16;
+
+  // Clamp horizontally
+  left = Math.max(margin, Math.min(left, wr.width - ttW - margin));
+  // If not enough room above, show below cursor
+  if (top < margin) top = evt.clientY - wr.top + 20;
+
+  tt.style.left = left + 'px';
+  tt.style.top  = top  + 'px';
+  tt.style.position = 'absolute';
+
+  // Show
+  if (_ttHideTimer) { clearTimeout(_ttHideTimer); _ttHideTimer = null; }
+  tt.classList.add('visible');
+}
+
+function hideMapTooltip() {
+  const tt = document.getElementById('map-tooltip');
+  if (!tt) return;
+  tt.classList.remove('visible');
+}
+
 function getCountryName(numericId) {
   // Rough lookup table for wishlist display
   const names = {
@@ -3246,6 +3449,9 @@ const VISITED_PINS_LIST = [
   { name:'Su\u00ED\u00E7a \uD83C\uDDE8\uD83C\uDDED', year:'2017', note:'Alpes, chocolate, rel\u00F3gios e precis\u00E3o su\u00ED\u00E7a \u26F0\uFE0F\uD83C\uDF6B', code:'ch' },
   { name:'Turquia \uD83C\uDDF9\uD83C\uDDF7', year:'2022', note:'Istambul \u2014 onde a Europa encontra a \u00C1sia \uD83D\uDD4C\uD83C\uDF09', code:'tr' },
   { name:'Vaticano \uD83C\uDDFB\uD83C\uDDE6', year:'2016', note:'O menor estado soberano do mundo \uD83D\uDD4A\uFE0F\uD83C\uDFA8', code:'va' },
+  { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'2026 \u00B7 Ver\u00E3o', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia Balc\u00E3 inconfund\u00EDvel \uD83C\uDFDB\uFE0F\uD83C\uDF7A', code:'rs' },
+  { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'2026 \u00B7 Ver\u00E3o', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado \uD83C\uDFD9\uFE0F\uD83C\uDF0A', code:'mk' },
+  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'2026 \u00B7 Ver\u00E3o', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente \uD83D\uDD4A\uFE0F', code:'xk' },
   // África
   { name:'Cabo Verde \uD83C\uDDE8\uD83C\uDDFB', year:'2024', note:'Ilhas atl\u00E2nticas de l\u00EDngua portuguesa \uD83C\uDF0A\uD83C\uDDF5\uD83C\uDDF9', code:'cv' },
   { name:'Eti\u00F3pia \uD83C\uDDEA\uD83C\uDDF9', year:'2025', note:'\u00C1frica oriental \u2014 cultura milenar e caf\u00E9 \u2615', code:'et' },
@@ -3351,7 +3557,7 @@ function renderPinsList() {
 // ─── RENDER USER PINS INTO LIST TAB CHIPS + FLAG STRIP ───────────────────────
 // Baseline counts per continent group (from the hardcoded VISITED data)
 const BASE_CONT_COUNTS = {
-  'Europa': 26, '\u00C1frica': 4, 'Am\u00E9ricas': 2,
+  'Europa': 29, '\u00C1frica': 4, 'Am\u00E9ricas': 2,
   '\u00C1sia & M\u00E9dio Oriente': 5, 'Oceania & Atl\u00E2ntico': 0,
 };
 // Maps continent value → chip container id + label id
