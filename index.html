@@ -715,6 +715,7 @@
   <div class="tab active" onclick="switchTab('map')"><span class="tab-icon">🗺️</span>Mapa</div>
   <div class="tab" onclick="switchTab('pins')"><span class="tab-icon">📍</span>Pins</div>
   <div class="tab" onclick="switchTab('list')"><span class="tab-icon">🌍</span>Países</div>
+  <div class="tab" onclick="switchTab('guides')"><span class="tab-icon">📖</span>Guias</div>
   <div class="tab" onclick="switchTab('timeline')"><span class="tab-icon">📅</span>Timeline</div>
 </div>
 
@@ -892,6 +893,62 @@
   </div>
 </div>
 
+<!-- GUIDES TAB CSS -->
+<style>
+  .guides-search-wrap { padding: 10px 14px 6px; background: white; border-bottom: 1px solid var(--border); }
+  .guides-search-input { width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 20px; border: 1.5px solid var(--border); font-size: 13px; font-family: 'Outfit', sans-serif; outline: none; background: var(--parchment); }
+  .guides-search-input:focus { border-color: var(--gold); }
+  .guides-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 14px; }
+  .guide-card { background: white; border-radius: 12px; border: 1.5px solid var(--border); padding: 12px 10px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; transition: box-shadow .18s, transform .18s, border-color .18s; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .guide-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); border-color: var(--gold); }
+  .guide-card:active { transform: scale(0.96); }
+  .guide-card-flag { width: 44px; height: 30px; border-radius: 5px; object-fit: cover; border: 1px solid rgba(0,0,0,0.10); box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+  .guide-card-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .guide-card-sub { font-size: 10px; color: var(--muted); line-height: 1.2; }
+  .guide-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; background: rgba(0,0,0,0.45); opacity: 0; pointer-events: none; transition: opacity .22s; }
+  .guide-modal.on { opacity: 1; pointer-events: all; }
+  .guide-modal-inner { background: var(--parchment); width: 100%; max-height: 88vh; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .28s cubic-bezier(.32,1,.46,1); overflow: hidden; }
+  .guide-modal.on .guide-modal-inner { transform: translateY(0); }
+  .guide-modal-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--border); background: white; flex-shrink: 0; }
+  .guide-modal-flag { width: 36px; height: 24px; border-radius: 4px; object-fit: cover; border: 1px solid rgba(0,0,0,0.10); }
+  .guide-modal-title { font-size: 16px; font-weight: 800; color: var(--ink); flex: 1; }
+  .guide-modal-close { font-size: 20px; color: var(--muted); cursor: pointer; padding: 2px 6px; line-height: 1; -webkit-tap-highlight-color: transparent; }
+  .guide-modal-body { overflow-y: auto; padding: 16px; -webkit-overflow-scrolling: touch; flex: 1; }
+  .guide-section { margin-bottom: 16px; }
+  .guide-section-title { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--gold-pale); }
+  .guide-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #f3ede4; font-size: 13px; line-height: 1.5; color: #3a2a10; }
+  .guide-item:last-child { border-bottom: none; }
+  .guide-item-num { font-weight: 700; color: var(--gold); flex-shrink: 0; min-width: 20px; }
+  .guide-highlight { background: #fff8e7; border-radius: 6px; padding: 8px 12px; margin: 6px 0; font-size: 12px; color: #5a3e00; line-height: 1.6; }
+  .guide-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .guide-day-btn { padding: 4px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1.5px solid var(--border); background: white; color: var(--muted); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .15s; }
+  .guide-day-btn.active { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
+  .guide-all-section { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 10px; }
+  .guide-all-section-title { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .guide-raw { white-space: pre-wrap; word-break: break-word; font-family: 'Outfit', sans-serif; font-size: 12.5px; line-height: 1.75; color: #3a2a10; }
+  .sh-btn.guide-btn { background: rgba(26,107,181,0.08); color: #1a6bb5; border-color: #1a6bb5; }
+</style>
+
+<!-- GUIDES TAB panel -->
+<div id="tab-guides" class="tab-panel">
+  <div class="guides-search-wrap">
+    <input type="text" class="guides-search-input" placeholder="Pesquisar guia..." oninput="filterGuides(this.value)" autocomplete="off">
+  </div>
+  <div class="guides-grid" id="guides-grid"></div>
+</div>
+
+<!-- Guide detail modal -->
+<div class="guide-modal" id="guide-modal" onclick="closeGuideModal(event)">
+  <div class="guide-modal-inner">
+    <div class="guide-modal-header">
+      <img class="guide-modal-flag" id="guide-modal-flag" src="" alt="">
+      <div class="guide-modal-title" id="guide-modal-title"></div>
+      <div class="guide-modal-close" onclick="closeGuideModal()">&times;</div>
+    </div>
+    <div class="guide-modal-body" id="guide-modal-body"></div>
+  </div>
+</div>
+
 <!-- TIMELINE TAB -->
 <div id="tab-timeline" class="tab-panel">
   <div class="section">
@@ -1054,6 +1111,9 @@ const VISITED = {
   834: { name:"Tanz\u00E2nia \uD83C\uDDF9\uD83C\uDDFF",            year:"2025 \u00B7 Ver\u00E3o",       note:"Zanzibar \u2014 a Stone Town com labirinto de ruelas hist\u00F3ricas, especiarias arom\u00E1ticas, praias infinitas e o p\u00F4r-do-sol mais belo do \u00CDndico \uD83C\uDFDD\uFE0F\uD83C\uDF05\uD83E\uDD81" },
   336: { name:"Vaticano \uD83C\uDDFB\uD83C\uDDE6",            year:"2016 \u00B7 Ver\u00E3o",       note:"O menor estado soberano do mundo \u2014 a Bas\u00EDlica de S\u00E3o Pedro, a Piet\u00E0 de Michelangelo, os Museus Vaticanos e a Capela Sistina que faz calar qualquer um \uD83D\uDD4A\uFE0F\uD83C\uDFA8\u271D\uFE0F" },
   826: { name:"Reino Unido \uD83C\uDDEC\uD83C\uDDE7",         year:"2014/24/25",         note:"Inglaterra (2014 P\u00E1scoa) \u00B7 Esc\u00F3cia (2024 Natal) \u00B7 Irlanda do Norte (2025 P\u00E1scoa)" },
+  688: { name:"S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8",               year:"2026 \u00B7 Ver\u00E3o",       note:"Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia Balc\u00E3 inconfund\u00EDvel \uD83C\uDFDB\uFE0F\uD83C\uDF7A" },
+  807: { name:"Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0", year:"2026 \u00B7 Ver\u00E3o",       note:"Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado \uD83C\uDFD9\uFE0F\uD83C\uDF0A" },
+  383: { name:"Kosovo \uD83C\uDDFD\uD83C\uDDF0",               year:"2026 \u00B7 Ver\u00E3o",       note:"Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente \uD83D\uDD4A\uFE0F" },
 };
 
 // UK sub-nations for display (share numeric ID 826 in topojson)
@@ -1098,10 +1158,10 @@ const COUNTRY_LABEL_POS = {
   792:[35,39], 834:[33,-6],
   336:[12.45,41.9],
   // Balcãs — países pequenos que precisam de posição explícita
-  688:[20.9,44.0],   // Sérvia
+  688:[21.00,44.00],   // Sérvia — centrado excluindo Kosovo
   499:[19.4,42.7],   // Montenegro
   807:[21.7,41.6],   // Macedónia do Norte
-  383:[21.0,42.6],   // Kosovo
+  383:[20.90,42.57],   // Kosovo — centro real do país
   112:[28.0,53.5],   // Bielorrússia
   428:[25.0,56.9],   // Letónia
   // África Central — posições explícitas para países grandes
@@ -1211,6 +1271,12 @@ const PLACES = [
   [-74.0, 40.71, 'Nova Iorque', true],
   // Vaticano
   [12.45, 41.9, 'Vaticano', true],
+  // Sérvia
+  [20.46, 44.82, 'Belgrado', true],
+  // Macedónia do Norte
+  [21.43, 42.00, 'Esc\u00F3pia', true],
+  // Kosovo
+  [21.17, 42.67, 'Pristina', true],
 ];
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
@@ -1288,7 +1354,7 @@ async function loadState() {
 // ─── TABS ────────────────────────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['map','pins','list','timeline'];
+    const names = ['map','pins','list','guides','timeline'];
     t.classList.toggle('active', names[i] === name);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -1443,6 +1509,7 @@ const NUM_TO_CODE = {
   634:'qa',642:'ro',643:'ru',646:'rw',682:'sa',686:'sn',694:'sl',703:'sk',
   705:'si',706:'so',710:'za',724:'es',729:'sd',740:'sr',752:'se',756:'ch',
   760:'sy',158:'tw',762:'tj',834:'tz',764:'th',626:'tl',768:'tg',780:'tt',
+  688:'rs',807:'mk',383:'xk',
   788:'tn',792:'tr',800:'ug',804:'ua',784:'ae',826:'gb',840:'us',858:'uy',
   860:'uz',862:'ve',704:'vn',887:'ye',894:'zm',716:'zw',132:'cv',462:'mv',
   492:'mc',336:'va',352:'is',
@@ -1600,10 +1667,18 @@ async function initMap() {
       const svgPos = geo ? proj(geo) : path.centroid(d);
       if (!svgPos || isNaN(svgPos[0]) || isNaN(svgPos[1])) return;
       const info = VISITED[id];
-      const name = info.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0073}\u{E0063}\u{E0074}\u{E007F}]+/gu,'').trim();
+      const name = WORLD_NAMES[id] || info.name
+        .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
+        .replace(/[\uD83C][\uDFF4]/g, '')
+        .replace(/[\uFE0F]/g, '')
+        .trim();
       const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
       window._visitedLabelData.push({ id, svgPos, name, tier });
     });
+
+    // Kosovo, Macedónia e Sérvia têm posições incorrectas em alguns topojson
+    // (o topojson inclui Kosovo dentro da Sérvia, deslocando o centróide)
+    window._visitedLabelData = window._visitedLabelData.filter(d => d.id !== 383 && d.id !== 807 && d.id !== 688);
 
     // Micro-state fallbacks
     const MICRO_STATES = [
@@ -1611,6 +1686,14 @@ async function initMap() {
       { id:336, pos:[12.45,41.9], name:'Vaticano' },
       { id:462, pos:[73.51,4.17], name:'Maldivas' },
       { id:634, pos:[51.5,25.35], name:'Qatar' },
+      // Kosovo — fica entre a Sérvia (N), Macedónia (S), Albânia (W)
+      // A área branca na imagem está centrada em ~lng 20.9, lat 42.6
+      { id:383, pos:[20.92,42.60], name:'Kosovo' },
+      // Macedónia do Norte — país dourado em baixo, centro visible ~lng 21.7, lat 41.6
+      { id:807, pos:[21.72,41.60], name:'Maced\u00F3nia do Norte' },
+      // Sérvia — o topojson inclui Kosovo na Sérvia, o centróide fica muito a oeste
+      // Forçar posição dentro da Sérvia (excluindo Kosovo): ~lng 21.0, lat 44.0
+      { id:688, pos:[21.00,44.00], name:'S\u00E9rvia' },
     ];
     MICRO_STATES.forEach(({id, pos, name}) => {
       if (!VISITED[id]) return;
@@ -1630,7 +1713,11 @@ async function initMap() {
       const svgPos = proj(geo);
       if (!svgPos || isNaN(svgPos[0])) return;
       const info = VISITED[id];
-      const name = info.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{0,10}/gu,'').trim();
+      const name = WORLD_NAMES[id] || info.name
+        .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
+        .replace(/[\uD83C][\uDFF4]/g, '')
+        .replace(/[\uFE0F]/g, '')
+        .trim();
       const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
       window._visitedLabelData.push({ id, svgPos, name, tier });
     });
@@ -2483,7 +2570,10 @@ function openSheet(info, numericId) {
   yr.className = '';
   document.getElementById('s-note').textContent = info.note || '';
   const actions = document.getElementById('sh-actions');
-  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinFormFromSheet(${numericId})">\uD83D\uDCCD Adicionar pin de local</button>`;
+  const guideBtn = GUIDES_DATA.filter(g => g.countryId === numericId).map(g =>
+    `<button class="sh-btn guide-btn" onclick="openGuideFromSheet('${g.id}')">\uD83D\uDCD6 Ver guia: ${g.name}</button>`
+  ).join('');
+  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinFormFromSheet(${numericId})">\uD83D\uDCCD Adicionar pin de local</button>${guideBtn}`;
   document.getElementById('sheet').classList.add('on');
   document.getElementById('backdrop').classList.add('on');
 }
@@ -2495,7 +2585,7 @@ function openUKSheet() {
   yr.className = '';
   document.getElementById('s-note').textContent = UK_DETAIL.map(u => `${u.name} (${u.year}) \u2014 ${u.note}`).join('\n');
   const actions = document.getElementById('sh-actions');
-  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinForm(null,null,'pin-visited')">\uD83D\uDCCD Adicionar pin</button>`;
+  actions.innerHTML = `<button class="sh-btn gold" onclick="openPinForm(null,null,'pin-visited')">\uD83D\uDCCD Adicionar pin</button><button class="sh-btn guide-btn" onclick="openGuideFromSheet('escocia')">\uD83D\uDCD6 Ver guia: Esc\u00F3cia</button>`;
   document.getElementById('sheet').classList.add('on');
   document.getElementById('backdrop').classList.add('on');
 }
@@ -2641,7 +2731,7 @@ const COUNTRY_CONTINENT = {
   250:'Europa',300:'Europa',348:'Europa',380:'Europa',372:'Europa',352:'Europa',
   492:'Europa',578:'Europa',620:'Europa',528:'Europa',616:'Europa',203:'Europa',
   642:'Europa',643:'Europa',752:'Europa',756:'Europa',826:'Europa',
-  688:'Europa',499:'Europa',807:'Europa',703:'Europa',705:'Europa',
+  688:'Europa',499:'Europa',807:'Europa',703:'Europa',705:'Europa',383:'Europa',
   440:'Europa',428:'Europa',233:'Europa',112:'Europa',804:'Europa',498:'Europa',
   336:'Europa',674:'Europa',20:'Europa',442:'Europa',470:'Europa',191:'Europa',
   196:'Europa',
@@ -2737,8 +2827,8 @@ function pfSelect(id, name) {
   const continent = COUNTRY_CONTINENT[+id] || '';
   const contSel = document.getElementById('pf-continent');
   if (contSel && continent) contSel.value = continent;
-  // Auto-fill flag code
-  const code = FLAG_CODES[+id] || '';
+  // Auto-fill flag code — FLAG_CODES has visited countries, NUM_TO_CODE has all countries
+  const code = FLAG_CODES[+id] || NUM_TO_CODE[+id] || '';
   document.getElementById('pf-emoji').value = code;
 }
 
@@ -2755,19 +2845,26 @@ function openPinForm(lat, lng, type, numericId) {
   // Auto-fill from numericId if a country was clicked on the map
   if (numericId) {
     const id = +numericId;
-    // Name: prefer VISITED data, fall back to WORLD_NAMES
-    const visitedInfo = VISITED[id];
-    const rawName = visitedInfo
-      ? visitedInfo.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|\uD83C\uDFF4[\s\S]{0,10}/gu, '').trim()
-      : (WORLD_NAMES[id] || '');
+    // Use WORLD_NAMES first (clean names without emoji),
+    // fall back to VISITED name with emoji stripped
+    let rawName = WORLD_NAMES[id] || '';
+    if (!rawName && VISITED[id]) {
+      // Strip surrogate-pair emoji from name
+      // \uD83C\uDDE0-\uD83C\uDDFF = flag letter indicators (surrogate pairs)
+      rawName = VISITED[id].name
+        .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')  // flag letter sequences
+        .replace(/[\uD83C][\uDFF4]/g, '')          // black flag
+        .replace(/[\uFE0F]/g, '')                  // variation selectors
+        .trim();
+    }
     document.getElementById('pf-name').value = rawName;
     document.getElementById('pf-country-id').value = id;
     // Continent
     const continent = COUNTRY_CONTINENT[id] || '';
     const contSel = document.getElementById('pf-continent');
     if (contSel) contSel.value = continent;
-    // Flag code
-    const code = FLAG_CODES[id] || '';
+    // Flag code — FLAG_CODES for visited, NUM_TO_CODE for all countries
+    const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
     document.getElementById('pf-emoji').value = code;
   } else {
     document.getElementById('pf-name').value = '';
@@ -2865,7 +2962,11 @@ function addFlagToMap(pin) {
   if (!svgPos || isNaN(svgPos[0])) return;
 
   const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
-  const name = pin.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{0,10}/gu, '').trim();
+  const name = WORLD_NAMES[id] || pin.name
+    .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
+    .replace(/[\uD83C][\uDFF4]/g, '')
+    .replace(/[\uFE0F]/g, '')
+    .trim();
   const tier = 'small';
 
   // Guardar nos dados para _updateVCL posicionar correctamente
@@ -3110,16 +3211,21 @@ function renderPinsList() {
 
   const userPinsHTML = userVisited.length > 0 ? `
     <div class="cont-lbl" style="margin-top:14px;margin-bottom:8px;">\uD83D\uDCCD Pins personalizados</div>
-    ${userVisited.map(p => `
+    ${userVisited.map(p => {
+      const code = (p.emoji && p.emoji.length <= 3) ? p.emoji : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
+      const flagEl = code
+        ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" onerror="this.style.display='none'" alt="">`
+        : `<div class="pin-dot vis">\uD83D\uDCCD</div>`;
+      return `
       <div class="pin-item">
-        <div class="pin-dot vis">${p.emoji || '\uD83D\uDCCD'}</div>
+        ${flagEl}
         <div class="pin-info">
           <div class="pin-name">${p.name}</div>
           <div class="pin-meta">${[p.continent, p.year].filter(Boolean).join(' \u00B7 ') || 'Sem nota'}</div>
         </div>
         <div class="pin-delete" onclick="deletePin('${p.id}')">\u2715</div>
-      </div>
-    `).join('')}
+      </div>`;
+    }).join('')}
   ` : '';
 
   visList.innerHTML = countryPinsHTML + userPinsHTML;
@@ -3170,7 +3276,8 @@ function renderUserChips() {
     const existing = [...container.querySelectorAll('.chip.user-pin-chip')];
     if (existing.some(el => el.dataset.name === p.name)) return;
 
-    const code = p.emoji && p.emoji.length === 2 ? p.emoji : (FLAG_CODES[+p.countryId] || '');
+    const code = (p.emoji && p.emoji.length <= 3) ? p.emoji
+      : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
     const flagImg = code
       ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
       : '';
@@ -3235,6 +3342,7 @@ const FLAG_CODES = {
   348:'hu', 380:'it', 372:'ie', 352:'is', 504:'ma', 462:'mv', 492:'mc',
   578:'no', 620:'pt', 528:'nl', 616:'pl', 634:'qa', 203:'cz', 756:'ch',
   752:'se', 764:'th', 792:'tr', 834:'tz', 336:'va',
+  688:'rs', 807:'mk', 383:'xk',
 };
 
 // Scotland / England / N.Ireland use GB flag
@@ -3282,6 +3390,12 @@ const SEARCH_DATA = [
   {name:'Turquia \uD83C\uDDF9\uD83C\uDDF7', year:'2022', id:792, type:'visited', code:'tr'},
   {name:'Tanz\u00E2nia \uD83C\uDDF9\uD83C\uDDFF', year:'2025', id:834, type:'visited', code:'tz'},
   {name:'Vaticano \uD83C\uDDFB\uD83C\uDDE6', year:'2016', id:336, type:'visited', code:'va'},
+  {name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'2026', id:688, type:'visited', code:'rs'},
+  {name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'2026', id:807, type:'visited', code:'mk'},
+  {name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'2026', id:383, type:'visited', code:'xk'},
+  {name:'Belgrado', year:'S\u00E9rvia \u00B7 2026', id:688, lat:44.82, lng:20.46, type:'city', code:'rs'},
+  {name:'Esc\u00F3pia', year:'Maced\u00F3nia do Norte \u00B7 2026', id:807, lat:42.00, lng:21.43, type:'city', code:'mk'},
+  {name:'Pristina', year:'Kosovo \u00B7 2026', id:383, lat:42.67, lng:21.17, type:'city', code:'xk'},
   // Cities
   {name:'Lisboa', year:'capital \u00B7 sempre', id:620, lat:38.72, lng:-9.14, type:'city', code:'pt'},
   {name:'Porto', year:'Portugal \u00B7 sempre', id:620, lat:41.15, lng:-8.61, type:'city', code:'pt'},
@@ -3551,7 +3665,11 @@ function initSearch() {
 function selectSearchResult(item) {
   const input = document.getElementById('map-search');
   const results = document.getElementById('search-results');
-  input.value = item.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{5}/gu, '').trim();
+  input.value = (WORLD_NAMES[+item.id] || item.name)
+    .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
+    .replace(/[\uD83C][\uDFF4]/g, '')
+    .replace(/[\uFE0F]/g, '')
+    .trim();
   results.classList.remove('open');
 
   switchTab('map');
@@ -3591,7 +3709,11 @@ function renderFlagStrip() {
 
   strip.innerHTML = countries.map(c => {
     // Remove flag emoji, keep full country name (max 12 chars to fit)
-    const cleanName = c.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|\uD83C\uDFF4[\s\S]{0,10}/gu, '').trim();
+    const cleanName = c.name
+      .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
+      .replace(/[\uD83C][\uDFF4]/g, '')
+      .replace(/[\uFE0F]/g, '')
+      .trim();
     const shortName = cleanName.length > 12 ? cleanName.slice(0,11) + '\u2026' : cleanName;
     return `<div class="flag-item" onclick="flagStripClick(${c.id}, ${JSON.stringify(c.code)})" title="${c.name} \u00B7 ${c.year}">
       <img class="flag-img" src="https://flagcdn.com/w40/${c.code}.png" alt="${shortName}" loading="lazy">
@@ -3623,7 +3745,8 @@ function renderFlagStrip() {
     }, []);
 
   strip.innerHTML += userCountries.map(p => {
-    const code = FLAG_CODES[+p.countryId] || '';
+    const code = (p.emoji && p.emoji.length <= 3) ? p.emoji
+      : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
     const shortName = p.name.length > 12 ? p.name.slice(0,11) + '\u2026' : p.name;
     if (!code) return '';
     return `<div class="flag-item" onclick="flagStripClick(${p.countryId}, '${code}')" title="${p.name} \u00B7 ${p.year || '\u2014'}">
@@ -3714,7 +3837,703 @@ function importData(input) {
   reader.readAsText(file);
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── GUIDES DATA ──────────────────────────────────────────────────────────────
+const GUIDES_DATA = [
+  {
+    id: 'atenas', name: 'Atenas', country: 'Gr\u00E9cia', flagCode: 'gr', countryId: 300,
+    sub: 'Gr\u00E9cia \u00B7 2019',
+    sections: [
+      { title: '\uD83C\uDFAB Bilhetes & Transportes', items: [
+        'Bilhete combinado 30\u20AC (Acr\u00F3pole, \u00C1gora, Biblioteca de Adriano, Templo de Zeus, Ceram\u00EDco\u2026) \u2192 etickets.tap.gr',
+        'Tourist Pass 3 dias 22\u20AC \u2014 comprar no aeroporto',
+        'Aeroporto \u2192 Hotel: Metro M3, sair em Ambelokipi (1h)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
+        'Monte Licabeto \u2014 ponto mais alto da cidade',
+        'Acr\u00F3pole \u2014 Partenon, Erecteion, Teatro de Dion\u00EDsio, Ode\u00E3o de Herodes \u00C1tico',
+        '\u00C1gora Romana',
+        '\u00C1gora de Atenas + Templo de Hefesto',
+        'Biblioteca de Adriano',
+        'Monastiraki \u2014 bairro para comer',
+        'Pra\u00E7a Sintagma',
+        'National Garden + Zappeion + Parlamento',
+        'Est\u00E1dio Panatenaico 5\u20AC',
+        'Templo de Zeus Ol\u00EDmpico',
+        'Arco de Adriano',
+        'Plaka \u2014 pesquisar Brettos',
+        '\u2605 \u00C0 noite: Stavros Niarchos Foundation Cultural Center',
+      ]},
+      { title: '\u23F0 Hor\u00E1rios', items: [
+        'Acr\u00F3pole: 08h\u201320h',
+        'Novo Museu da Acr\u00F3pole 10\u20AC: Sex 08h\u201322h | Sab\u2013Dom 08h\u201320h',
+        '\u00C1goras, Biblioteca, Templo Zeus, Ceram\u00EDco: 08h\u201320h',
+        'National Garden: 06h\u201320h',
+        'Est\u00E1dio Panatenaico: 08h\u201319h',
+      ]},
+    ]
+  },
+  {
+    id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
+    sub: 'Espanha',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'Aeroporto \u2192 Pra\u00E7a de Espanha: Autocarro 46',
+        'Hola Barcelona Travel Card \u2014 levantar no balc\u00E3o ou m\u00E1quina (n\u00E3o inclui Aerobus)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F O que ver', items: [
+        'Monumento a Col\u00F3n',
+        'Praia de La Barceloneta',
+        'Igreja de Santa Maria do Mar',
+        'Camp Nou (opcional)',
+      ]},
+      { title: '\uD83C\uDF7D\uFE0F Restaurantes', items: [
+        'Colom Restaurant \u2014 Paelha, 4.6/5 (10000 votos) \u20AC\u20AC',
+        'Honest Greens Rambla Catalunya \u2014 saud\u00E1vel, 4.5 \u20AC\u20AC',
+        'La Gastronomica Burgers & Beers \u2014 4.7 (1200 votos) \u20AC\u20AC',
+        'Micu Maku \u2014 burgers artesanais, 4.5 \u20AC\u20AC',
+      ]},
+      { title: '\uD83D\uDECD\uFE0F Compras', items: [
+        'Supermercado: Mercadona (09h\u201321h, 3min do hotel)',
+        'Souvenirs: Little Barcelona Souvenirs',
+      ]},
+    ]
+  },
+  {
+    id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
+    sub: 'Alemanha \u00B7 2019',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes & Passes', items: [
+        'Aeroporto Sch\u00F6nefeld \u2192 Hotel: S45 (verde) + U6 (roxo), 1h',
+        'Berlin WelcomeCard all inclusive + transportes: 79\u20AC',
+        'Berlin WelcomeCard AB + Potsdam ABC: 23\u20AC + atrações em separado',
+        'Alugu\u00EAr bicicleta Deezer Nextbike (incluso no WelcomeCard)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F 1\u00BA Dia', items: [
+        'Pal\u00E1cio do Reichstag (gr\u00E1tis, pr\u00E9-reservar em visite.bundestag.de)',
+        'Port\u00E3o de Brandemburgo',
+        'Memorial aos Judeus Mortos da Europa',
+        'Potsdamer Platz',
+        'Spy Museum Berlin (10h\u201320h)',
+        'Topografia do Terror \u2014 gr\u00E1tis (10h\u201320h)',
+        'Checkpoint Charlie',
+        'Gendarmenmarkt',
+        'Ilha dos Museus: Mus\u00E9u de Pergam\u00F3n + Berliner Dom',
+        'Pal\u00E1cio de Bellevue + Siegess\u00E4ule + Tiergarten',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F 2\u00BA Dia', items: [
+        'Berliner Fernsehturm (09h\u201324h)',
+        'Alexanderplatz',
+        'Berlin Dungeon (10h\u201318h)',
+        'East Side Gallery + Oberbaumbr\u00FCcke',
+        'Passeio de barco no Spree',
+      ]},
+    ]
+  },
+  {
+    id: 'cabo-verde', name: 'Santiago \u2014 Cabo Verde', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
+    sub: 'Cabo Verde \u00B7 2024',
+    sections: [
+      { title: '\uD83D\uDE97 Dia 1', items: [
+        'New Vision Rent a Car (entrega no aeroporto)',
+        'Rock of Praia + Pra\u00E7a Alexandre Albuquerque',
+        'Pal\u00E1cio Presidencial',
+        'Lojas de Souvenirs: Tourist Info, Mimos, Loja 104, Sucupira Market',
+        'Miradouro do Cruzeiro \u2192 Praia de S\u00E3o Francisco',
+        'Praia dos Amores',
+        'Barragem Ribeira Principal \u2192 Porto Formoso',
+        'Tarrafal: Placa, Ponte Natural, Praia',
+        '\uD83C\uDF74 Restaurante Alto Mira (Tarrafal) \u2014 4.6/5',
+      ]},
+      { title: '\uD83D\uDE97 Dia 2', items: [
+        'Cidade de Praia',
+        '\uD83C\uDF74 Restaurante Quintal da M\u00FAsica',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Alto Mira \u2014 Tarrafal (4.6, 223 opini\u00F5es)',
+        'Quintal da M\u00FAsica \u2014 Praia',
+      ]},
+    ]
+  },
+  {
+    id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
+    sub: 'Pol\u00F3nia \u00B7 2023',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
+        'Galeria Krakowska (centro comercial \u00E0 sa\u00EDda do comboio)',
+        'Old Kleparz \u2014 mercado mais antigo (6h\u201318h)',
+        'St. Florian\'s Gate',
+        'Rua Floria\u0144ska \u2192 Rynek G\u0142\u00F3wny (pra\u00E7a principal)',
+        'Bas\u00EDlica de Santa Maria (gr\u00E1tis, 9h\u201318h)',
+        'MNK Sukiennice (gr\u00E1tis \u00E0s ter\u00E7as, 10h\u201318h) \u2014 4.7/5',
+        'Rynek Underground Museum (gr\u00E1tis \u00E0s ter\u00E7as, 10h\u201314h) \u2014 4.5/5',
+        'Castelo Real de Wawel + Catedral (9h\u201315h30)',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes & Sobremesas', items: [
+        'Chimney Cake Bakery \u2014 4.7 (1237 votos), 10h\u201322h',
+        'Pijalnia Czekolady E.Wedel \u2014 chocolate quente',
+      ]},
+      { title: '\uD83C\uDFAB Passes', items: [
+        'Bilhetes nas ticket machines da esta\u00E7\u00E3o',
+        'Comboio Crac\u00F3via \u2192 Vars\u00F3via: Krak\u00F3w Main \u2192 Warsaw Central',
+      ]},
+    ]
+  },
+  {
+    id: 'escocia', name: 'Esc\u00F3cia', country: 'Reino Unido', flagCode: 'gb', countryId: 826,
+    sub: 'Esc\u00F3cia \u00B7 2024 Natal',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Edimburgo \u2014 Dia 1', items: [
+        'Chegada ao aeroporto \u2192 Hotel',
+        'Mercados de Natal de Edimburgo',
+        'Royal Mile',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Edimburgo \u2014 Dia 2', items: [
+        'Castelo de Edimburgo',
+        'Calton Hill',
+        'Arthur\'s Seat (opcional)',
+        'Holyrood Palace',
+        '\u00C0 noite: jantar e pub',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Glasgow \u2014 Dia 3', items: [
+        'Comboio Edimburgo \u2192 Glasgow (ida e volta)',
+        'George Square + Catedral de Glasgow',
+        'Riverside Museum',
+        'Kelvingrove Art Gallery (gr\u00E1tis)',
+        'Mercados de Natal de Glasgow',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Edimburgo \u2014 Dia 4', items: [
+        'National Museum of Scotland (gr\u00E1tis)',
+        'Scottish National Gallery (gr\u00E1tis)',
+        'Greyfriars Kirkyard',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes Edimburgo', items: [
+        'The Elephant House (caf\u00E9 Harry Potter)',
+        'Deacon Brodie\'s Tavern (Royal Mile)',
+      ]},
+    ]
+  },
+  {
+    id: 'irlanda', name: 'Irlanda & Irlanda do Norte', country: 'Irlanda', flagCode: 'ie', countryId: 372,
+    sub: 'Irlanda \u00B7 2025 P\u00E1scoa',
+    sections: [
+      { title: '\uD83D\uDE82 Transportes', items: [
+        'Aeroporto Dublin \u2192 Centro: Dublin Express (bilhetes impressos)',
+        'Voo Lisboa\u2013Dublin: FR7137 | Regresso: FR7328',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1 \u2014 Dublin', items: [
+        'The Church Caf\u00E9 & Restaurant \u2014 4.4 (16837 votos), 4min do hotel',
+        'GPO Witness History Visitor Centre',
+        'Monumento O\'Connell + Ponte',
+        '\uD83C\uDF74 Japanese Kitchen by J2 Sushi (takeaway)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2 \u2014 Belfast', items: [
+        'Viagem Dublin \u2192 Belfast',
+        'Titanic Belfast Museum',
+        'Cathedral Quarter',
+        'Souvenirs: lojas no centro de Belfast',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3 \u2014 Dublin', items: [
+        'Trinity College & Book of Kells',
+        'Temple Bar',
+        'St Patrick\'s Cathedral',
+        'Guinness Storehouse',
+      ]},
+    ]
+  },
+  {
+    id: 'istambul', name: 'Istambul', country: 'Turquia', flagCode: 'tr', countryId: 792,
+    sub: 'Turquia \u00B7 2022',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Lado Europeu', items: [
+        'Parque G\u00FClhane + Pal\u00E1cio de Topkap\u0131',
+        'Santa Sofia + Igreja de Santa Irene',
+        'Mesquita Azul + Hip\u00F3dromo de Constantinopla',
+        'Grande Bazar',
+        'Mesquita S\u00FCleymaniye',
+        'Bazar das Especiarias + Mesquita Yeni',
+        'Ponte de G\u00E1lata \u2192 Torre de G\u00E1lata (pago)',
+        'Rua Istiklal \u2192 Pra\u00E7a Taksim',
+        'Pal\u00E1cio Dolmabah\u00E7e',
+        'Ortaк\u00F6y Square + Mesquita de Ortaк\u00F6y',
+        'Vista Ponte do B\u00F3sforo',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Lado Asi\u00E1tico', items: [
+        'Marmaray (comboio sob o B\u00F3sforo) \u2192 Uskudar',
+        'Uskudar Coast Walkway',
+        'Torre de Leandro (vista da margem)',
+        'Kadik\u00F6y (bairro animado)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Capad\u00F3cia', items: [
+        'Bal\u00E3o de ar quente ao nascer do sol',
+        'Vall do Amor + Rose Valley',
+        'Museu ao Ar Livre de G\u00F6reme',
+      ]},
+    ]
+  },
+  {
+    id: 'madeira', name: 'Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal \u00B7 Madeira',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Dia 1 \u2014 Funchal', items: [
+        'Miradouro Cristo Rei',
+        'Mercado dos Lavradores (s\u00E1b 07h\u201314h | seg 07h\u201319h)',
+        'Carros de cesto do Monte (30\u20AC/2 pessoas)',
+        'Centro do Funchal + Marina (noite)',
+        'CR7 Museu (5\u20AC, 2\u00AA a 09h\u201321h)',
+        'Miradouro Pico do Barcelos',
+        'Cabo Gir\u00E3o Skywalk (09h\u201320h)',
+        'Cascata dos Anjos',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2 \u2014 Norte da Ilha', items: [
+        'Miradouro Eira do Serrado',
+        'Miradouro Pico do Areeiro (3\u00BA ponto mais alto)',
+        'Levada dos Balc\u00F5es \u2014 trilho 1.5km, 1h, f\u00E1cil (p\u00E1ssaros comem na m\u00E3o!)',
+        'Casas T\u00EDpicas de Santana',
+        'Pico Ruivo \u2014 2.6km, \u00B140min, m\u00E9dio',
+        'Praia do Porto do Seixal',
+        'Piscinas Naturais de Porto Moniz',
+      ]},
+    ]
+  },
+  {
+    id: 'madrid', name: 'Madrid', country: 'Espanha', flagCode: 'es', countryId: 724,
+    sub: 'Espanha \u00B7 2024 Natal',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'Aeroporto \u2192 Hotel: Metro 32min',
+        'Tourist Ticket Zona A: 14.20\u20AC/2 dias (inclui aeroporto)',
+        'Hotel: Riu Plaza Espa\u00F1a (Plaza de Espa\u00F1a, 19)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1', items: [
+        'Templo de Debod (at\u00E9 18h30 no inverno)',
+        'Gran V\u00EDa \u2192 Plaza del Callao',
+        'Puerta del Sol \u2014 \u00E1rvore de Natal e rel\u00F3gio',
+        'Plaza Mayor + Mercado de Natal',
+        'Catedral Almudena (gr\u00E1tis)',
+        'Pal\u00E1cio Real (gr\u00E1tis EU das 16h\u201318h)',
+        'Mercado de S\u00E3o Miguel (jantar tapas)',
+        '\u2605 Plaza Mayor \u00E0 noite',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2', items: [
+        'Parque do Retiro',
+        'Prado Museum',
+        'Thyssen-Bornemisza',
+        'Barrio de Las Letras',
+        'Mercado de San Ant\u00F3n',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Tapa Tapa Montera \u2014 tapas, 4.6 (31457) \u20AC\u20AC',
+        'Casa Garcia \u2014 paella, 4.7 (1454)',
+        'Chocolateria San Gin\u00E9s \u2014 churros, 4.3 (67804)',
+      ]},
+    ]
+  },
+  {
+    id: 'marrakech', name: 'Marraquexe', country: 'Marrocos', flagCode: 'ma', countryId: 504,
+    sub: 'Marrocos \u00B7 2023',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
+        'Jemaa el-Fnaa \u2014 pra\u00E7a central',
+        'Souk Semmarine (mercado)',
+        'Madrasa Ben Youssef',
+        'Souk des teinturiers (tintureiros)',
+        'Pal\u00E1cio da Bahia \u2014 6.5\u20AC',
+        'Pal\u00E1cio El-Badi \u2014 6.5\u20AC',
+        'T\u00FAmulos Saad\u00EDanos \u2014 6.5\u20AC',
+        'Mesquita Koutoubia',
+        'Jardim Majorelle \u2014 13.5\u20AC (mais longe)',
+        'Jardins da Menara',
+      ]},
+      { title: '\uD83D\uDCF6 SIM Card', items: [
+        'Inwi: 1GB/7 dias MAD 10 | 5GB/30 dias MAD 50',
+        'Orange: 2GB/30 dias MAD 49 | 20GB/30 dias MAD 99',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Nomad \u2014 4.1 (4324) \u20AC\u20AC',
+        'Naranj Libanese \u2014 4.7 (2371) \u20AC\u20AC',
+        'La Cantine des Gazelles \u2014 4.6 \u20AC',
+        'Mandala Society \u2014 4.7 (437)',
+        'La Patisserie des Princes \u2014 doces & gelados',
+      ]},
+    ]
+  },
+  {
+    id: 'marselha-monaco-nice', name: 'Marselha, M\u00F3naco & Nice', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
+    sub: 'Fran\u00E7a \u00B7 2026 P\u00E1scoa',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Dia 1 \u2014 Marselha', items: [
+        'Chegada Gare Saint-Charles \u2192 Hotel Residhome',
+        'Vieux-Port de Marselha',
+        'Notre-Dame de la Garde',
+        'Le Panier (bairro hist\u00F3rico)',
+        'MuCEM \u2014 Museu das Civiliza\u00E7\u00F5es',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2 \u2014 M\u00F3naco & Nice', items: [
+        'Comboio Marselha \u2192 Aer Nice \u2192 M\u00F3naco (autocarro)',
+        'Jardins de Saint-Martin + Palais Princier',
+        'Catedral de S\u00E3o Nicolau',
+        'Museu Oce\u00E2nogr\u00E1fico',
+        'Collection de voitures do Pr\u00EDncipe',
+        'Comboio M\u00F3naco \u2192 Nice',
+        'Promenade des Anglais',
+        'Vieux-Nice + Cour Saleya',
+        'Colina do Castelo (gr\u00E1tis)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3 \u2014 Marselha', items: [
+        'Calanques de Sormi\u00F4u (barco ou trilho)',
+        'Cours Julien (bairro street art)',
+        '\u00C9glise des Accoules',
+      ]},
+    ]
+  },
+  {
+    id: 'new-york', name: 'Nova Iorque', country: 'EUA', flagCode: 'us', countryId: 840,
+    sub: 'EUA \u00B7 2023',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'MTA MetroCard \u2014 comprar na chegada',
+        'Aeroporto JFK \u2192 Hotel: Metro AirTrain + linha',
+        'Hotel: Cambria Hotel New York \u2013 Chelsea',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1', items: [
+        'Times Square',
+        'Central Park',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2', items: [
+        'Statue of Liberty Ferry (NY Pass, 09h\u201317h)',
+        'Battery Park + Castle Clinton',
+        'Touro de Wall Street + Wall Street',
+        '9/11 Memorial & Museum (NY Pass)',
+        'One World Observatory (NY Pass)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3', items: [
+        'Brooklyn Bridge + DUMBO',
+        'High Line',
+        'Chelsea Market',
+        'Empire State Building',
+        'Top of the Rock',
+        'Madame Tussauds',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 4', items: [
+        'Metropolitan Museum of Art',
+        'Guggenheim',
+        'Central Park \u2014 outro \u00E2ngulo',
+        'Chinatown + Little Italy',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Joe\'s Pizza \u2014 Washington Square',
+        'Shake Shack \u2014 v\u00E1rios locais',
+        'Katz\'s Delicatessen',
+        'Levain Bakery \u2014 cookies',
+      ]},
+    ]
+  },
+  {
+    id: 'porto', name: 'Porto', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal \u00B7 Porto',
+    sections: [
+      { title: '\uD83D\uDE87 Transportes', items: [
+        'Metro Porto Campanha \u2192 Hotel: linha A/E/F',
+        'Autocarro Flixbus Torres Vedras \u2192 Porto',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Parte 1 \u2014 Centro', items: [
+        'Mercado do Bolh\u00E3o (seg 08h\u201320h)',
+        'C\u00E2mara Municipal + Avenida dos Aliados',
+        'Esta\u00E7\u00E3o de S\u00E3o Bento',
+        'S\u00E9 do Porto (catedral)',
+        'Ponte Lu\u00EDs I',
+        'Ribeira do Porto',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Parte 2 \u2014 Opcional', items: [
+        'Rua das Flores',
+        'Igreja dos Cl\u00E9rigos (gr\u00E1tis) + Torre dos Cl\u00E9rigos (10\u20AC, ap\u00F3s 19h s\u00E3o 5\u20AC)',
+        'Livraria Lello (10\u20AC)',
+        'Igreja de Santo Ildef\u00F3nso',
+        'Rua de Santa Catarina',
+      ]},
+    ]
+  },
+  {
+    id: 'qatar-maldivas', name: 'Qatar & Maldivas', country: 'Qatar / Maldivas', flagCode: 'qa', countryId: 634,
+    sub: 'Qatar \u00B7 Maldivas \u00B7 2024',
+    sections: [
+      { title: '\uD83D\uDEEB Voos', items: [
+        'Lisboa \u2192 Doha: 11h40 | Doha \u2192 Male: 01h50 (25 jul)',
+        'Male \u2192 Doha: 10h05 (29 jul) | Doha \u2192 Lisboa: 00h55 (30 jul)',
+        'Sair do resort o mais tardar \u00E0s 06h30',
+      ]},
+      { title: '\uD83C\uDFDD\uFE0F Maldivas \u2014 Resort', items: [
+        'OBLU SELECT Sangeli \u2014 barco 50min do aeroporto de Mal\u00E9',
+        'Recep\u00E7\u00E3o na chegada ao aeroporto (ap\u00F3s imigra\u00E7\u00E3o)',
+        'Serenity Plan AI \u2014 atividades inclu\u00EDdas',
+        'Preencher declara\u00E7\u00E3o de viajante: imuga.immigration.gov.mv',
+      ]},
+      { title: '\uD83C\uDFD9\uFE0F Qatar \u2014 Doha', items: [
+        'Villagio Mall',
+        'Saf\u00E1ri no deserto com sandboard + passeio de camelo + mar interior',
+        'Centro de Doha',
+        'Souq Waqif',
+        'Museum of Islamic Art',
+      ]},
+    ]
+  },
+  {
+    id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
+    sub: 'It\u00E1lia \u00B7 2016',
+    sections: [
+      { title: '\uD83C\uDFAB Bilhetes', items: [
+        'Passe transportes p\u00FAblicos 48h \u2014 comprar em Roma',
+        'Museus do Vaticano & Capela Sistina \u2014 pr\u00E9-reservar online',
+        'Coliseu de Roma \u2014 pr\u00E9-reservar online',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1 \u2014 S\u00E1bado', items: [
+        'Museus do Vaticano + Capela Sistina',
+        'Bas\u00EDlica de S\u00E3o Pedro + Pra\u00E7a de S\u00E3o Pedro',
+        'Castel Sant\'Angelo + Ponte Sant\'Angelo',
+        'Piazza Navona',
+        'Pante\u00E3o (gr\u00E1tis)',
+        'Fontana di Trevi',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2 \u2014 Domingo', items: [
+        'F\u00F3rum Romano + Palatino',
+        'Coliseu de Roma',
+        'Arco de Constantino',
+        'Circo M\u00E1ximo',
+        'Aventino + Buraco da Fechadura (vista S\u00E3o Pedro)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3 \u2014 Segunda', items: [
+        'Piazza Venezia + Vittoriano (gr\u00E1tis)',
+        'Campo de\' Fiori (mercado)',
+        'Trastevere (bairro)',
+        'Gianicolo (miradouro)',
+      ]},
+    ]
+  },
+  {
+    id: 'sao-miguel', name: 'S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'A\u00E7ores \u00B7 S\u00E3o Miguel',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
+        'Miradouro da Vista do Rei',
+        'Miradouro da Grota do Inferno',
+        'Centro de Interpreta\u00E7\u00E3o Ambiental da Caldeira Velha (opcional)',
+        'Fumarolas Lagoa das Furnas',
+        'Po\u00E7a da Dona Beija (termas)',
+        'Miradouro do Tanque \u2014 vista Ilh\u00E9u Vila Franca (opcional)',
+        'Portas da Cidade \u2014 centro de Ponta Delgada',
+      ]},
+      { title: '\uD83C\uDF74 Jantar', items: [
+        'Parque Atl\u00E2ntico (centro comercial)',
+        'NEAT Hotel Avenida',
+      ]},
+    ]
+  },
+  {
+    id: 'tailandia-abu-dhabi', name: 'Tail\u00E2ndia & Abu Dhabi', country: 'Tail\u00E2ndia / Emirados', flagCode: 'th', countryId: 764,
+    sub: 'Tail\u00E2ndia \u00B7 Abu Dhabi \u00B7 2024',
+    sections: [
+      { title: '\uD83D\uDE87 Transportes', items: [
+        'Lisboa \u2192 Abu Dhabi \u2192 Bangkok (terminal 1)',
+        'Bangkok \u2192 Phuket: voo interno',
+        'Presto Card Bangkok BTS / MRT',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Bangkok', items: [
+        'Grand Palace + Wat Phra Kaew',
+        'Wat Pho (Buda Reclinado)',
+        'Wat Arun (Templo da Aurora)',
+        'Khao San Road \u00E0 noite',
+        'Chatuchak Weekend Market',
+        'ICONSIAM + Rio Chao Phraya (barco)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Phuket', items: [
+        'Praia Patong',
+        'Praia Karon & Kata',
+        'Praia Kamala',
+        'Ilhas Phi Phi (passeio de barco)',
+        'Big Buddha',
+        'Old Phuket Town',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Abu Dhabi', items: [
+        'Mesquita Sheikh Zayed (gr\u00E1tis)',
+        'Corniche',
+        'Yas Island: Ferrari World ou Warner Bros',
+        'Emirates Palace',
+      ]},
+    ]
+  },
+  {
+    id: 'toronto', name: 'Toronto & Ni\u00E1gara', country: 'Canad\u00E1', flagCode: 'ca', countryId: 124,
+    sub: 'Canad\u00E1 \u00B7 2023',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'Aeroporto \u2192 Hotel: UP Express (9.25CAD) + Metro',
+        'Presto Card: 4\u20AC \u2014 passes 2h por 2.25\u20AC | Day Pass 9.25\u20AC',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1', items: [
+        'Ripley\'s Aquarium of Canada',
+        'Roundhouse Park',
+        'Harbourfront Centre',
+        'Toronto Islands (ferry 6.25\u20AC, at\u00E9 23h)',
+        'The Rex Hotel Jazz & Blues Bar',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 2 \u2014 Ni\u00E1gara', items: [
+        'Niagara Day Tour (operador: Niagara Day Tour, sa\u00EDda 08h)',
+        'Cat\u00E1ratas do Ni\u00E1gara \u2014 lado canadiano',
+        'Maid of the Mist',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3', items: [
+        'Torre CN (15min a p\u00E9 do hotel)',
+        'Berczy Park + Gooderham Building',
+        'St. Lawrence Market (07h\u201317h)',
+      ]},
+    ]
+  },
+  {
+    id: 'varsovia', name: 'Vars\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
+    sub: 'Pol\u00F3nia \u00B7 2023 Natal',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'Aeroporto \u2192 Hotel NYX: Autocarro 175 (35\u201340min, freq. 15m) ou t\u00E1xi 7\u20AC',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 1', items: [
+        'Warsaw Uprising Museum (gr\u00E1tis \u00E0s 2\u00E0s, 08h\u201318h)',
+        'Plac Zamkowy \u2014 Coluna de Zygmunt',
+        'Pra\u00E7a do Mercado da Cidade Velha + Mercado de Natal (11h\u201320h)',
+        'Warsaw Barbican (5\u20AC, 11h\u201318h)',
+        '\uD83C\uDF74 Barn Burger (jantar)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dia 3', items: [
+        'Parque Lazienki',
+        'Palais Lazienkowski \u2192 Nowy \u015awiat',
+        'Nowy \u015awiat \u2014 rua mais bonita de Vars\u00F3via',
+        'Pra\u00E7a do Mercado da Cidade Velha',
+        'Centro Comercial Z\u0142ote Tarasy',
+        '\uD83C\uDF74 Manekin (jantar \u2014 crepes)',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes & Doces', items: [
+        'Sushi Z\u0142ota (11h\u201322h, 7.5\u20AC\u201310\u20AC/pack)',
+        'Chocolate Cafe E.Wedel \u2014 chocolate quente',
+        'Barn Burger',
+      ]},
+    ]
+  },
+  {
+    id: 'veneza', name: 'Veneza', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
+    sub: 'It\u00E1lia \u00B7 2019',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes', items: [
+        'Aeroporto \u2192 Hotel: Autocarro 25a/10a, sair em Campalto (3\u20AC i/v)',
+        'Hotel \u2192 Centro Veneza: linha 19 ou 5 (3\u20AC i/v)',
+        'Bilhetes barco + autocarro: veneziaunica.it \u2014 42\u20AC/2 dias',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Lado Norte & Rialto', items: [
+        'Ponte dos Desc\u00E1lcos',
+        'Ca\u2019 Pesaro + Ca\u2019 d\u2019Oro (museus)',
+        'Mercado de Rialto + Ponte de Rialto',
+        'Igreja Santa Maria dos Milagres',
+        'Libreria Acqua Alta',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Pra\u00E7a S\u00E3o Marcos', items: [
+        'Arsenal de Veneza',
+        'Pal\u00E1cio Ducal (pago)',
+        'Bas\u00EDlica de S\u00E3o Marcos (pago)',
+        'Torre do Rel\u00F3gio + Campanile (pago)',
+        'Pra\u00E7a de S\u00E3o Marcos',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Dorsoduro', items: [
+        'Cole\u00E7\u00E3o Peggy Guggenheim',
+        'Bas\u00EDlica Santa Maria della Salute',
+        'Ca\u2019 Rezzonico (pago)',
+        'Bas\u00EDlica Santa Maria Gloriosa dei Frari',
+      ]},
+    ]
+  },
+  {
+    id: 'servia-macedonia-kosovo', name: 'S\u00E9rvia, Maced\u00F3nia & Kosovo', country: 'S\u00E9rvia', flagCode: 'rs', countryId: 688,
+    sub: 'Balc\u00E3s \u00B7 2026 Ver\u00E3o',
+    sections: [
+      { title: '\uD83C\uDFAB Transportes & Alojamento', items: [
+        'Aeroporto Belgrado \u2192 Hotel: Bus 72 (25 em 25 min, gratuito)',
+        'Hotel \u2192 Aeroporto: T\u00E1xi ~30\u20AC',
+        'Hotel: Hotel Amsterdam, Jug Bogdanova 10, Belgrado',
+        'Rent a car: 127.32\u20AC',
+        'Hotel Esc\u00F3pia 1 + Hotel Esc\u00F3pia 2',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Belgrado \u2014 S\u00E9rvia', items: [
+        'Legend \u2014 rua Kneza Mihaila (zona pedonal)',
+        'Republic Square (Trg republike)',
+        'Kalemegdan \u2014 fortaleza hist\u00F3rica',
+        'Templo de S\u00E3o Sava (maior igrejaortodoxa dos Balc\u00E3s)',
+        'St. Mark Orthodox Church (opcional)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Maced\u00F3nia do Norte', items: [
+        'Esc\u00F3pia \u2014 capital com mistura Otomana e moderna',
+        'Lago Ohrid \u2014 Patrim\u00F3nio UNESCO',
+        'Cidade Velha de Ohrid',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Kosovo', items: [
+        'Pristina \u2014 capital do pa\u00EDs mais jovem da Europa',
+        'Newborn Monument',
+        'Mesquita Imperial de Pristina',
+      ]},
+    ]
+  },
+];
+
+// ─── GUIDES FUNCTIONS ─────────────────────────────────────────────────────────
+function renderGuides(filter) {
+  const grid = document.getElementById('guides-grid');
+  if (!grid) return;
+  const q = (filter || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const filtered = GUIDES_DATA.filter(g => {
+    if (!q) return true;
+    const hay = (g.name + g.country + g.sub).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return hay.includes(q);
+  });
+  grid.innerHTML = filtered.map(g => {
+    const flagUrl = `https://flagcdn.com/w40/${g.flagCode}.png`;
+    return `<div class="guide-card" onclick="openGuideModal('${g.id}')">
+      <img class="guide-card-flag" src="${flagUrl}" alt="${g.country}" onerror="this.style.display='none'">
+      <div class="guide-card-name">${g.name}</div>
+      <div class="guide-card-sub">${g.sub}</div>
+    </div>`;
+  }).join('') || `<div style="padding:30px;text-align:center;color:var(--muted);font-size:13px;grid-column:1/-1">\uD83D\uDD0D Nenhum guia encontrado</div>`;
+}
+
+function filterGuides(q) { renderGuides(q); }
+
+function openGuideModal(guideId) {
+  const guide = GUIDES_DATA.find(g => g.id === guideId);
+  if (!guide) return;
+  document.getElementById('guide-modal-title').textContent = guide.name;
+  const flagEl = document.getElementById('guide-modal-flag');
+  flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
+  flagEl.alt = guide.country;
+
+  const body = document.getElementById('guide-modal-body');
+  body.innerHTML = `
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">${guide.sub}</div>
+    ${guide.sections.map(s => `
+      <div class="guide-all-section">
+        <div class="guide-all-section-title">${s.title}</div>
+        ${s.items.map(item => `<div class="guide-item"><span class="guide-item-num">\u2022</span><span>${item}</span></div>`).join('')}
+      </div>
+    `).join('')}
+  `;
+  body.scrollTop = 0;
+  document.getElementById('guide-modal').classList.add('on');
+}
+
+function closeGuideModal(evt) {
+  if (evt && evt.target !== document.getElementById('guide-modal')) return;
+  document.getElementById('guide-modal').classList.remove('on');
+}
+
+// Open guide from country sheet
+function openGuideFromSheet(guideId) {
+  closeAll();
+  setTimeout(() => openGuideModal(guideId), 80);
+}
 async function _init() {
   await loadState();
 
@@ -3734,6 +4553,7 @@ async function _init() {
   renderPinsList();
   initSearch();
   renderFlagStrip();
+  renderGuides();
 
   // Injetar bandeiras no mapa para pins guardados anteriormente
   // (addFlagToMap só funciona após initMap, por isso fazemos aqui)
