@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VanBerto's — Passaporte digital de viagens. Países visitados, wishlist e memórias de viagem desde 2007.">
+<meta name="theme-color" content="#0f0c07">
 <title>VanBerto's 🌍</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -78,7 +80,15 @@
     position: relative;
   }
   header h1 span { font-style: italic; font-weight: 400; color: var(--gold-light); }
-  header .tagline { font-size: 11px; opacity: .35; letter-spacing: 2.5px; text-transform: uppercase; color: white; margin-bottom: 16px; }
+  header .tagline {
+    font-size: clamp(7.5px, 2.2vw, 11px);
+    opacity: .35;
+    letter-spacing: clamp(0.8px, 0.6vw, 2.5px);
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 16px;
+    white-space: nowrap;
+  }
   .hbadges { display: flex; justify-content: center; flex-wrap: nowrap; gap: 5px; }
   .hbadge {
     background: rgba(255,255,255,0.07);
@@ -168,47 +178,75 @@
   .sri-badge.explore { background: #e8f4fb; color: #1a6080; }
 
   /* MAP */
+  /* MAP TOOLBAR — colapsável em mobile */
   .map-toolbar {
     display: flex; align-items: center; gap: 8px;
-    padding: 8px 12px; background: white;
+    padding: 7px 10px; background: white;
     border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
+    flex-wrap: nowrap; overflow: hidden;
+    transition: max-height .25s ease, padding .25s ease, opacity .2s;
+    max-height: 60px;
+  }
+  .map-toolbar.collapsed {
+    max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; pointer-events: none;
   }
   .tool-btn {
     display: flex; align-items: center; gap: 5px;
-    padding: 6px 12px; border-radius: 20px;
-    font-size: 11px; font-weight: 500; cursor: pointer;
+    padding: 7px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 500; cursor: pointer;
     border: 1.5px solid; transition: all .2s;
-    letter-spacing: .3px;
+    letter-spacing: .3px; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   .tool-btn.visited { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
   .tool-btn.wishlist { border-color: var(--green); color: var(--green); background: var(--green-pale); }
   .tool-btn.active { transform: scale(1.04); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
   .tool-btn.visited.active { background: var(--gold); color: white; }
   .tool-btn.wishlist.active { background: var(--green); color: white; }
-  .tool-tip { font-size: 10px; color: var(--muted); margin-left: auto; letter-spacing: .3px; font-style: italic; }
+  .tool-tip { font-size: 10px; color: var(--muted); margin-left: auto; letter-spacing: .3px; font-style: italic; white-space: nowrap; }
+
+  /* MAP TOGGLE BAR — strip above the map to expand/collapse toolbar+legend */
+  .map-toggle-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 5px 12px; background: white;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .map-toggle-left { display: flex; align-items: center; gap: 8px; }
+  .map-toggle-legend { display: flex; gap: 10px; align-items: center; }
+  .map-toggle-leg { display: flex; align-items: center; gap: 4px; font-size: 9.5px; color: #888; }
+  .map-toggle-dot { width: 10px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .map-toggle-chevron {
+    font-size: 10px; color: var(--muted); transition: transform .25s;
+    flex-shrink: 0;
+  }
+  .map-toggle-chevron.open { transform: rotate(180deg); }
 
   #map-wrap { width: 100%; background: var(--ocean); position: relative; overflow: hidden; }
   #map-wrap svg { display: block; width: 100%; }
 
-  /* ZOOM CONTROLS */
+  /* ZOOM CONTROLS — two big thumb-friendly buttons, stacked vertically, left side */
   .zoom-controls {
     position: absolute; right: 10px; bottom: 14px; z-index: 20;
-    display: flex; flex-direction: column; gap: 5px;
+    display: flex; flex-direction: column; gap: 6px;
     align-items: center;
   }
   .zoom-btn {
-    width: 48px; height: 48px; background: white;
-    border: 1px solid rgba(0,0,0,0.13); border-radius: 14px;
-    font-size: 24px; line-height: 1; cursor: pointer;
+    width: 52px; height: 52px; background: white;
+    border: 1px solid rgba(0,0,0,0.13); border-radius: 16px;
+    font-size: 26px; line-height: 1; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.18); color: #333;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.20); color: #333;
     user-select: none; -webkit-user-select: none;
-    transition: background .12s, transform .1s, box-shadow .12s;
+    transition: background .1s, transform .08s, box-shadow .1s;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
-  .zoom-btn:active { background: #ececec; transform: scale(0.93); box-shadow: 0 1px 5px rgba(0,0,0,0.13); }
-  .zoom-btn.reset { font-size: 15px; color: var(--muted); height: 40px; }
+  .zoom-btn:active { background: #e8e8e8; transform: scale(0.91); box-shadow: 0 1px 4px rgba(0,0,0,0.13); }
+  .zoom-btn.reset { font-size: 15px; color: var(--muted); height: 36px; width: 52px; border-radius: 10px; }
   .zoom-level {
     font-family: 'Outfit', sans-serif;
     font-size: 9px; color: var(--muted);
@@ -218,12 +256,19 @@
     border: 1px solid rgba(0,0,0,0.08);
     min-width: 36px; text-align: center;
   }
+  /* Slider hidden on mobile — replaced by +/- buttons */
   .zoom-slider {
     -webkit-appearance: none; appearance: none;
     writing-mode: vertical-lr; direction: rtl;
     width: 6px; height: 80px;
     background: transparent; cursor: pointer;
     outline: none; padding: 0;
+    display: none; /* hidden by default; shown on desktop via media query */
+  }
+  @media (min-width: 600px) {
+    .zoom-slider { display: block; }
+    .zoom-btn { width: 44px; height: 44px; font-size: 22px; }
+    .zoom-btn.reset { height: 36px; width: 44px; }
   }
   .zoom-slider::-webkit-slider-runnable-track {
     width: 4px; background: #e0dbd4; border-radius: 2px;
@@ -263,6 +308,21 @@
 
   /* Visited country labels — HTML overlay (always on top, no SVG z-order issues) */
   #visited-label-overlay { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8; }
+
+  /* Bandeira flutuante — visível a zoom baixo, sem texto */
+  .vcl-flag {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: none;
+    border-radius: 3px;
+    border: 1.5px solid rgba(255,255,255,0.85);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.18);
+    object-fit: cover;
+    image-rendering: -webkit-optimize-contrast;
+  }
+
+  /* Label com bandeira + nome — visível a zoom alto */
   .vcl {
     position:absolute;
     transform:translate(-50%,-50%);
@@ -270,16 +330,26 @@
     font-size:11px;
     font-weight:900;
     color:#fff;
-    background: rgba(140, 85, 5, 0.78);
-    border: 1px solid rgba(255,215,80,0.40);
+    background: rgba(140, 85, 5, 0.82);
+    border: 1px solid rgba(255,215,80,0.45);
     border-radius: 5px;
-    padding: 2px 6px;
+    padding: 2px 5px 2px 3px;
     white-space:nowrap;
     pointer-events:none;
-    letter-spacing:0.6px;
+    letter-spacing:0.5px;
     line-height:1.4;
     display:none;
     box-shadow: 0 1px 6px rgba(0,0,0,0.38), 0 0 0 1px rgba(0,0,0,0.15);
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .vcl img.vcl-flag-inline {
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.5);
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
   }
   .country-label {
     font-family: 'Outfit', sans-serif;
@@ -339,6 +409,9 @@
     from { fill: #e8f44d; filter: drop-shadow(0 0 6px rgba(232,244,77,0.7)); }
     to   { fill: #f9ff80; filter: drop-shadow(0 0 14px rgba(249,255,128,1)); }
   }
+
+  /* Fix: selector was missing — these rules now correctly target .all-country-label */
+  .all-country-label {
     font-family: 'Outfit', sans-serif;
     font-size: 9px;
     font-weight: 600;
@@ -435,6 +508,8 @@
   }
   .type-opt.sel-visited { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
   .type-opt.sel-wishlist { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+  /* Alias used in JS */
+  .type-opt.sel-wish { border-color: var(--green); background: var(--green-pale); color: var(--green); }
   .submit-btn {
     width: 100%; padding: 12px; border-radius: 12px;
     font-size: 14px; font-weight: 600; cursor: pointer;
@@ -516,29 +591,39 @@
   .flag-strip {
     background: var(--ink);
     padding: 14px 12px 18px;
-    overflow: hidden;
   }
   .flag-strip-title {
     font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
     color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 12px;
   }
   .flag-scroll {
-    display: flex; flex-wrap: wrap; gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     justify-content: center;
   }
   .flag-item {
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     cursor: pointer;
+    padding: 4px 5px;
+    border-radius: 6px;
+    transition: background .15s, transform .15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .flag-item:active {
+    background: rgba(255,255,255,0.12);
+    transform: scale(0.92);
   }
   .flag-img {
-    width: 32px; height: 21px; object-fit: cover;
+    width: 34px; height: 23px; object-fit: cover;
     border-radius: 3px;
     border: 1px solid rgba(255,255,255,0.2);
     box-shadow: 0 1px 4px rgba(0,0,0,0.5);
     transition: transform .2s, box-shadow .2s;
     background: #333;
   }
-  .flag-item:hover .flag-img { transform: scale(1.2) translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
+  .flag-item:hover .flag-img { transform: scale(1.18) translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
   .flag-name {
     font-size: 7px; color: rgba(255,255,255,0.35);
     text-align: center; max-width: 42px;
@@ -617,8 +702,8 @@
   <p class="tagline">Explorar o mundo, uma aventura de cada vez</p>
   <div class="hbadges">
     <span class="hbadge" id="hbadge-paises">🌍 — Países</span>
-    <span class="hbadge">5 Continentes</span>
-    <span class="hbadge">10 Ilhas PT</span>
+    <span class="hbadge" id="hbadge-conts">— Continentes</span>
+    <span class="hbadge" id="hbadge-ilhas">10 Ilhas PT</span>
     <span class="hbadge">Desde 2007</span>
   </div>
 </header>
@@ -647,33 +732,45 @@
     </div>
     <div class="search-results" id="search-results"></div>
   </div>
-  <div class="map-toolbar">
+
+  <!-- Toggle bar: legenda sempre visível, toolbar colapsável ao tocar -->
+  <div class="map-toggle-bar" id="map-toggle-bar" onclick="toggleMapToolbar()">
+    <div class="map-toggle-left">
+      <div class="map-toggle-legend">
+        <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:var(--gold)"></div>Visitado</div>
+        <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:var(--green-light)"></div>Quero ir</div>
+        <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:#c8dbe8"></div>Explorar</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:9.5px;color:var(--muted);" id="mode-tip-mini">📍 ⭐ Pins</span>
+      <span class="map-toggle-chevron" id="map-chevron">▾</span>
+    </div>
+  </div>
+
+  <!-- Toolbar colapsável -->
+  <div class="map-toolbar collapsed" id="map-toolbar">
     <button class="tool-btn visited" id="btn-pin-visited" onclick="setMode('pin-visited')">
       📍 Pin Visitado
     </button>
     <button class="tool-btn wishlist" id="btn-pin-wish" onclick="setMode('pin-wish')">
       ⭐ Quero ir
     </button>
-    <span class="tool-tip" id="mode-tip">Toca num país para ver detalhes</span>
+    <span class="tool-tip" id="mode-tip">Toca num país</span>
   </div>
-  <div class="legend">
-    <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div>Visitado</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--green-light)"></div>Quero ir</div>
-    <div class="leg"><div class="leg-dot" style="background:#c8dbe8"></div>Por explorar</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--ocean)"></div>Oceano</div>
-  </div>
-  <div id="map-wrap">
-    <div id="map-loading" style="text-align:center;padding:50px 20px;color:#999;font-size:13px">
+
+  <div id="map-wrap" role="application" aria-label="Mapa interativo de viagens — usa os controlos de zoom ou o rato/toque para navegar">
+    <div id="map-loading" style="text-align:center;padding:50px 20px;color:#999;font-size:13px" aria-live="polite">
       🌍 A carregar mapa…
     </div>
-    <div class="zoom-controls">
-      <button class="zoom-btn" id="zbtn-in" aria-label="Zoom in">+</button>
+    <div class="zoom-controls" role="group" aria-label="Controlos de zoom do mapa">
+      <button class="zoom-btn" id="zbtn-in" aria-label="Aproximar (zoom in)" title="Aproximar">+</button>
       <input type="range" id="zoom-slider" class="zoom-slider"
              min="0" max="4.906890595" step="0.01" value="0"
-             oninput="mapZoomSlider(this.value)" aria-label="Zoom level">
-      <div class="zoom-level" id="zoom-level-indicator">1×</div>
-      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Reset zoom">⊙</button>
-      <button class="zoom-btn" id="zbtn-out" aria-label="Zoom out">−</button>
+             oninput="mapZoomSlider(this.value)" aria-label="Nível de zoom" title="Nível de zoom">
+      <div class="zoom-level" id="zoom-level-indicator" aria-live="polite" aria-label="Zoom atual">1×</div>
+      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Repor zoom" title="Repor zoom">⊙</button>
+      <button class="zoom-btn" id="zbtn-out" aria-label="Afastar (zoom out)" title="Afastar">−</button>
     </div>
   </div>
 
@@ -684,7 +781,14 @@
   <div class="pins-list">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
       <div class="sec-title" style="margin:0">📍 Os meus pins</div>
-      <button class="tool-btn visited" style="font-size:11px;" onclick="openPinForm(null,null,'pin-visited')">+ Adicionar</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="tool-btn" style="font-size:10px;background:rgba(45,122,79,0.1);color:var(--green);border-color:var(--green);" onclick="exportData()" title="Exportar dados como JSON">⬇ Exportar</button>
+        <label class="tool-btn" style="font-size:10px;background:rgba(26,107,181,0.1);color:#1a6bb5;border-color:#1a6bb5;cursor:pointer;" title="Importar dados de JSON">
+          ⬆ Importar
+          <input type="file" accept=".json" style="display:none" onchange="importData(this)">
+        </label>
+        <button class="tool-btn visited" style="font-size:11px;" onclick="openPinForm(null,null,'pin-visited')">+ Adicionar</button>
+      </div>
     </div>
     <div id="pins-visited-section">
       <div class="cont-lbl">Visitados</div>
@@ -706,8 +810,8 @@
     <div class="sec-title">🌍 Países Visitados</div>
 
     <div class="cont-group">
-      <div class="cont-lbl">Europa · 26 países/territórios</div>
-      <div class="chips">
+      <div class="cont-lbl" id="lbl-europa">Europa · 26 países/territórios</div>
+      <div class="chips" id="chips-europa">
         <div class="chip">🇵🇹 Portugal <span class="cy">sempre</span></div>
         <div class="chip">🇩🇪 Alemanha <span class="cy">2019 Verão</span></div>
         <div class="chip">🇦🇹 Áustria <span class="cy">2021 Verão</span></div>
@@ -737,8 +841,8 @@
     </div>
 
     <div class="cont-group">
-      <div class="cont-lbl">África · 4 países</div>
-      <div class="chips">
+      <div class="cont-lbl" id="lbl-africa">África · 4 países</div>
+      <div class="chips" id="chips-africa">
         <div class="chip">🇨🇻 Cabo Verde <span class="cy">2024 Páscoa</span></div>
         <div class="chip">🇪🇹 Etiópia <span class="cy">2025 Verão</span></div>
         <div class="chip">🇲🇦 Marrocos <span class="cy">2023 Páscoa</span></div>
@@ -747,16 +851,16 @@
     </div>
 
     <div class="cont-group">
-      <div class="cont-lbl">Américas · 2 países</div>
-      <div class="chips">
+      <div class="cont-lbl" id="lbl-americas">Américas · 2 países</div>
+      <div class="chips" id="chips-americas">
         <div class="chip">🇨🇦 Canadá <span class="cy">2023 Verão</span></div>
         <div class="chip">🇺🇸 EUA <span class="cy">2023 Verão</span></div>
       </div>
     </div>
 
     <div class="cont-group">
-      <div class="cont-lbl">Ásia & Médio Oriente · 5 países</div>
-      <div class="chips">
+      <div class="cont-lbl" id="lbl-asia">Ásia & Médio Oriente · 5 países</div>
+      <div class="chips" id="chips-asia">
         <div class="chip">🇦🇪 Emirados Árabes <span class="cy">2024 Natal</span></div>
         <div class="chip">🇲🇻 Maldivas <span class="cy">2024 Verão</span></div>
         <div class="chip">🇶🇦 Qatar <span class="cy">2024 Verão</span></div>
@@ -765,9 +869,9 @@
     </div>
 
     <div class="cont-group">
-      <div class="cont-lbl">Oceania & Atlântico · 0 países</div>
+      <div class="cont-lbl" id="lbl-oceania">Oceania & Atlântico · 0 países</div>
       <div class="chips" id="oceania-chips">
-        <div class="chip" style="color:var(--muted);border-style:dashed">✈️ Próximo destino?</div>
+        <div class="chip user-placeholder" style="color:var(--muted);border-style:dashed">✈️ Próximo destino?</div>
       </div>
     </div>
 
@@ -903,12 +1007,22 @@
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
-// Fallback: if topojson not loaded from first CDN, load from unpkg
+// Fallback: if topojson not loaded from first CDN, load via createElement (document.write is deprecated)
 if (typeof topojson === 'undefined') {
-  document.write('<script src="https://unpkg.com/topojson@3/dist/topojson.min.js"><\/script>');
+  const s = document.createElement('script');
+  s.src = 'https://unpkg.com/topojson@3/dist/topojson.min.js';
+  document.head.appendChild(s);
 }
 </script>
 <script>
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║              CONFIGURAÇÃO DE VIAGENS — EDITAR AQUI                          ║
+// ║  VISITED   → países visitados (id numérico ISO 3166-1)                      ║
+// ║  PLACES    → cidades e locais com coordenadas                               ║
+// ║  HOMES     → definido dentro de initMap()                                   ║
+// ║  UK_DETAIL → sub-nações do Reino Unido                                      ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const VISITED = {
   276: { name:"Alemanha 🇩🇪",           year:"2019 · Verão",       note:"Berlim — cidade que reinventou a sua história. Do Checkpoint Charlie ao Memorial do Holocausto, passando pela arte de rua, o Muro e uma vida noturna que não dorme 🍺🎨🏛️" },
@@ -1118,21 +1232,61 @@ let pathRef = null;
 let currentZoomK = 1;
 let wishCountriesNumeric = new Set();
 
-// ─── STORAGE (window.storage API — works in Claude.ai) ───────────────────────
+// ─── STORAGE — window.storage (Claude.ai) com fallback automático para localStorage ──
+// Detecta qual API está disponível e usa sempre a melhor opção.
+const _store = (() => {
+  // Testa se window.storage existe e funciona
+  const hasCloudStorage = typeof window !== 'undefined' &&
+    window.storage && typeof window.storage.set === 'function';
+
+  // Testa se localStorage está disponível (pode estar bloqueado em modo privado)
+  let hasLocal = false;
+  try { localStorage.setItem('__vb_test', '1'); localStorage.removeItem('__vb_test'); hasLocal = true; } catch(e) {}
+
+  return {
+    async set(key, value) {
+      if (hasCloudStorage) {
+        try { await window.storage.set(key, value); return; } catch(e) {}
+      }
+      if (hasLocal) {
+        try { localStorage.setItem(key, value); return; } catch(e) {}
+      }
+      // Fallback em memória — persiste enquanto a página estiver aberta
+      (_store._mem = _store._mem || {})[key] = value;
+    },
+    async get(key) {
+      if (hasCloudStorage) {
+        try {
+          const r = await window.storage.get(key);
+          if (r && r.value != null) return r.value;
+        } catch(e) {}
+      }
+      if (hasLocal) {
+        try {
+          const v = localStorage.getItem(key);
+          if (v != null) return v;
+        } catch(e) {}
+      }
+      return (_store._mem || {})[key] || null;
+    },
+    _mem: {}
+  };
+})();
+
 async function savePins() {
-  try { await window.storage.set('vb-pins', JSON.stringify(pins)); } catch(e) {}
+  try { await _store.set('vb-pins', JSON.stringify(pins)); } catch(e) {}
 }
 async function saveWishCountries() {
-  try { await window.storage.set('vb-wish-countries', JSON.stringify([...wishCountriesNumeric])); } catch(e) {}
+  try { await _store.set('vb-wish-countries', JSON.stringify([...wishCountriesNumeric])); } catch(e) {}
 }
 async function loadState() {
   try {
-    const p = await window.storage.get('vb-pins');
-    if (p) pins = JSON.parse(p.value || '[]');
+    const p = await _store.get('vb-pins');
+    if (p) pins = JSON.parse(p);
   } catch(e) { pins = []; }
   try {
-    const w = await window.storage.get('vb-wish-countries');
-    if (w) wishCountriesNumeric = new Set(JSON.parse(w.value || '[]'));
+    const w = await _store.get('vb-wish-countries');
+    if (w) wishCountriesNumeric = new Set(JSON.parse(w));
   } catch(e) { wishCountriesNumeric = new Set(); }
 }
 
@@ -1145,8 +1299,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'pins') { renderPinsList(); renderWishList(); }
-  if (name === 'list') renderWishChips();
-  if (name === 'wish') renderWishList();
+  if (name === 'list') { renderWishChips(); renderUserChips(); }
 }
 
 // ─── WORLD COUNTRY NAMES (for all-countries labels) ──────────────────────────
@@ -1301,24 +1454,41 @@ WORLD_CAPITALS.forEach(([id,,lat,lng]) => { WORLD_CAP_POS[id] = [lng, lat]; });
 
 // ─── Sub-national boundaries: embedded simplified polygons ───────────────────
 
+// ─── MAP TOOLBAR TOGGLE ───────────────────────────────────────────────────────
+function toggleMapToolbar() {
+  const toolbar = document.getElementById('map-toolbar');
+  const chevron = document.getElementById('map-chevron');
+  if (!toolbar) return;
+  const isCollapsed = toolbar.classList.contains('collapsed');
+  toolbar.classList.toggle('collapsed', !isCollapsed);
+  if (chevron) chevron.classList.toggle('open', isCollapsed);
+}
+
 function setMode(mode) {
   if (currentMode === mode) {
     currentMode = 'view';
     document.getElementById('btn-pin-visited').classList.remove('active');
     document.getElementById('btn-pin-wish').classList.remove('active');
-    document.getElementById('mode-tip').textContent = 'Toca num país para ver detalhes';
-    document.getElementById('map-hint').textContent = 'Toca nos países dourados para detalhes · Arrasta para mover · Dois dedos para zoom';
+    document.getElementById('mode-tip').textContent = 'Toca num país';
+    document.getElementById('mode-tip-mini').textContent = '📍 ⭐ Pins';
     return;
   }
   currentMode = mode;
   document.getElementById('btn-pin-visited').classList.toggle('active', mode === 'pin-visited');
   document.getElementById('btn-pin-wish').classList.toggle('active', mode === 'pin-wish');
+
+  // Keep toolbar open while a mode is active
+  const toolbar = document.getElementById('map-toolbar');
+  const chevron = document.getElementById('map-chevron');
+  if (toolbar) toolbar.classList.remove('collapsed');
+  if (chevron) chevron.classList.add('open');
+
   if (mode === 'pin-visited') {
-    document.getElementById('mode-tip').textContent = '📍 Toca num país ou sítio para marcar como visitado';
-    document.getElementById('map-hint').textContent = 'Modo pin ativo — toca no mapa para colocar um pin';
+    document.getElementById('mode-tip').textContent = '📍 Toca num país para marcar';
+    document.getElementById('mode-tip-mini').textContent = '📍 Ativo';
   } else {
     document.getElementById('mode-tip').textContent = '⭐ Toca num país que queres visitar';
-    document.getElementById('map-hint').textContent = 'Modo wishlist ativo — toca num país para adicionar';
+    document.getElementById('mode-tip-mini').textContent = '⭐ Ativo';
   }
 }
 
@@ -1334,7 +1504,9 @@ async function initMap() {
     if (el) el.remove();
 
     const W = wrap.offsetWidth || wrap.clientWidth || 360;
-    const H = Math.round(W * 0.62);
+    // On mobile (narrow screens) use more vertical space; on desktop keep 62%
+    const isMobile = W < 600;
+    const H = Math.round(W * (isMobile ? 0.82 : 0.62));
     wrap.style.height = H + 'px';
 
     const proj = d3.geoNaturalEarth1().scale(W / 6.28).translate([W / 2, H / 2]);
@@ -1442,6 +1614,21 @@ async function initMap() {
       const svgPos = proj(pos);
       if (!svgPos || isNaN(svgPos[0])) return;
       window._visitedLabelData.push({ id, svgPos, name });
+    });
+
+    // ── Passagem final: garantir que TODOS os países do VISITED têm entrada ──
+    // Cobre casos em que o topojson não tem a feature (países muito pequenos, etc.)
+    Object.keys(VISITED).forEach(idStr => {
+      const id = +idStr;
+      if (window._visitedLabelData.some(d => d.id === id)) return; // já existe
+      const geo = COUNTRY_LABEL_POS[id] || WORLD_CAP_POS[id] || null;
+      if (!geo) return;
+      const svgPos = proj(geo);
+      if (!svgPos || isNaN(svgPos[0])) return;
+      const info = VISITED[id];
+      const name = info.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{0,10}/gu,'').trim();
+      const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
+      window._visitedLabelData.push({ id, svgPos, name, tier });
     });
     allLabelsG = g.append('g').attr('class','all-labels-layer');
 
@@ -1713,31 +1900,73 @@ async function initMap() {
       mapWrap.appendChild(overlay);
       window._vclOverlay = overlay;
 
-      // Build divs for each label
+      // Build divs for each visited country label — bandeira standalone + label com bandeira+nome
       (window._visitedLabelData || []).forEach(({ id, name, tier }) => {
+        const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
+
+        // 1. Bandeira flutuante (zoom baixo — só bandeira, sem texto)
+        if (code) {
+          const flagEl = document.createElement('img');
+          flagEl.className = 'vcl-flag';
+          flagEl.dataset.id = id;
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.alt = name;
+          overlay.appendChild(flagEl);
+        }
+
+        // 2. Label com bandeira inline + nome (zoom alto)
         const div = document.createElement('div');
         div.className = 'vcl';
         div.dataset.id = id;
         div.dataset.tier = tier || 'small';
-        div.textContent = name;
+        if (code) {
+          const flagImg = document.createElement('img');
+          flagImg.className = 'vcl-flag-inline';
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.alt = '';
+          div.appendChild(flagImg);
+        }
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        div.appendChild(nameSpan);
         overlay.appendChild(div);
       });
 
       // Also add UK sub-nation labels
       const UK_LABELS = [
-        { name:'Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿', svgGeo:[-1.5,52.5] },
-        { name:'Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿', svgGeo:[-4.0,57.0] },
-        { name:'País de Gales 🏴󠁧󠁢󠁷󠁬󠁳󠁿', svgGeo:[-3.8,52.2] },
-        { name:'Irlanda do Norte 🇬🇧', svgGeo:[-6.5,54.7] },
+        { name:'Inglaterra', code:'gb-eng', svgGeo:[-1.5,52.5] },
+        { name:'Escócia',    code:'gb-sct', svgGeo:[-4.0,57.0] },
+        { name:'País de Gales', code:'gb-wls', svgGeo:[-3.8,52.2] },
+        { name:'Irlanda do Norte', code:'gb', svgGeo:[-6.5,54.7] },
       ];
-      UK_LABELS.forEach(({ name, svgGeo }) => {
+      UK_LABELS.forEach(({ name, code, svgGeo }) => {
         const svgPos = projRef ? projRef(svgGeo) : null;
         if (!svgPos) return;
+
+        // Bandeira flutuante UK
+        if (code) {
+          const flagEl = document.createElement('img');
+          flagEl.className = 'vcl-flag vcl-flag-uk';
+          flagEl.dataset.geo = JSON.stringify(svgGeo);
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.alt = name;
+          overlay.appendChild(flagEl);
+        }
+
+        // Label UK
         const div = document.createElement('div');
         div.className = 'vcl vcl-uk';
         div.dataset.geo = JSON.stringify(svgGeo);
-        div.textContent = name;
-        div.style.fontSize = '6px';
+        if (code) {
+          const flagImg = document.createElement('img');
+          flagImg.className = 'vcl-flag-inline';
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.alt = '';
+          div.appendChild(flagImg);
+        }
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        div.appendChild(nameSpan);
         div.style.display = 'none';
         overlay.appendChild(div);
       });
@@ -1757,9 +1986,7 @@ async function initMap() {
       const offX = sr.left - wr.left;
       const offY = sr.top  - wr.top;
 
-      // Projection may have been created with wrong dimensions (clientWidth=0 at init).
-      // Compute scale factor to map projection coords → actual SVG pixels.
-      const W_proj = projRef.translate()[0] * 2; // width used when projection was created
+      const W_proj = projRef.translate()[0] * 2;
       const H_proj = projRef.translate()[1] * 2;
       const scX = sr.width  / W_proj;
       const scY = sr.height / H_proj;
@@ -1771,26 +1998,88 @@ async function initMap() {
         ];
       }
 
-      // Main visited country labels — hide at low zoom, show when zoomed
+      // Zoom thresholds
+      const SHOW_FLAG_ONLY = k >= 1.4;   // só bandeira, sem texto
+      const SHOW_LABEL     = k >= 2.8;   // bandeira + nome
+
+      // ── Bandeiras flutuantes (só bandeira, zoom intermédio) ─────────────────
+      overlay.querySelectorAll('.vcl-flag:not(.vcl-flag-uk)').forEach(flagEl => {
+        const id = flagEl.dataset.id;
+        const entry = (window._visitedLabelData || []).find(d => String(d.id) === String(id));
+        if (!entry) { flagEl.style.display = 'none'; return; }
+        const [sx, sy] = toCSS(entry.svgPos);
+
+        // Hide when out of viewport
+        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
+          flagEl.style.display = 'none'; return;
+        }
+
+        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+
+        // Size scales with zoom: 14px at k=1.4 → 22px at k=2.8
+        const flagW = Math.round(Math.min(26, Math.max(12, 10 * k)));
+        const flagH = Math.round(flagW * 0.67);
+        flagEl.style.left   = sx + 'px';
+        flagEl.style.top    = sy + 'px';
+        flagEl.style.width  = flagW + 'px';
+        flagEl.style.height = flagH + 'px';
+        flagEl.style.display = 'block';
+      });
+
+      // ── Labels (bandeira inline + nome, zoom alto) ───────────────────────────
       (window._visitedLabelData || []).forEach(({ id, svgPos }) => {
-        const div = overlay.querySelector(`.vcl[data-id="${id}"]`);
+        const div = overlay.querySelector(`.vcl:not(.vcl-uk)[data-id="${id}"]`);
         if (!div) return;
         const [sx, sy] = toCSS(svgPos);
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
-        if (k < 2.5) { div.style.display = 'none'; return; }
+
+        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
+          div.style.display = 'none'; return;
+        }
+
         const tier = div.dataset.tier || 'small';
-        // Base sizes at k=2.5: large=9, medium=7, small=5.5
         const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
-        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.5, 0.5)));
+        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.8, 0.5)));
         div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '1px 4px' : '2px 6px';
+        div.style.padding = k < 4 ? '2px 4px 2px 2px' : '2px 5px 2px 3px';
         div.style.borderRadius = k < 4 ? '3px' : '5px';
-        div.style.display = 'block';
+        div.style.display = 'flex';
+
+        // Scale the inline flag proportionally
+        const flagImg = div.querySelector('.vcl-flag-inline');
+        if (flagImg) {
+          const flagW = Math.round(Math.min(20, Math.max(10, fs * 1.5)));
+          const flagH = Math.round(flagW * 0.67);
+          flagImg.style.width  = flagW + 'px';
+          flagImg.style.height = flagH + 'px';
+        }
       });
 
-      // UK sub-nation labels — same logic as visited country labels
-      overlay.querySelectorAll('.vcl-uk').forEach(div => {
+      // ── UK flags flutuantes ─────────────────────────────────────────────────
+      overlay.querySelectorAll('.vcl-flag.vcl-flag-uk').forEach(flagEl => {
+        const geo = JSON.parse(flagEl.dataset.geo || 'null');
+        if (!geo) return;
+        const sp = projRef(geo);
+        if (!sp || isNaN(sp[0])) return;
+        const [sx, sy] = toCSS(sp);
+
+        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
+          flagEl.style.display = 'none'; return;
+        }
+        const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
+        const flagH = Math.round(flagW * 0.67);
+        flagEl.style.left   = sx + 'px';
+        flagEl.style.top    = sy + 'px';
+        flagEl.style.width  = flagW + 'px';
+        flagEl.style.height = flagH + 'px';
+        flagEl.style.display = 'block';
+      });
+
+      // ── UK sub-nation labels ─────────────────────────────────────────────────
+      overlay.querySelectorAll('.vcl.vcl-uk').forEach(div => {
         const geo = JSON.parse(div.dataset.geo || 'null');
         if (!geo) return;
         const sp = projRef(geo);
@@ -1798,12 +2087,20 @@ async function initMap() {
         const [sx, sy] = toCSS(sp);
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
-        // Only show when zoomed in enough to read comfortably
-        if (k < 2.5) { div.style.display = 'none'; return; }
-        div.style.display = 'block';
+        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
+          div.style.display = 'none'; return;
+        }
+        div.style.display = 'flex';
         const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
         div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '1px 4px' : '2px 5px';
+        div.style.padding = k < 4 ? '1px 4px 1px 2px' : '2px 5px 2px 3px';
+        const flagImg = div.querySelector('.vcl-flag-inline');
+        if (flagImg) {
+          const flagW = Math.round(Math.min(18, Math.max(9, fs * 1.5)));
+          flagImg.style.width  = flagW + 'px';
+          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
+        }
       });
     };
 
@@ -2272,7 +2569,14 @@ function updateStats() {
   // Base: Object.keys(VISITED) has 826 (UK) as 1, but we visited 3 nations
   const baseCountries = Object.keys(VISITED).length; // e.g. 33
   // UK = +2 extra (Scotland + N.Ireland on top of England)
-  const numPaises = baseCountries + 2 + pins.filter(p => p.type === 'pin-visited' && p.countryId).length;
+  // User pins: only count distinct countryIds NOT already in VISITED
+  const visitedBaseIds = new Set(Object.keys(VISITED).map(Number));
+  const userNewCountryIds = new Set(
+    pins
+      .filter(p => p.type === 'pin-visited' && p.countryId && !visitedBaseIds.has(+p.countryId))
+      .map(p => +p.countryId)
+  );
+  const numPaises = baseCountries + 2 + userNewCountryIds.size;
 
   // Continents visited
   const VISITED_CONTINENTS = {
@@ -2309,8 +2613,18 @@ function updateStats() {
   el('stat-conts', numConts);
   el('stat-anos', numAnos);
   el('stat-destinos', numDestinos + '+');
+
+  // Dynamic header badges
   const badge = document.getElementById('hbadge-paises');
   if (badge) badge.textContent = `🌍 ${numPaises} Países`;
+  const badgeConts = document.getElementById('hbadge-conts');
+  if (badgeConts) badgeConts.textContent = `${numConts} Continentes`;
+
+  // Count Portuguese islands from PLACES
+  const ptIslands = PLACES.filter(([,,name,,isIsland]) => isIsland &&
+    (name.includes('🏝️') || name.includes('Madeira'))).length;
+  const badgeIlhas = document.getElementById('hbadge-ilhas');
+  if (badgeIlhas) badgeIlhas.textContent = `${ptIslands} Ilhas PT`;
 }
 
 
@@ -2428,16 +2742,37 @@ function openPinForm(lat, lng, type, numericId) {
   document.getElementById('pf-lat').value = lat || '';
   document.getElementById('pf-lng').value = lng || '';
   document.getElementById('pf-edit-id').value = '';
-  document.getElementById('pf-name').value = '';
   document.getElementById('pf-note').value = '';
-  document.getElementById('pf-emoji').value = '';
   document.getElementById('pf-suggestions').style.display = 'none';
-  const contSel = document.getElementById('pf-continent');
-  if (contSel) contSel.value = '';
   const seasonSel = document.getElementById('pf-season');
   if (seasonSel) seasonSel.value = '';
-  const countryIdEl = document.getElementById('pf-country-id');
-  if (countryIdEl) countryIdEl.value = '';
+
+  // Auto-fill from numericId if a country was clicked on the map
+  if (numericId) {
+    const id = +numericId;
+    // Name: prefer VISITED data, fall back to WORLD_NAMES
+    const visitedInfo = VISITED[id];
+    const rawName = visitedInfo
+      ? visitedInfo.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|🏴[\s\S]{0,10}/gu, '').trim()
+      : (WORLD_NAMES[id] || '');
+    document.getElementById('pf-name').value = rawName;
+    document.getElementById('pf-country-id').value = id;
+    // Continent
+    const continent = COUNTRY_CONTINENT[id] || '';
+    const contSel = document.getElementById('pf-continent');
+    if (contSel) contSel.value = continent;
+    // Flag code
+    const code = FLAG_CODES[id] || '';
+    document.getElementById('pf-emoji').value = code;
+  } else {
+    document.getElementById('pf-name').value = '';
+    document.getElementById('pf-emoji').value = '';
+    const contSel = document.getElementById('pf-continent');
+    if (contSel) contSel.value = '';
+    const countryIdEl = document.getElementById('pf-country-id');
+    if (countryIdEl) countryIdEl.value = '';
+  }
+
   buildYearSelect(currentPinType === 'pin-wish');
   // Sync type buttons
   document.getElementById('type-vis').className = 'type-opt' + (currentPinType === 'pin-visited' ? ' sel-visited' : '');
@@ -2492,14 +2827,79 @@ function submitPin() {
   savePins(); // async fire-and-forget
   closePinForm();
   renderMapPins();
-  renderPinsList();
+  renderPinsList();   // também chama renderUserChips → renderFlagStrip
   renderWishList();
   updateMapColors();
   updateStats();
+
+  // Bandeira no mapa + flag strip em tempo real
+  if (currentPinType === 'pin-visited' && pin.countryId) {
+    addFlagToMap(pin);
+  }
+
   showNotif(currentPinType === 'pin-visited' ? '📍 Pin guardado!' : '⭐ Adicionado à wishlist!');
 }
 
-// ─── MAP PINS RENDER ──────────────────────────────────────────────────────────
+// ─── ADICIONAR BANDEIRA AO MAPA EM TEMPO REAL ────────────────────────────────
+// Chamado depois de guardar um pin visitado — injeta a bandeira no overlay
+// sem precisar de recarregar o mapa inteiro.
+function addFlagToMap(pin) {
+  if (!projRef || !window._vclOverlay) return;
+  const id = +pin.countryId;
+  if (!id) return;
+
+  // Já existe no overlay? Não duplicar
+  if (window._vclOverlay.querySelector(`.vcl[data-id="${id}"]`)) return;
+
+  // Calcular posição SVG: usar COUNTRY_LABEL_POS se existir, senão WORLD_CAP_POS
+  let geoPos = COUNTRY_LABEL_POS[id] || null;
+  if (!geoPos && WORLD_CAP_POS[id]) geoPos = WORLD_CAP_POS[id];
+  if (!geoPos) return;
+
+  const svgPos = projRef(geoPos);
+  if (!svgPos || isNaN(svgPos[0])) return;
+
+  const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
+  const name = pin.name.replace(/[\u{1F1E0}-\u{1F1FF}]{2}|[\u{1F3F4}][\s\S]{0,10}/gu, '').trim();
+  const tier = 'small';
+
+  // Guardar nos dados para _updateVCL posicionar correctamente
+  window._visitedLabelData = window._visitedLabelData || [];
+  window._visitedLabelData.push({ id, svgPos, name, tier });
+
+  // Bandeira flutuante (zoom baixo)
+  if (code) {
+    const flagEl = document.createElement('img');
+    flagEl.className = 'vcl-flag';
+    flagEl.dataset.id = id;
+    flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+    flagEl.alt = name;
+    window._vclOverlay.appendChild(flagEl);
+  }
+
+  // Label bandeira + nome (zoom alto)
+  const div = document.createElement('div');
+  div.className = 'vcl';
+  div.dataset.id = id;
+  div.dataset.tier = tier;
+  if (code) {
+    const flagImg = document.createElement('img');
+    flagImg.className = 'vcl-flag-inline';
+    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+    flagImg.alt = '';
+    div.appendChild(flagImg);
+  }
+  const nameSpan = document.createElement('span');
+  nameSpan.textContent = name;
+  div.appendChild(nameSpan);
+  window._vclOverlay.appendChild(div);
+
+  // Forçar reposicionamento imediato com o zoom atual
+  if (window._updateVCL) {
+    const svgEl = document.querySelector('#map-wrap svg');
+    if (svgEl) window._updateVCL(d3.zoomTransform(svgEl));
+  }
+}
 function renderMapPins() {
   if (!gRef || !projRef) return;
   gRef.selectAll('.map-pin').remove();
@@ -2718,6 +3118,88 @@ function renderPinsList() {
   ` : '';
 
   visList.innerHTML = countryPinsHTML + userPinsHTML;
+
+  // Also update the chips in the list tab and the flag strip
+  renderUserChips();
+}
+
+// ─── RENDER USER PINS INTO LIST TAB CHIPS + FLAG STRIP ───────────────────────
+// Baseline counts per continent group (from the hardcoded VISITED data)
+const BASE_CONT_COUNTS = {
+  'Europa': 26, 'África': 4, 'Américas': 2,
+  'Ásia & Médio Oriente': 5, 'Oceania & Atlântico': 0,
+};
+// Maps continent value → chip container id + label id
+const CONT_TO_IDS = {
+  'Europa':               { chips: 'chips-europa',   lbl: 'lbl-europa'   },
+  'África':               { chips: 'chips-africa',   lbl: 'lbl-africa'   },
+  'América do Norte':     { chips: 'chips-americas', lbl: 'lbl-americas' },
+  'América do Sul':       { chips: 'chips-americas', lbl: 'lbl-americas' },
+  'Ásia':                 { chips: 'chips-asia',     lbl: 'lbl-asia'     },
+  'Médio Oriente':        { chips: 'chips-asia',     lbl: 'lbl-asia'     },
+  'Oceânia':              { chips: 'oceania-chips',  lbl: 'lbl-oceania'  },
+};
+
+function renderUserChips() {
+  const userVisited = pins.filter(p => p.type === 'pin-visited');
+
+  // Remove previously injected user chips from all continent containers
+  document.querySelectorAll('.chip.user-pin-chip').forEach(el => el.remove());
+  // Remove the placeholder if there are user Oceania pins
+  document.querySelectorAll('.chip.user-placeholder').forEach(el => {
+    const hasOceania = userVisited.some(p => p.continent === 'Oceânia');
+    if (hasOceania) el.remove();
+  });
+
+  // Track how many user chips per display group
+  const userCountPerGroup = {};
+
+  userVisited.forEach(p => {
+    const ids = CONT_TO_IDS[p.continent];
+    if (!ids) return; // no continent set — skip
+
+    const container = document.getElementById(ids.chips);
+    if (!container) return;
+
+    // Avoid duplicate: if a chip with same name already exists (e.g. user added same country twice), skip
+    const existing = [...container.querySelectorAll('.chip.user-pin-chip')];
+    if (existing.some(el => el.dataset.name === p.name)) return;
+
+    const code = p.emoji && p.emoji.length === 2 ? p.emoji : (FLAG_CODES[+p.countryId] || '');
+    const flagImg = code
+      ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
+      : '';
+    const chip = document.createElement('div');
+    chip.className = 'chip user-pin-chip';
+    chip.dataset.name = p.name;
+    chip.style.borderColor = 'rgba(201,149,26,0.4)';
+    chip.style.background = 'var(--gold-pale)';
+    chip.innerHTML = `${flagImg}${p.name} <span class="cy">${p.year || '—'}</span>`;
+    container.appendChild(chip);
+
+    userCountPerGroup[ids.chips] = (userCountPerGroup[ids.chips] || 0) + 1;
+  });
+
+  // Update continent label counts
+  const groupCounts = {
+    'chips-europa':   { lbl: 'lbl-europa',   base: 26, label: 'Europa' },
+    'chips-africa':   { lbl: 'lbl-africa',   base: 4,  label: 'África' },
+    'chips-americas': { lbl: 'lbl-americas', base: 2,  label: 'Américas' },
+    'chips-asia':     { lbl: 'lbl-asia',     base: 5,  label: 'Ásia & Médio Oriente' },
+    'oceania-chips':  { lbl: 'lbl-oceania',  base: 0,  label: 'Oceania & Atlântico' },
+  };
+  Object.entries(groupCounts).forEach(([chipsId, { lbl, base, label }]) => {
+    const extra = userCountPerGroup[chipsId] || 0;
+    const total = base + extra;
+    const lblEl = document.getElementById(lbl);
+    if (lblEl) {
+      const suffix = total === 1 ? 'país' : 'países';
+      lblEl.textContent = `${label} · ${total} ${suffix}`;
+    }
+  });
+
+  // Also refresh the flag strip with any new user-added countries
+  renderFlagStrip();
 }
 
 // ─── WISH CHIPS IN LIST TAB ───────────────────────────────────────────────────
@@ -3123,11 +3605,43 @@ function renderFlagStrip() {
       <div class="flag-name">${u.name}</div>
     </div>`
   ).join('');
+
+  // Append user-added visited countries (not already in SEARCH_DATA)
+  const existingIds = new Set(SEARCH_DATA.filter(d => d.type === 'visited').map(d => d.id));
+  const userCountries = pins
+    .filter(p => p.type === 'pin-visited' && p.countryId && !existingIds.has(+p.countryId))
+    .reduce((acc, p) => {
+      // Deduplicate by countryId
+      if (!acc.some(x => x.countryId === p.countryId)) acc.push(p);
+      return acc;
+    }, []);
+
+  strip.innerHTML += userCountries.map(p => {
+    const code = FLAG_CODES[+p.countryId] || '';
+    const shortName = p.name.length > 12 ? p.name.slice(0,11) + '…' : p.name;
+    if (!code) return '';
+    return `<div class="flag-item" onclick="flagStripClick(${p.countryId}, '${code}')" title="${p.name} · ${p.year || '—'}">
+      <img class="flag-img" src="https://flagcdn.com/w40/${code}.png" alt="${shortName}" loading="lazy">
+      <div class="flag-name">${shortName}</div>
+    </div>`;
+  }).join('');
 }
 
 function flagStripClick(numericId, code) {
   switchTab('map');
-  setTimeout(() => zoomToCountry(numericId, null, null), 100);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    zoomToCountry(numericId, null, null);
+    // After zoom settles, open the country sheet
+    setTimeout(() => {
+      if (numericId === 826) {
+        openUKSheet();
+      } else {
+        const info = VISITED[numericId];
+        if (info) openSheet(info, numericId);
+      }
+    }, 800);
+  }, 450);
 }
 
 // ─── NOTIFICATION ─────────────────────────────────────────────────────────────
@@ -3138,14 +3652,81 @@ function showNotif(msg) {
   setTimeout(() => el.classList.remove('show'), 2200);
 }
 
+// ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
+function exportData() {
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pins: pins,
+    wishCountries: [...wishCountriesNumeric],
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'vanbertos-passaporte-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showNotif('⬇ Dados exportados com sucesso!');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.pins || !Array.isArray(data.pins)) throw new Error('Formato inválido');
+      pins = data.pins;
+      if (Array.isArray(data.wishCountries)) {
+        wishCountriesNumeric = new Set(data.wishCountries);
+      }
+      await savePins();
+      await saveWishCountries();
+      renderMapPins();
+      renderPinsList();
+      renderWishList();
+      renderWishChips();
+      updateMapColors();
+      updateStats();
+      showNotif('⬆ ' + pins.length + ' pins importados!');
+    } catch(err) {
+      showNotif('⚠️ Erro ao importar — verifica o ficheiro');
+    }
+    input.value = ''; // reset file input
+  };
+  reader.readAsText(file);
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 async function _init() {
   await loadState();
+
+  // Show storage indicator
+  const ind = document.getElementById('storage-indicator');
+  if (ind) {
+    const hasCloud = typeof window !== 'undefined' && window.storage && typeof window.storage.set === 'function';
+    let hasLocal = false;
+    try { localStorage.setItem('__vb_t','1'); localStorage.removeItem('__vb_t'); hasLocal = true; } catch(e) {}
+    if (hasCloud) ind.textContent = '☁️ guardado na nuvem';
+    else if (hasLocal) ind.textContent = '💾 guardado neste browser';
+    else ind.textContent = '⚠️ sem armazenamento persistente';
+  }
+
   updateStats();
-  initMap(); // updateMapColors is called inside after map renders
+  await initMap();  // aguarda mapa pronto antes de injetar bandeiras
   renderPinsList();
   initSearch();
   renderFlagStrip();
+
+  // Injetar bandeiras no mapa para pins guardados anteriormente
+  // (addFlagToMap só funciona após initMap, por isso fazemos aqui)
+  requestAnimationFrame(() => {
+    pins.filter(p => p.type === 'pin-visited' && p.countryId).forEach(pin => {
+      addFlagToMap(pin);
+    });
+  });
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _init);
@@ -3161,7 +3742,15 @@ if (document.readyState === 'loading') {
   </div>
 </div>
 
-<footer><span>VanBerto's</span> · Passaporte Digital · 2007 – 2026</footer>
+<noscript>
+  <div style="text-align:center;padding:40px 20px;font-family:sans-serif;background:#f7f0e4;color:#333;">
+    <strong>🌍 VanBerto's Passaporte Digital</strong><br><br>
+    Esta aplicação requer JavaScript para funcionar.<br>
+    Por favor ativa o JavaScript no teu browser.
+  </div>
+</noscript>
+
+<footer><span>VanBerto's</span> · Passaporte Digital · 2007 – 2026 · <span id="storage-indicator" style="opacity:.6;font-size:8px;letter-spacing:1px;">💾 a verificar…</span></footer>
 
 </body>
 </html>
