@@ -757,7 +757,7 @@
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     cursor: pointer;
     padding: 5px 4px;
-    width: 52px;
+    width: 56px;
     flex-shrink: 0;
     flex-grow: 0;
     border-radius: 6px;
@@ -779,9 +779,11 @@
   }
   .flag-item:hover .flag-img { transform: scale(1.18) translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
   .flag-name {
-    font-size: 7px; color: rgba(255,255,255,0.35);
-    text-align: center; width: 44px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 6.5px; color: rgba(255,255,255,0.5);
+    text-align: center; width: 52px;
+    white-space: normal; overflow: visible;
+    word-break: break-word; hyphens: auto;
+    line-height: 1.3;
     letter-spacing: .2px;
   }
 
@@ -4227,12 +4229,27 @@ function renderFlagStrip() {
   const all = [...baseEntries, ...ukEntries, ...userEntries]
     .sort((a, b) => a.name.localeCompare(b.name, 'pt', { sensitivity: 'base' }));
 
-  // 5. Render
+  // 5. Abreviações para nomes compridos na flag strip
+  const ABBR_MAP = {
+    'Emirados Árabes': 'EAU',
+    'Países Baixos': 'P. Baixos',
+    'Irlanda do Norte': 'Irl. Norte',
+    'Macedónia do Norte': 'Mac. Norte',
+    'Cabo Verde': 'C. Verde',
+  };
+  function abbrevName(name) {
+    for (const [key, val] of Object.entries(ABBR_MAP)) {
+      if (name.includes(key)) return val;
+    }
+    return name;
+  }
+
+  // 6. Render
   strip.innerHTML = all.map(e => {
-    const shortName = e.name.length > 12 ? e.name.slice(0, 11) + '\u2026' : e.name;
+    const displayName = abbrevName(e.name);
     return `<div class="flag-item" onclick="flagStripClick(${e.id}, ${JSON.stringify(e.code)})" title="${e.name} \u00B7 ${e.year}">
-      <img class="flag-img" src="https://flagcdn.com/w40/${e.code}.png" alt="${shortName}" loading="lazy">
-      <div class="flag-name">${shortName}</div>
+      <img class="flag-img" src="https://flagcdn.com/w40/${e.code}.png" alt="${e.name}" loading="lazy">
+      <div class="flag-name">${displayName}</div>
     </div>`;
   }).join('');
 }
