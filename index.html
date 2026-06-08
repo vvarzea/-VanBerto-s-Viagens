@@ -1356,7 +1356,7 @@ const PLACES = [
   // Bélgica
   [4.35, 50.85, 'Bruxelas', true],
   // Canadá
-  [-79.38, 43.65, 'Toronto', true],
+  [-79.38, 43.65, 'Toronto', false],
   [-79.07, 43.09, 'Niagara Falls', false],
   // Cabo Verde — ilha de Santiago
   [-23.51, 14.93, 'Santiago \uD83C\uDFDD\uFE0F', true, true],
@@ -1382,7 +1382,7 @@ const PLACES = [
   // Hungria
   [19.04, 47.5, 'Budapeste', true],
   // Islândia
-  [-21.9, 64.13, 'Reykjavik', true],
+  [-21.9, 64.13, 'Reiquiavique', true],
   // Irlanda
   [-6.26, 53.33, 'Dublin', true],
   // Irlanda do Norte (UK)
@@ -1395,9 +1395,9 @@ const PLACES = [
   // Escócia (UK)
   [-3.19, 55.95, 'Edimburgo', false],
   // Marrocos
-  [-7.99, 31.63, 'Marraquexe', true],
+  [-7.99, 31.63, 'Marraquexe', false],
   // Maldivas — ilha
-  [73.51, 4.17, 'Maldivas', true, true],
+  [73.51, 4.17, 'Mal\u00E9', true, true],
   // Mónaco
   [7.42, 43.73, 'M\u00F3naco', true],
   // Noruega
@@ -1430,7 +1430,7 @@ const PLACES = [
   // Rep. Checa
   [14.42, 50.08, 'Praga', true],
   // Suíça
-  [8.55, 47.37, 'Zurique', true],
+  [8.55, 47.37, 'Zurique', false],
   // Suécia
   [18.07, 59.33, 'Estocolmo', true],
   [13.0, 55.6, 'Malm\u00F6', false],
@@ -1439,14 +1439,14 @@ const PLACES = [
   [98.39, 7.88, 'Phuket', false],
   [98.77, 7.74, 'Phi Phi \uD83C\uDFDD\uFE0F', false, true],
   // Turquia
-  [29.05, 40.99, 'Istambul', true],
+  [29.05, 40.99, 'Istambul', false],
   [34.83, 38.66, 'Capad\u00F3cia', false],
   // Etiópia
   [38.74, 9.03, 'Adis Abeba', true],
   // Emirados Árabes
   [54.37, 24.47, 'Abu Dhabi', true],
   // EUA — Nova Iorque
-  [-74.0, 40.71, 'Nova Iorque', true],
+  [-74.0, 40.71, 'Nova Iorque', false],
   // Vaticano
   [12.45, 41.9, 'Vaticano', true],
   // Sérvia
@@ -1602,7 +1602,7 @@ const WORLD_NAMES = {
   674:'S\u00E3o Marino',776:'Tonga',795:'Turquemenist\u00E3o',798:'Tuvalu',882:'Samoa',
   90:'Ilhas Salom\u00E3o',
   // Territ\u00f3rios e regi\u00f5es especiais
-  304:'Gro\u00EAnl\u00E2ndia',
+  304:'Gronelândia',
   166:'Ilhas Cocos',184:'Ilhas Cook',238:'Ilhas Malvinas',
   254:'Guiana Francesa',312:'Guadalupe',446:'Macau',474:'Martinica',
   175:'Maiote',540:'Nova Caled\u00F3nia',258:'Polin\u00E9sia Francesa',
@@ -1623,11 +1623,11 @@ const WORLD_CAPITALS = [
   [20,'Andorra la Velha',42.51,1.52],[24,'Luanda',-8.84,13.23],
   [32,'Buenos Aires',-34.61,-58.38],[36,'Camberra',-35.28,149.13],
   [40,'Viena',48.21,16.37],[31,'Baku',40.41,49.87],[44,'Nassau',25.04,-77.36],
-  [48,'Manama',26.22,50.59],[50,'Dacca',23.72,90.41],[52,'Bridgetown',13.10,-59.62],
+  [48,'Manama',26.22,50.59],[50,'Daca',23.72,90.41],[52,'Bridgetown',13.10,-59.62],
   [56,'Bruxelas',50.85,4.35],[84,'Belmopan',17.25,-88.77],[204,'Porto-Novo',6.37,2.62],
   [64,'Thimphu',27.47,89.64],[68,'Sucre',-19.05,-65.26],[70,'Sarajevo',43.85,18.36],
   [72,'Gaborone',-24.65,25.91],[76,'Bras\u00EDlia',-15.78,-47.93],[96,'Bandar Seri Begawan',4.94,114.95],
-  [100,'S\u00F3fia',42.70,23.32],[854,'Ouagadougou',12.37,-1.53],[108,'Bujumbura',-3.38,29.36],
+  [100,'S\u00F3fia',42.70,23.32],[854,'Ouagadougou',12.37,-1.53],[108,'Gitega',-3.43,29.92],
   [116,'Phnom Penh',11.57,104.92],[120,'Iacund\u00EA',3.87,11.52],[124,'Otava',45.42,-75.70],
   [140,'Bangui',4.36,18.55],[144,'Colombo',6.93,79.85],[148,'Ndjam\u00E9na',12.10,15.04],
   [152,'Santiago',-33.46,-70.65],[156,'Pequim',39.91,116.39],[170,'Bogot\u00E1',4.71,-74.07],
@@ -1679,6 +1679,8 @@ const WORLD_CAPITALS = [
   [336,'Cidade do Vaticano',41.90,12.45],[372,'Dublin',53.33,-6.26],
   [462,'Mal\u00E9',4.17,73.51],[492,'M\u00F3naco',43.73,7.42],
   [504,'Rabat',34.01,-6.85],
+  // Gronelândia
+  [304,'Nuque',64.18,-51.73],
 ];
 
 // ─── ISO numeric → alpha-2 code (para bandeiras) ─────────────────────────────
@@ -2294,6 +2296,46 @@ async function initMap() {
         div.style.display = 'none';
         overlay.appendChild(div);
       });
+
+      // ── Ilhas Portuguesas — bandeiras regionais dos Açores e Madeira ─────────
+      const PT_ISLAND_LABELS = [
+        // Açores (bandeira regional pt-20)
+        { name:'São Miguel',   code:'pt-20', geo:[-25.67,37.74] },
+        { name:'Terceira',     code:'pt-20', geo:[-27.22,38.65] },
+        { name:'Faial',        code:'pt-20', geo:[-28.04,38.53] },
+        { name:'Pico',         code:'pt-20', geo:[-28.33,38.47] },
+        { name:'Flores',       code:'pt-20', geo:[-31.11,39.45] },
+        { name:'Graciosa',     code:'pt-20', geo:[-28.97,39.09] },
+        { name:'Santa Maria',  code:'pt-20', geo:[-25.17,36.97] },
+        { name:'Corvo',        code:'pt-20', geo:[-31.13,39.67] },
+        { name:'São Jorge',    code:'pt-20', geo:[-28.72,38.65] },
+        // Madeira (bandeira regional pt-30)
+        { name:'Madeira',      code:'pt-30', geo:[-16.91,32.65] },
+      ];
+      PT_ISLAND_LABELS.forEach(({ name, code, geo }) => {
+        // Bandeira flutuante ilha
+        const flagEl = document.createElement('img');
+        flagEl.className = 'vcl-flag vcl-flag-island';
+        flagEl.dataset.geo = JSON.stringify(geo);
+        flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+        flagEl.alt = name;
+        overlay.appendChild(flagEl);
+
+        // Label ilha: bandeira + nome
+        const div = document.createElement('div');
+        div.className = 'vcl vcl-island';
+        div.dataset.geo = JSON.stringify(geo);
+        const flagImg = document.createElement('img');
+        flagImg.className = 'vcl-flag-inline';
+        flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+        flagImg.alt = '';
+        div.appendChild(flagImg);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        div.appendChild(nameSpan);
+        div.style.display = 'none';
+        overlay.appendChild(div);
+      });
     })();
 
     // ── HTML overlay for ALL countries (flag + name, same system as visited) ──
@@ -2470,6 +2512,46 @@ async function initMap() {
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
           div.style.display = 'none'; return;
         }
+        div.style.display = 'flex';
+        const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
+        div.style.fontSize = fs + 'px';
+        div.style.padding = k < 4 ? '1px 4px 1px 2px' : '2px 5px 2px 3px';
+        const flagImg = div.querySelector('.vcl-flag-inline');
+        if (flagImg) {
+          const flagW = Math.round(Math.min(18, Math.max(9, fs * 1.5)));
+          flagImg.style.width  = flagW + 'px';
+          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
+        }
+      });
+
+      // ── Ilhas Portuguesas — bandeiras flutuantes e labels ───────────────────────
+      overlay.querySelectorAll('.vcl-flag.vcl-flag-island').forEach(flagEl => {
+        const geo = JSON.parse(flagEl.dataset.geo || 'null');
+        if (!geo) return;
+        const sp = projRef(geo);
+        if (!sp || isNaN(sp[0])) return;
+        const [sx, sy] = toCSS(sp);
+        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
+        const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
+        const flagH = Math.round(flagW * 0.67);
+        flagEl.style.left   = sx + 'px';
+        flagEl.style.top    = sy + 'px';
+        flagEl.style.width  = flagW + 'px';
+        flagEl.style.height = flagH + 'px';
+        flagEl.style.display = 'block';
+      });
+
+      overlay.querySelectorAll('.vcl.vcl-island').forEach(div => {
+        const geo = JSON.parse(div.dataset.geo || 'null');
+        if (!geo) return;
+        const sp = projRef(geo);
+        if (!sp || isNaN(sp[0])) return;
+        const [sx, sy] = toCSS(sp);
+        div.style.left = sx + 'px';
+        div.style.top  = sy + 'px';
+        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
         div.style.display = 'flex';
         const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
         div.style.fontSize = fs + 'px';
