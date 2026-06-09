@@ -4425,799 +4425,6 @@ function importData(input) {
 // ─── GUIDES DATA ──────────────────────────────────────────────────────────────
 const GUIDES_DATA = [
   {
-    id: 'atenas', name: 'Atenas', country: 'Gr\u00E9cia', flagCode: 'gr', countryId: 300,
-    sub: 'Gr\u00E9cia \u00B7 Ver\u00E3o 2019',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Monte Licabeto',
-        'Acr\u00F3pole \u2014 Partenon, Erecteion, Teatro de Dion\u00EDsio, Ode\u00E3o de Herodes \u00C1tico',
-        '\u00C1gora Romana',
-        '\u00C1gora de Atenas + Templo de Hefesto',
-        'Biblioteca de Adriano',
-        'Pra\u00E7a Sintagma',
-        'National Garden + Zappeion + Parlamento',
-        'Est\u00E1dio Panatenaico',
-        'Templo de Zeus Ol\u00EDmpico',
-        'Arco de Adriano',
-        'Plaka',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Airotel Alexandros',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Karamanlidika',
-        'Tavern Klimataria',
-        'Atitamos',
-      ]},
-    ]
-  },
-  {
-    id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
-    sub: 'Espanha \u00B7 2023 P\u00E1scoa',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Plaça d\'Espanya',
-        'Praça da Catalunha',
-        'La Rambla',
-        'Catedral de Barcelona',
-        'La Boqueria',
-        'Monumento a Colón',
-        'Sagrada Família',
-        'Igreja de Santa Maria do Mar',
-        'Parc de la Ciutadella',
-        'Arco do Triunfo de Barcelona',
-        'Casa Milá',
-        'Casa Batló',
-        'Fonte Mágica de Montjuïc',
-        'Plaça d’Espanya',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'B Hotel',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Colom Restaurant',
-        'Honest Greens Rambla Catalunya',
-        'La Gastronomica Burgers&Beers',
-        'El Desván Barcelona',
-        'Micu Maku',
-      ]},
-    ]
-  },
-  {
-    id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
-    sub: 'Alemanha \u00B7 Ver\u00E3o 2019',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Palácio do Reichstag',
-        'Portão de Brandemburgo',
-        'Madame Tussaud Berlim',
-        'Memorial aos Judeus Mortos da Europa',
-        'Potsdamer Platz',
-        'Topografia do Terror (Museu histórico de Berlim)',
-        'Checkpoint Charlie',
-        'Gendarmenmarkt',
-        'Ilha dos Museus (Museu De Pergamón, Catedral de Berlim)',
-        'Siegessäule (Monumento em Berlim)',
-        'Großer Tiergarten',
-        'Berliner Fernsehturm (Torre de TV de Berlim)',
-        'Alexanderplatz',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'H4 Hotel',
-        'H+ Hotel Berlin Mitte',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Zur Gerichtslaube',
-        'Dicke Wirtin',
-        'Max und Moritz',
-      ]},
-    ]
-  },
-  {
-    id: 'cabo-verde', name: 'Santiago \u2014 Cabo Verde', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
-    sub: 'Cabo Verde \u00B7 2024 P\u00E1scoa',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Rock of Praia',
-        'Praça Alexandre Albuquerque',
-        'Praia de São Francisco',
-        'Cruz de Papa – Miradouro',
-        'Quebra Canela (Praia)',
-        'Katchás',
-        'Praia dos Amores',
-        'Tarrafal',
-        'Parque Natural Serra Malagueta',
-        'Cidade Velha',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'Hotel Cesaria',
-        'Hotel Vista Mar',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Quintal da Música',
-        'Linha d\'Água',
-        'Alto Mira',
-        'Hamburgueria B. Burguer',
-      ]},
-    ]
-  },
-  {
-    id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
-    sub: 'Pol\u00F3nia \u00B7 Natal 2023',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Galeria Krakowska',
-        'Planty',
-        'Old Kleparz',
-        'Florian\'s Gate',
-        'Floriańska Street',
-        'Rynek Główny',
-        'Basílica de Santa Maria',
-        'Museu MNK Sukiennice',
-        'Rua Grodzka',
-        'Igreja de São Pedro e São Paulo',
-        'Castelo Real de Wawel',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Chimney Cake Bakery',
-        'Moaburger',
-        'GOGO Burger',
-      ]},
-    ]
-  },
-  {
-    id: 'istambul', name: 'Istambul', country: 'Turquia', flagCode: 'tr', countryId: 792,
-    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Parque Gülhane + Palácio de Topkapı',
-        'Santa Sofia + Igreja de Santa Irene',
-        'Mesquita Azul + Hipódromo de Constantinopla (Praça do Hipódromo)',
-        'Coluna de Constantino',
-        'Mesquita de Nuruosmaniye',
-        'Grande Bazar',
-        'Beyazit Square + Mesquita de Beyazid',
-        'Mesquita de Laleli',
-        'Fatih Mosque',
-        'Mesquita Süleymaniye',
-        'Mesquita de Rüstem Paxá + Bazar das Especiarias + Mesquita Yeni',
-        'Ponte de Gálata + Torre de Gálata',
-        'Rua Istklal',
-        'Taksim Square + Parque Taksim Gezi',
-        'Palácio Dolmabahçe',
-        'Yıldız Park',
-        'Ortaköy Square + Mesquita de Ortaköy',
-        'Ponte do Bósforo + Palácio de Beylerbeyi',
-        'Shemsi Pasha Mosque',
-        'Uskudar Coast Walkway',
-        'Torre de Leandro',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'Hotel Black Tulip',
-        'Villa Siesta Hotel Istanbul Airport',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Ziya Baba Türk',
-        'Ortaklar Kebap',
-        'Münhani Istanbul',
-        'Old Ottoman Cafe & Restaurant',
-      ]},
-    ]
-  },
-  {
-    id: 'madeira', name: 'Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'Portugal \u00B7 Madeira \u00B7 Maio 2023',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Miradouro Cristo Rei',
-        'Mercado dos Lavradores',
-        'Associação dos Carreiros do Monte',
-        'Centro da Cidade do Funchal',
-        'Marina do Funchal',
-        'CR7 Museu',
-        'Miradouro Pico do Barcelos',
-        'Cabo Girão Skywalk',
-        'Cascata dos Anjos',
-        'Miradouro Eira do Serrado',
-        'Miradouros do Paredão',
-        'Miradouro do Pico do Areeiro',
-        'Levada dos Balcões + Miradouro',
-        'Miradouro do Guindaste',
-        'Casas Típicas de Santana',
-        'Pico Ruivo',
-        'Miradouro da Beira da Quinta',
-        'Miradouro do Véu da Noiva',
-        'Praia do Porto do Seixal',
-        'Miradouro da Eira da Achada',
-        'Piscinas Naturais – Porto Moniz',
-        'Ponta de São Lourenço',
-        'Praia de Machico',
-        'Madeira Cablecar',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'Eira do Serrado - Hotel & Spa',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'La Vaca Negra – Funchal',
-        'Rei da Poncha - Funchal',
-        'Restaurante Alta Vista – Funchal',
-        'Hamburgueria do Mercado - Funchal',
-        'O.Giro Churros & Paninis - Funchal',
-        'Restaurante Santo António - Câmara de Lobos',
-        'Sea View Restaurante – Porto Moniz',
-      ]},
-    ]
-  },
-  {
-    id: 'madrid', name: 'Madrid', country: 'Espanha', flagCode: 'es', countryId: 724,
-    sub: 'Espanha \u00B7 2025 Natal',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Templo de Debod',
-        'Gran Vía',
-        'Plaza del Callao',
-        'C. de Preciados',
-        'Puerta del Sol',
-        'Plaza Mayor',
-        'Catedral de Santa María a Real de la Almudena',
-        'Palácio Real',
-        'Mercado de São Miguel',
-        'Edifício Metrópolis',
-        'Parque do Retiro',
-        'Estádio Santiago Bernabéu',
-        'Museu do Prado',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'Hotel Riu Plaza España',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Tapa Tapa Montera',
-        'Grosso Napoletano',
-        'Casa Garcia',
-        'Chocolateria San Ginés',
-        'New York Burger',
-        'Scarlett Atocha',
-      ]},
-    ]
-  },
-  {
-    id: 'porto', name: 'Porto', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'Portugal \u00B7 2025 Ver\u00E3o',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
-        'Mercado do Bolh\u00E3o (seg 08h\u201320h)',
-        'C\u00E2mara Municipal do Porto',
-        'Avenida dos Aliados',
-        'McDonald\u2019s Imperial (imperd\u00EDvel!)',
-        'Esta\u00E7\u00E3o de S\u00E3o Bento',
-        'S\u00E9 do Porto (catedral)',
-        'Ponte Lu\u00EDs I',
-        'Ribeira do Porto',
-        'Igreja dos Cl\u00E9rigos + Torre dos Cl\u00E9rigos (10\u20AC, ap\u00F3s 19h s\u00E3o 5\u20AC)',
-        'Livraria Lello (10\u20AC)',
-        'Rua de Santa Catarina',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Yotel Porto',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Inova Trindade',
-        'Bras\u00E3o Coliseu \u2014 francesinhas',
-        'Casa Guedes Rooftop',
-        'Cana Verde',
-        'A Despensa',
-        'Pizzeria Bella Mia!',
-      ]},
-    ]
-  },
-  {
-    id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
-    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2016',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Piazza del Popolo',
-        'Piazza di Spagna',
-        'Fontana di Trevi',
-        'Coliseu',
-        'Fórum Romano',
-        'Bocca della Verità',
-        'Ponte Sant\'Angelo',
-        'Piazza Navona',
-        'Panteão',
-        'Vaticano (Museus do Vaticano, Praça de São Pedro, Basílica de São Pedro)',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'Hotel San Paolo Roma',
-        'Hotel Varese',
-        'Hotel Argentina',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Ristorante Luigi, Cantina e Cucina',
-        'Pane e Salame (paninis)',
-        'Sfizio Pizzeria (pizzaria)',
-        'La Nuova Piazzetta',
-        'Cantina e Cucina (italiano), próximo da Piazza Navona',
-      ]},
-    ]
-  },
-  {
-    id: 'sao-miguel', name: 'S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'A\u00E7ores \u00B7 S\u00E3o Miguel \u00B7 2014, 2018, 2021, 2024',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Oeste', items: [
-        'Lagoa das Sete Cidades \u2014 imperd\u00EDvel',
-        'Miradouro da Vista do Rei (vista das Sete Cidades)',
-        'Miradouro da Grota do Inferno',
-        'Lagoa do Fogo',
-        'Ch\u00E1 Gorreana \u2014 F\u00E1brica (a mais antiga da Europa)',
-      ]},
-      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Este', items: [
-        'Parque Terra Nostra (termas, entrada ~5\u20AC)',
-        'Fumarolas + Lagoa das Furnas',
-        'Po\u00E7a da Dona Beija (termas ao ar livre)',
-        'Centro de Interpreta\u00E7\u00E3o Ambiental da Caldeira Velha',
-        'Miradouro do Tanque \u2014 vista Ilh\u00E9u Vila Franca do Campo',
-      ]},
-      { title: '\uD83D\uDDFA\uFE0F Ponta Delgada', items: [
-        'Portas da Cidade',
-      ]},
-      { title: '\uD83C\uDFE8 Hoteis', items: [
-        'Hotel Lince',
-        'NEAT Hotel Avenida',
-        'Azoris Royal Garden',
-        'Casa das Arcadas',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Parque Atl\u00E2ntico (centro comercial)',
-        'A Tasca',
-        'Supl\u00E9xio',
-        'Quinta dos A\u00E7ores',
-        'Restaurante Associa\u00E7\u00E3o Agr\u00EDcola de S\u00E3o Miguel',
-      ]},
-    ]
-  },
-  {
-    id: 'toronto', name: 'Toronto & Ni\u00E1gara', country: 'Canad\u00E1', flagCode: 'ca', countryId: 124,
-    sub: 'Canad\u00E1 \u00B7 Ver\u00E3o 2023',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Niagara Falls',
-        'Ripley\'s Aquarium of Canada',
-        'Roundhouse Park',
-        'Toronto Islands',
-        'Torre CN',
-        'Berczy Park',
-        'Gooderham Building',
-        'St. Lawrence Market',
-        'Distillery District',
-        'Nathan Phillips Square',
-        'Toronto Eaton Centre',
-        'Dundas Square',
-        'Toronto Public Library',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'The Rex Hotel Jazz and Blues Bar',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Queen Street Warehouse',
-        'Poke Guys',
-        'Chick-fil-A',
-        'Five Guys',
-        'Niagara Fallsview Casino Resort',
-      ]},
-    ]
-  },
-  {
-    id: 'varsovia', name: 'Vars\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
-    sub: 'Pol\u00F3nia \u00B7 2023 Natal',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Warsaw Uprising Museum',
-        'plac Zamkowy (Castle Square) + Coluna de Zygmunt',
-        'Praça do Mercado da Cidade Velha de Varsóvia',
-        'Museum of Warsaw',
-        'Warsaw Barbican',
-        'Vistula Boulevards',
-        'Palácio da Cultura e Ciência',
-        'Centro comercial Złote Tarasy',
-        'Parque Łazienki',
-        'Nowy Swiat (Rua)',
-        'Museum of Fryderyk Chopin in Warsaw',
-        'Palácio Presidencial',
-        'Igreja de Santa Ana',
-        'Castelo Real de Varsóvia',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'Hotel NYX',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        '"Sushi Złota" Złote Tarasy',
-        'Chocolate Cafe E.Wedel',
-        'Barn Burger',
-        'Gościniec Polskie Pierogi',
-        'Manekin',
-      ]},
-    ]
-  },
-  {
-    id: 'veneza', name: 'Veneza', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
-    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2019',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Grande Canal de Veneza de Barco',
-        'Passeio de Gondola',
-        'Ponte da Constituição',
-        'Ponte dos descalços',
-        'Palácio Ca\' Pesaro',
-        'Palácio Ca\' d\'Oro + Ca\' Sagredo Hotel',
-        'Mercado de Rialto + Ponte de Rialto + Riva degli Vin (zona) + Fondaco dei Tedeschi',
-        'Igreja de Santa Maria dos Milagres',
-        'Basílica de São João e São Paulo',
-        'Libreria Acqua Alta (livraria)',
-        'Arsenal de Veneza',
-        'Igreja de São Zacarias',
-        'Palácio Ducal',
-        'Basílica de São Marcos',
-        'Praça de São Marcos + Campanário de São Marcos + Torre do relógio de São Marcos',
-        'Ponte da Academia',
-        'Basílica de Santa Maria della Salute + Punta della Dogana',
-        'Academia de Belas Artes de Veneza (museu)',
-        'Ca\' Rezzonico + Palazzo Grassi',
-        'Basílica de Santa Maria Gloriosa dei Frari + Scuola Grande di San Rocco',
-        'Ilhas de Murano e Burano',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'Antony Hotel - Venice Airport',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Ristorante Due Fratelli',
-        'Bacaro Quebrado',
-        'Ostaria dai Zemei',
-        'Hostaria Osottoosopra',
-        'Ristorante Caffè Saraceno',
-        'Trattoria Al Gazzettino',
-        'La Bottiglia (paninis)',
-        'Osteria Al Squero',
-        'Bacaro Risorto Castello',
-      ]},
-    ]
-  },
-  {
-    id: 'capadocia', name: 'Capad\u00F3cia', country: 'Turquia', flagCode: 'tr', countryId: 792,
-    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
-    sections: [
-      { title: '\uD83C\uDF0B Locais visitados', items: [
-        'Cappadocia Hot Air Balloon',
-        'Pigeon Valley',
-        'Zelve Open Air Museum',
-        'Goreme Historical National Park',
-        'Uchisar Castle',
-        'Goreme Open Air Museum',
-        'Fairy Chimneys',
-        'Rose Valley',
-        'Ortahisar Castle',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Termessos Hotel',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Rocks Terrace Restaurant',
-        'Sedef',
-        'Kapadokya Kebapzade',
-      ]},
-    ]
-  },
-  {
-    id: 'bangkok', name: 'Bangkok', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
-    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'The Grand Palace',
-        'Wat Arun',
-        'Wat Pho',
-        'Wat Mangkon Kamalawat',
-        'Chinatown (Yaowarat Rd)',
-        'Buda de Ouro',
-        'Centro comercial ICONSIAM',
-        'King Power Mahanakhon',
-        'centralwOrld',
-        'Siam Paragon',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'Hotel Eastin Grand Hotel Phayathai',
-        'The Park Nine Hotel Suvarnabhumi',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Pop A Bowl',
-        'Rongros',
-        'Centro comercial ICONSIAM',
-        'Hua Seng Hong Restaurant',
-        'Odean Noodle',
-        'The Cheesecake Factory',
-        'Siam Paragon Food Court',
-      ]},
-    ]
-  },
-  {
-    id: 'phuket', name: 'Phuket', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
-    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
-    sections: [
-      { title: '\uD83C\uDFD6\uFE0F Locais visitados', items: [
-        'Patong',
-        'Bangla Road',
-        'Praia de Patong (Parasailing)',
-        'Tour ilhas Phi Phi',
-        'Tour Santu\u00E1rio de Elefantes',
-        'Tour ilha James Bond',
-      ]},
-      { title: '\uD83C\uDFE8 Hoteis', items: [
-        'Hotel Clover Patong Phuket \u2013 SHA Plus',
-        'Panphuree Residence \u2013 SHA Extra Plus',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'GlowBloom',
-        'Siam Thai Restaurant',
-        'SIAM Phuket \u2013 Seafood Restaurant',
-        'Da Mario Patong Bangla Rd',
-        'Eurothai Restaurant',
-        'Medusa Patong Restaurant',
-      ]},
-    ]
-  },
-  {
-    id: 'catar', name: 'Catar', country: 'Catar', flagCode: 'qa', countryId: 634,
-    sub: 'Catar \u00B7 Ver\u00E3o 2024',
-    sections: [
-      { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
-        'Villagio Mall',
-        'Saf\u00E1ri no deserto com sandboard, passeio de camelo e mar interior',
-        'Souq Waqif',
-        'Doha Corniche',
-        'The Pearl Monument',
-        'Doha Skyline Viewpoint',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Shake Shack',
-        'The Cheesecake Factory',
-        'Outback Steakhouse',
-      ]},
-    ]
-  },
-  {
-    id: 'edimburgo', name: 'Edimburgo', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
-    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Museum of Edinburgh',
-        'George St, Castle St, Cockburn St, Victoria St',
-        'Royal Mile',
-        'Edinburgh Christmas Market',
-        'Catedral de Santo Eg\u00EDdio',
-        'Grassmarket',
-        'National Museum of Scotland',
-        'Castelo de Edimburgo',
-        'National Galleries of Scotland',
-        'Scott Monument',
-        'The Balmoral',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Hotel hub by Premier Inn Edinburgh Royal Mile Hotel',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Oink Victoria Street',
-        'KauKau Poke',
-        'Minami',
-        'Waverley Market',
-        'Five Guys',
-      ]},
-    ]
-  },
-  {
-    id: 'glasgow', name: 'Glasgow', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
-    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'George Square',
-        'Gallery of Modern Art',
-        'Singl-end Merchant City',
-        'Fellow Glasgow Residents Mural Street Art',
-        'Argyle St, St Enoch Sq, Buchanan St, Sauchiehall St',
-        'Kelvingrove Park, Stewart Memorial Fountain',
-        'Museu e Galeria de Arte de Kelvingrove',
-        'Riverside Museum',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Paesano Pizza',
-        'Rice Time',
-        'Akiko (vegan)',
-        'Five Guys',
-      ]},
-    ]
-  },
-  {
-    id: 'marraquexe', name: 'Marraquexe', country: 'Marrocos', flagCode: 'ma', countryId: 504,
-    sub: 'Marrocos \u00B7 P\u00E1scoa 2023',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Jemaa el-Fnaa',
-        'Souk Semmarine (Mercado)',
-        'Rahba Lakdima (Pra\u00E7a)',
-        'Madrasa Ben Youssef',
-        'Souk des teinturiers',
-        'Place des Ferblantiers',
-        'Mosqu\u00E9e de la Koutoubia',
-        'Tour deserto Agafay',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'BnB Medina',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Nomad',
-        'Medina Burger',
-        'Caf\u00E9 Babouche Medina',
-        'Naranj Libanese',
-        'La Cantine des Gazelles',
-      ]},
-    ]
-  },
-  {
-    id: 'marselha', name: 'Marselha', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
-    sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Centre de la Vieille Charit\u00E9',
-        'Le Panier',
-        'Catedral de Marselha',
-        'Landmark \u201CMarseille\u201D',
-        'Le Vieux Port',
-        'Pal\u00E1cio Longchamp',
-        'Notre-Dame de la Garde',
-        'Plage des Catalans',
-        'Palais du Pharo',
-        'Parc \u00C9mile Duclaux',
-        'A \u201CEscadaria\u201D Art\u00EDstica: Escaliers du Cours Julien',
-        'Avenida La Canebière',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Residhome Marseille',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Splendido',
-        'Black \u0026 White Burger Marseille Terrasses du Port',
-        'POKAWA Poke Bowls',
-        'Lunicco \u2013 Bourse',
-        'Yaki\u0026Soba \u2013 Restaurant Joliette',
-      ]},
-    ]
-  },
-  {
-    id: 'monaco', name: 'M\u00F3naco', country: 'M\u00F3naco', flagCode: 'mc', countryId: 492,
-    sub: 'M\u00F3naco \u00B7 P\u00E1scoa 2026',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Pal\u00E1cio do Pr\u00EDncipe de M\u00F3naco',
-        'Catedral de S\u00E3o Nicolau',
-        'Vista panor\u00E2mica do M\u00F3naco, 32 Rue des Remparts',
-        'Private Cars Collection of HSH Prince of Monaco',
-        'Casino de Monte Carlo',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Steak \'n Shake',
-        'Smash Club Monaco',
-      ]},
-    ]
-  },
-  {
-    id: 'nice', name: 'Nice', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
-    sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Avenue Jean M\u00E9decin',
-        'Bas\u00EDlica Notre-Dame de l\u2019Assomption',
-        'Place Mass\u00E9na',
-        'Fonte do Sol',
-        'Promenade du Paillon',
-        'Letreiro #ILoveNICE',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Pitaya Tha\u00EF Street Food Nice Jean M\u00E9decin',
-        'Mas Sushi \u0026 Poke Bowl',
-        'Casa Leya',
-      ]},
-    ]
-  },
-  {
-    id: 'irlanda-dublin', name: 'Irlanda \u2014 Dublin', country: 'Irlanda', flagCode: 'ie', countryId: 372,
-    sub: 'Irlanda \u00B7 P\u00E1scoa 2025',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'The Church Caf\u00E9 & Restaurant',
-        'GPO Witness History Visitor Centre',
-        'Monumento O\u2019Connell',
-        'Trinity College',
-        'Galeria Nacional da Irlanda',
-        'Museu Nacional da Irlanda',
-        'Grafton St, George\u2019s St',
-        'Molly Malone Statue',
-        'The Temple Bar',
-        'Ha\u2019penny Bridge',
-        'Destilaria de Old Jameson',
-        'Dublinia',
-        'Christ Church Cathedral',
-        'Catedral St. Patrick\u2019s',
-        'Castelo de Dublin',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Ruby Molly Hotel Dublin by IHG',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Temple Bar',
-        'Five Guys',
-        'Bunsen',
-        'Wok In',
-        'Japanese Kitchen by J2 Sushi',
-      ]},
-    ]
-  },
-  {
-    id: 'irlanda-do-norte', name: 'Irlanda do Norte', country: 'Reino Unido', flagCode: 'gb-nir', countryId: 826,
-    sub: 'Reino Unido \u00B7 P\u00E1scoa 2025',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Castelo de Dunluce',
-        'Giant\u2019s Causeway',
-        'Museu do Titanic',
-        'Black Taxi Tour',
-        'Catedral de Santa Ana',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'The Nook',
-      ]},
-    ]
-  },
-  {
-    id: 'nova-iorque', name: 'Nova Iorque', country: 'EUA', flagCode: 'us', countryId: 840,
-    sub: 'EUA \u00B7 Ver\u00E3o 2023',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Times Square',
-        'Statue of Liberty',
-        'Touro de Wall Street',
-        'Trinity Church',
-        'Brooklyn Bridge',
-        'Central Park',
-        'Broadway (Radio City Music Hall)',
-        'Empire state Building',
-        'St. Patrick\'s Cathedral',
-        'Museum of Modern Art (MoMA)',
-        'American Museum of Natural History',
-        'Madame Tussauds',
-        'Top of the Rock – Rockefeller Center',
-        'Chrysler Building',
-        'Estação Grand Central',
-        'Biblioteca Pública de Nova Iorque',
-        'Madison Square Park',
-        'Chinatown',
-        'Little Italy',
-        'Cruzeiro Harbor Lights da Circle Line',
-        '1 day Hop-on Hop-Off',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'Cambria Hotel New York - Chelsea',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Poke Bowl',
-        'Joe\'s Pizza',
-        'Fried Dumpling 106 Mosco St',
-        'John\'s of Bleecker Street',
-        'Bleecker Street Pizza',
-        'Wasabi Sushi & Bento',
-        'Five Guys',
-        'Ben & Jerry\'s',
-      ]},
-    ]
-  },
-  {
     id: 'londres', name: 'Londres', country: 'Reino Unido', flagCode: 'gb', countryId: 826,
     sub: 'Reino Unido \u00B7 P\u00E1scoa 2014',
     sections: [
@@ -5260,6 +4467,42 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'sao-miguel', name: 'S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'A\u00E7ores \u00B7 S\u00E3o Miguel \u00B7 2014, 2018, 2021, 2024',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Oeste', items: [
+        'Lagoa das Sete Cidades \u2014 imperd\u00EDvel',
+        'Miradouro da Vista do Rei (vista das Sete Cidades)',
+        'Miradouro da Grota do Inferno',
+        'Lagoa do Fogo',
+        'Ch\u00E1 Gorreana \u2014 F\u00E1brica (a mais antiga da Europa)',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Este', items: [
+        'Parque Terra Nostra (termas, entrada ~5\u20AC)',
+        'Fumarolas + Lagoa das Furnas',
+        'Po\u00E7a da Dona Beija (termas ao ar livre)',
+        'Centro de Interpreta\u00E7\u00E3o Ambiental da Caldeira Velha',
+        'Miradouro do Tanque \u2014 vista Ilh\u00E9u Vila Franca do Campo',
+      ]},
+      { title: '\uD83D\uDDFA\uFE0F Ponta Delgada', items: [
+        'Portas da Cidade',
+      ]},
+      { title: '\uD83C\uDFE8 Hoteis', items: [
+        'Hotel Lince',
+        'NEAT Hotel Avenida',
+        'Azoris Royal Garden',
+        'Casa das Arcadas',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Parque Atl\u00E2ntico (centro comercial)',
+        'A Tasca',
+        'Supl\u00E9xio',
+        'Quinta dos A\u00E7ores',
+        'Restaurante Associa\u00E7\u00E3o Agr\u00EDcola de S\u00E3o Miguel',
+      ]},
+    ]
+  },
+  {
     id: 'paris', name: 'Paris', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
     sub: 'Fran\u00E7a \u00B7 Ver\u00E3o 2015',
     sections: [
@@ -5296,47 +4539,32 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'adis-abeba', name: 'Adis Abeba', country: 'Eti\u00F3pia', flagCode: 'et', countryId: 231,
-    sub: 'Eti\u00F3pia \u00B7 Ver\u00E3o 2015',
+    id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
+    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2016',
     sections: [
       { title: '🗺️ Locais visitados', items: [
-        'Museu Nacional da Etiópia',
-        'Catedral da Santíssima Trindade (Holy Trinity Cathedral)',
-        'Addis Mercato (Mercato)',
-        'Monte Entoto',
-        'Bole Airport Roundabout',
+        'Piazza del Popolo',
+        'Piazza di Spagna',
+        'Fontana di Trevi',
+        'Coliseu',
+        'Fórum Romano',
+        'Bocca della Verità',
+        'Ponte Sant\'Angelo',
+        'Piazza Navona',
+        'Panteão',
+        'Vaticano (Museus do Vaticano, Praça de São Pedro, Basílica de São Pedro)',
       ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'ADD Restaurant',
-        'TinyTalian',
-        'Jegol',
-        'Ta\'em Cultural Restaurant',
-        'Asian Bay',
+      { title: '🏨 Hoteis', items: [
+        'Hotel San Paolo Roma',
+        'Hotel Varese',
+        'Hotel Argentina',
       ]},
-    ]
-  },
-  {
-    id: 'bruxelas', name: 'Bruxelas', country: 'B\u00E9lgica', flagCode: 'be', countryId: 56,
-    sub: 'B\u00E9lgica \u00B7 Ver\u00E3o 2017',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Atomium',
-        'Parque do Cinquentenário',
-        'European Parliament',
-        'Palácio Real de Bruxelas',
-        'Catedral de São Miguel e Santa Gudula',
-        'Manneken Pis',
-        'Mont des Arts',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Hotel Ibis Brussels Centre Gare Midi',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Mammouth',
-        'Bia Mara',
-        'Exki',
-        'L\'Express',
-        'Tonton Garby',
+      { title: '🍴 Restaurantes', items: [
+        'Ristorante Luigi, Cantina e Cucina',
+        'Pane e Salame (paninis)',
+        'Sfizio Pizzeria (pizzaria)',
+        'La Nuova Piazzetta',
+        'Cantina e Cucina (italiano), próximo da Piazza Navona',
       ]},
     ]
   },
@@ -5373,6 +4601,31 @@ const GUIDES_DATA = [
         'Piadina Bar',
         'Bagels & Beans',
         'LEON',
+      ]},
+    ]
+  },
+  {
+    id: 'bruxelas', name: 'Bruxelas', country: 'B\u00E9lgica', flagCode: 'be', countryId: 56,
+    sub: 'B\u00E9lgica \u00B7 Ver\u00E3o 2017',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Atomium',
+        'Parque do Cinquentenário',
+        'European Parliament',
+        'Palácio Real de Bruxelas',
+        'Catedral de São Miguel e Santa Gudula',
+        'Manneken Pis',
+        'Mont des Arts',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel Ibis Brussels Centre Gare Midi',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Mammouth',
+        'Bia Mara',
+        'Exki',
+        'L\'Express',
+        'Tonton Garby',
       ]},
     ]
   },
@@ -5515,6 +4768,106 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'atenas', name: 'Atenas', country: 'Gr\u00E9cia', flagCode: 'gr', countryId: 300,
+    sub: 'Gr\u00E9cia \u00B7 Ver\u00E3o 2019',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Monte Licabeto',
+        'Acr\u00F3pole \u2014 Partenon, Erecteion, Teatro de Dion\u00EDsio, Ode\u00E3o de Herodes \u00C1tico',
+        '\u00C1gora Romana',
+        '\u00C1gora de Atenas + Templo de Hefesto',
+        'Biblioteca de Adriano',
+        'Pra\u00E7a Sintagma',
+        'National Garden + Zappeion + Parlamento',
+        'Est\u00E1dio Panatenaico',
+        'Templo de Zeus Ol\u00EDmpico',
+        'Arco de Adriano',
+        'Plaka',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Airotel Alexandros',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Karamanlidika',
+        'Tavern Klimataria',
+        'Atitamos',
+      ]},
+    ]
+  },
+  {
+    id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
+    sub: 'Alemanha \u00B7 Ver\u00E3o 2019',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Palácio do Reichstag',
+        'Portão de Brandemburgo',
+        'Madame Tussaud Berlim',
+        'Memorial aos Judeus Mortos da Europa',
+        'Potsdamer Platz',
+        'Topografia do Terror (Museu histórico de Berlim)',
+        'Checkpoint Charlie',
+        'Gendarmenmarkt',
+        'Ilha dos Museus (Museu De Pergamón, Catedral de Berlim)',
+        'Siegessäule (Monumento em Berlim)',
+        'Großer Tiergarten',
+        'Berliner Fernsehturm (Torre de TV de Berlim)',
+        'Alexanderplatz',
+      ]},
+      { title: '🏨 Hoteis', items: [
+        'H4 Hotel',
+        'H+ Hotel Berlin Mitte',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Zur Gerichtslaube',
+        'Dicke Wirtin',
+        'Max und Moritz',
+      ]},
+    ]
+  },
+  {
+    id: 'veneza', name: 'Veneza', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
+    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2019',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Grande Canal de Veneza de Barco',
+        'Passeio de Gondola',
+        'Ponte da Constituição',
+        'Ponte dos descalços',
+        'Palácio Ca\' Pesaro',
+        'Palácio Ca\' d\'Oro + Ca\' Sagredo Hotel',
+        'Mercado de Rialto + Ponte de Rialto + Riva degli Vin (zona) + Fondaco dei Tedeschi',
+        'Igreja de Santa Maria dos Milagres',
+        'Basílica de São João e São Paulo',
+        'Libreria Acqua Alta (livraria)',
+        'Arsenal de Veneza',
+        'Igreja de São Zacarias',
+        'Palácio Ducal',
+        'Basílica de São Marcos',
+        'Praça de São Marcos + Campanário de São Marcos + Torre do relógio de São Marcos',
+        'Ponte da Academia',
+        'Basílica de Santa Maria della Salute + Punta della Dogana',
+        'Academia de Belas Artes de Veneza (museu)',
+        'Ca\' Rezzonico + Palazzo Grassi',
+        'Basílica de Santa Maria Gloriosa dei Frari + Scuola Grande di San Rocco',
+        'Ilhas de Murano e Burano',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Antony Hotel - Venice Airport',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Ristorante Due Fratelli',
+        'Bacaro Quebrado',
+        'Ostaria dai Zemei',
+        'Hostaria Osottoosopra',
+        'Ristorante Caffè Saraceno',
+        'Trattoria Al Gazzettino',
+        'La Bottiglia (paninis)',
+        'Osteria Al Squero',
+        'Bacaro Risorto Castello',
+      ]},
+    ]
+  },
+  {
     id: 'estocolmo', name: 'Estocolmo', country: 'Su\u00E9cia', flagCode: 'se', countryId: 752,
     sub: 'Su\u00E9cia \u00B7 Natal 2019',
     sections: [
@@ -5540,27 +4893,6 @@ const GUIDES_DATA = [
         'Mom\'s Kitchen',
         'Hermans',
         'Pelikan',
-      ]},
-    ]
-  },
-  {
-    id: 'malmo', name: 'Malm\u00F6', country: 'Su\u00E9cia', flagCode: 'se', countryId: 752,
-    sub: 'Su\u00E9cia \u00B7 Natal 2022',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Igreja de S\u00E3o Pedro',
-        'Lilla Torg \u2013 Pra\u00E7a',
-        'Gustav Adolfs Torg Square (Pra\u00E7a e Mercado de Natal)',
-        'Kungsparken - Parque mais antigo da cidade com trilhos',
-        'Malm\u00F6 Castle + Malmo Museum',
-        'Slottstr\u00E4dg\u00E5rden + Castle Mill (parque + moinho)',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Spoonery',
-        '\u00D6stergatan No. 25',
-        'Masala & More',
-        'Dagens Lunch (Muitos restaurantes com o prato do dia)',
-        'Malm\u00F6 foodhall',
       ]},
     ]
   },
@@ -5688,6 +5020,70 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'capadocia', name: 'Capad\u00F3cia', country: 'Turquia', flagCode: 'tr', countryId: 792,
+    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
+    sections: [
+      { title: '\uD83C\uDF0B Locais visitados', items: [
+        'Cappadocia Hot Air Balloon',
+        'Pigeon Valley',
+        'Zelve Open Air Museum',
+        'Goreme Historical National Park',
+        'Uchisar Castle',
+        'Goreme Open Air Museum',
+        'Fairy Chimneys',
+        'Rose Valley',
+        'Ortahisar Castle',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Termessos Hotel',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Rocks Terrace Restaurant',
+        'Sedef',
+        'Kapadokya Kebapzade',
+      ]},
+    ]
+  },
+  {
+    id: 'istambul', name: 'Istambul', country: 'Turquia', flagCode: 'tr', countryId: 792,
+    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Parque Gülhane + Palácio de Topkapı',
+        'Santa Sofia + Igreja de Santa Irene',
+        'Mesquita Azul + Hipódromo de Constantinopla (Praça do Hipódromo)',
+        'Coluna de Constantino',
+        'Mesquita de Nuruosmaniye',
+        'Grande Bazar',
+        'Beyazit Square + Mesquita de Beyazid',
+        'Mesquita de Laleli',
+        'Fatih Mosque',
+        'Mesquita Süleymaniye',
+        'Mesquita de Rüstem Paxá + Bazar das Especiarias + Mesquita Yeni',
+        'Ponte de Gálata + Torre de Gálata',
+        'Rua Istklal',
+        'Taksim Square + Parque Taksim Gezi',
+        'Palácio Dolmabahçe',
+        'Yıldız Park',
+        'Ortaköy Square + Mesquita de Ortaköy',
+        'Ponte do Bósforo + Palácio de Beylerbeyi',
+        'Shemsi Pasha Mosque',
+        'Uskudar Coast Walkway',
+        'Torre de Leandro',
+      ]},
+      { title: '🏨 Hoteis', items: [
+        'Hotel Black Tulip',
+        'Villa Siesta Hotel Istanbul Airport',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Ziya Baba Türk',
+        'Ortaklar Kebap',
+        'Münhani Istanbul',
+        'Old Ottoman Cafe & Restaurant',
+      ]},
+    ]
+  },
+  {
     id: 'copenhaga', name: 'Copenhaga', country: 'Dinamarca', flagCode: 'dk', countryId: 208,
     sub: 'Dinamarca \u00B7 Natal 2022',
     sections: [
@@ -5714,6 +5110,305 @@ const GUIDES_DATA = [
         'Restaurant Karla',
         'Hanzo',
         'Reffen (Copenhagen Street Food)',
+      ]},
+    ]
+  },
+  {
+    id: 'malmo', name: 'Malm\u00F6', country: 'Su\u00E9cia', flagCode: 'se', countryId: 752,
+    sub: 'Su\u00E9cia \u00B7 Natal 2022',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Igreja de S\u00E3o Pedro',
+        'Lilla Torg \u2013 Pra\u00E7a',
+        'Gustav Adolfs Torg Square (Pra\u00E7a e Mercado de Natal)',
+        'Kungsparken - Parque mais antigo da cidade com trilhos',
+        'Malm\u00F6 Castle + Malmo Museum',
+        'Slottstr\u00E4dg\u00E5rden + Castle Mill (parque + moinho)',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Spoonery',
+        '\u00D6stergatan No. 25',
+        'Masala & More',
+        'Dagens Lunch (Muitos restaurantes com o prato do dia)',
+        'Malm\u00F6 foodhall',
+      ]},
+    ]
+  },
+  {
+    id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
+    sub: 'Espanha \u00B7 2023 P\u00E1scoa',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Plaça d\'Espanya',
+        'Praça da Catalunha',
+        'La Rambla',
+        'Catedral de Barcelona',
+        'La Boqueria',
+        'Monumento a Colón',
+        'Sagrada Família',
+        'Igreja de Santa Maria do Mar',
+        'Parc de la Ciutadella',
+        'Arco do Triunfo de Barcelona',
+        'Casa Milá',
+        'Casa Batló',
+        'Fonte Mágica de Montjuïc',
+        'Plaça d’Espanya',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'B Hotel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Colom Restaurant',
+        'Honest Greens Rambla Catalunya',
+        'La Gastronomica Burgers&Beers',
+        'El Desván Barcelona',
+        'Micu Maku',
+      ]},
+    ]
+  },
+  {
+    id: 'marraquexe', name: 'Marraquexe', country: 'Marrocos', flagCode: 'ma', countryId: 504,
+    sub: 'Marrocos \u00B7 P\u00E1scoa 2023',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Jemaa el-Fnaa',
+        'Souk Semmarine (Mercado)',
+        'Rahba Lakdima (Pra\u00E7a)',
+        'Madrasa Ben Youssef',
+        'Souk des teinturiers',
+        'Place des Ferblantiers',
+        'Mosqu\u00E9e de la Koutoubia',
+        'Tour deserto Agafay',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'BnB Medina',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Nomad',
+        'Medina Burger',
+        'Caf\u00E9 Babouche Medina',
+        'Naranj Libanese',
+        'La Cantine des Gazelles',
+      ]},
+    ]
+  },
+  {
+    id: 'madeira', name: 'Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal \u00B7 Madeira \u00B7 Maio 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Miradouro Cristo Rei',
+        'Mercado dos Lavradores',
+        'Associação dos Carreiros do Monte',
+        'Centro da Cidade do Funchal',
+        'Marina do Funchal',
+        'CR7 Museu',
+        'Miradouro Pico do Barcelos',
+        'Cabo Girão Skywalk',
+        'Cascata dos Anjos',
+        'Miradouro Eira do Serrado',
+        'Miradouros do Paredão',
+        'Miradouro do Pico do Areeiro',
+        'Levada dos Balcões + Miradouro',
+        'Miradouro do Guindaste',
+        'Casas Típicas de Santana',
+        'Pico Ruivo',
+        'Miradouro da Beira da Quinta',
+        'Miradouro do Véu da Noiva',
+        'Praia do Porto do Seixal',
+        'Miradouro da Eira da Achada',
+        'Piscinas Naturais – Porto Moniz',
+        'Ponta de São Lourenço',
+        'Praia de Machico',
+        'Madeira Cablecar',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Eira do Serrado - Hotel & Spa',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'La Vaca Negra – Funchal',
+        'Rei da Poncha - Funchal',
+        'Restaurante Alta Vista – Funchal',
+        'Hamburgueria do Mercado - Funchal',
+        'O.Giro Churros & Paninis - Funchal',
+        'Restaurante Santo António - Câmara de Lobos',
+        'Sea View Restaurante – Porto Moniz',
+      ]},
+    ]
+  },
+  {
+    id: 'nova-iorque', name: 'Nova Iorque', country: 'EUA', flagCode: 'us', countryId: 840,
+    sub: 'EUA \u00B7 Ver\u00E3o 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Times Square',
+        'Statue of Liberty',
+        'Touro de Wall Street',
+        'Trinity Church',
+        'Brooklyn Bridge',
+        'Central Park',
+        'Broadway (Radio City Music Hall)',
+        'Empire state Building',
+        'St. Patrick\'s Cathedral',
+        'Museum of Modern Art (MoMA)',
+        'American Museum of Natural History',
+        'Madame Tussauds',
+        'Top of the Rock – Rockefeller Center',
+        'Chrysler Building',
+        'Estação Grand Central',
+        'Biblioteca Pública de Nova Iorque',
+        'Madison Square Park',
+        'Chinatown',
+        'Little Italy',
+        'Cruzeiro Harbor Lights da Circle Line',
+        '1 day Hop-on Hop-Off',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Cambria Hotel New York - Chelsea',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Poke Bowl',
+        'Joe\'s Pizza',
+        'Fried Dumpling 106 Mosco St',
+        'John\'s of Bleecker Street',
+        'Bleecker Street Pizza',
+        'Wasabi Sushi & Bento',
+        'Five Guys',
+        'Ben & Jerry\'s',
+      ]},
+    ]
+  },
+  {
+    id: 'toronto', name: 'Toronto & Ni\u00E1gara', country: 'Canad\u00E1', flagCode: 'ca', countryId: 124,
+    sub: 'Canad\u00E1 \u00B7 Ver\u00E3o 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Niagara Falls',
+        'Ripley\'s Aquarium of Canada',
+        'Roundhouse Park',
+        'Toronto Islands',
+        'Torre CN',
+        'Berczy Park',
+        'Gooderham Building',
+        'St. Lawrence Market',
+        'Distillery District',
+        'Nathan Phillips Square',
+        'Toronto Eaton Centre',
+        'Dundas Square',
+        'Toronto Public Library',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'The Rex Hotel Jazz and Blues Bar',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Queen Street Warehouse',
+        'Poke Guys',
+        'Chick-fil-A',
+        'Five Guys',
+        'Niagara Fallsview Casino Resort',
+      ]},
+    ]
+  },
+  {
+    id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
+    sub: 'Pol\u00F3nia \u00B7 Natal 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Galeria Krakowska',
+        'Planty',
+        'Old Kleparz',
+        'Florian\'s Gate',
+        'Floriańska Street',
+        'Rynek Główny',
+        'Basílica de Santa Maria',
+        'Museu MNK Sukiennice',
+        'Rua Grodzka',
+        'Igreja de São Pedro e São Paulo',
+        'Castelo Real de Wawel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Chimney Cake Bakery',
+        'Moaburger',
+        'GOGO Burger',
+      ]},
+    ]
+  },
+  {
+    id: 'varsovia', name: 'Vars\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
+    sub: 'Pol\u00F3nia \u00B7 2023 Natal',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Warsaw Uprising Museum',
+        'plac Zamkowy (Castle Square) + Coluna de Zygmunt',
+        'Praça do Mercado da Cidade Velha de Varsóvia',
+        'Museum of Warsaw',
+        'Warsaw Barbican',
+        'Vistula Boulevards',
+        'Palácio da Cultura e Ciência',
+        'Centro comercial Złote Tarasy',
+        'Parque Łazienki',
+        'Nowy Swiat (Rua)',
+        'Museum of Fryderyk Chopin in Warsaw',
+        'Palácio Presidencial',
+        'Igreja de Santa Ana',
+        'Castelo Real de Varsóvia',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Hotel NYX',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        '"Sushi Złota" Złote Tarasy',
+        'Chocolate Cafe E.Wedel',
+        'Barn Burger',
+        'Gościniec Polskie Pierogi',
+        'Manekin',
+      ]},
+    ]
+  },
+  {
+    id: 'cabo-verde', name: 'Santiago \u2014 Cabo Verde', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
+    sub: 'Cabo Verde \u00B7 2024 P\u00E1scoa',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Rock of Praia',
+        'Praça Alexandre Albuquerque',
+        'Praia de São Francisco',
+        'Cruz de Papa – Miradouro',
+        'Quebra Canela (Praia)',
+        'Katchás',
+        'Praia dos Amores',
+        'Tarrafal',
+        'Parque Natural Serra Malagueta',
+        'Cidade Velha',
+      ]},
+      { title: '🏨 Hoteis', items: [
+        'Hotel Cesaria',
+        'Hotel Vista Mar',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Quintal da Música',
+        'Linha d\'Água',
+        'Alto Mira',
+        'Hamburgueria B. Burguer',
+      ]},
+    ]
+  },
+  {
+    id: 'catar', name: 'Catar', country: 'Catar', flagCode: 'qa', countryId: 634,
+    sub: 'Catar \u00B7 Ver\u00E3o 2024',
+    sections: [
+      { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
+        'Villagio Mall',
+        'Saf\u00E1ri no deserto com sandboard, passeio de camelo e mar interior',
+        'Souq Waqif',
+        'Doha Corniche',
+        'The Pearl Monument',
+        'Doha Skyline Viewpoint',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Shake Shack',
+        'The Cheesecake Factory',
+        'Outback Steakhouse',
       ]},
     ]
   },
@@ -5759,6 +5454,213 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'bangkok', name: 'Bangkok', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
+    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'The Grand Palace',
+        'Wat Arun',
+        'Wat Pho',
+        'Wat Mangkon Kamalawat',
+        'Chinatown (Yaowarat Rd)',
+        'Buda de Ouro',
+        'Centro comercial ICONSIAM',
+        'King Power Mahanakhon',
+        'centralwOrld',
+        'Siam Paragon',
+      ]},
+      { title: '🏨 Hoteis', items: [
+        'Hotel Eastin Grand Hotel Phayathai',
+        'The Park Nine Hotel Suvarnabhumi',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Pop A Bowl',
+        'Rongros',
+        'Centro comercial ICONSIAM',
+        'Hua Seng Hong Restaurant',
+        'Odean Noodle',
+        'The Cheesecake Factory',
+        'Siam Paragon Food Court',
+      ]},
+    ]
+  },
+  {
+    id: 'phuket', name: 'Phuket', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
+    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    sections: [
+      { title: '\uD83C\uDFD6\uFE0F Locais visitados', items: [
+        'Patong',
+        'Bangla Road',
+        'Praia de Patong (Parasailing)',
+        'Tour ilhas Phi Phi',
+        'Tour Santu\u00E1rio de Elefantes',
+        'Tour ilha James Bond',
+      ]},
+      { title: '\uD83C\uDFE8 Hoteis', items: [
+        'Hotel Clover Patong Phuket \u2013 SHA Plus',
+        'Panphuree Residence \u2013 SHA Extra Plus',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'GlowBloom',
+        'Siam Thai Restaurant',
+        'SIAM Phuket \u2013 Seafood Restaurant',
+        'Da Mario Patong Bangla Rd',
+        'Eurothai Restaurant',
+        'Medusa Patong Restaurant',
+      ]},
+    ]
+  },
+  {
+    id: 'edimburgo', name: 'Edimburgo', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
+    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Museum of Edinburgh',
+        'George St, Castle St, Cockburn St, Victoria St',
+        'Royal Mile',
+        'Edinburgh Christmas Market',
+        'Catedral de Santo Eg\u00EDdio',
+        'Grassmarket',
+        'National Museum of Scotland',
+        'Castelo de Edimburgo',
+        'National Galleries of Scotland',
+        'Scott Monument',
+        'The Balmoral',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel hub by Premier Inn Edinburgh Royal Mile Hotel',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Oink Victoria Street',
+        'KauKau Poke',
+        'Minami',
+        'Waverley Market',
+        'Five Guys',
+      ]},
+    ]
+  },
+  {
+    id: 'glasgow', name: 'Glasgow', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
+    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'George Square',
+        'Gallery of Modern Art',
+        'Singl-end Merchant City',
+        'Fellow Glasgow Residents Mural Street Art',
+        'Argyle St, St Enoch Sq, Buchanan St, Sauchiehall St',
+        'Kelvingrove Park, Stewart Memorial Fountain',
+        'Museu e Galeria de Arte de Kelvingrove',
+        'Riverside Museum',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Paesano Pizza',
+        'Rice Time',
+        'Akiko (vegan)',
+        'Five Guys',
+      ]},
+    ]
+  },
+  {
+    id: 'irlanda-do-norte', name: 'Irlanda do Norte', country: 'Reino Unido', flagCode: 'gb-nir', countryId: 826,
+    sub: 'Reino Unido \u00B7 P\u00E1scoa 2025',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Castelo de Dunluce',
+        'Giant\u2019s Causeway',
+        'Museu do Titanic',
+        'Black Taxi Tour',
+        'Catedral de Santa Ana',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'The Nook',
+      ]},
+    ]
+  },
+  {
+    id: 'irlanda-dublin', name: 'Irlanda \u2014 Dublin', country: 'Irlanda', flagCode: 'ie', countryId: 372,
+    sub: 'Irlanda \u00B7 P\u00E1scoa 2025',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'The Church Caf\u00E9 & Restaurant',
+        'GPO Witness History Visitor Centre',
+        'Monumento O\u2019Connell',
+        'Trinity College',
+        'Galeria Nacional da Irlanda',
+        'Museu Nacional da Irlanda',
+        'Grafton St, George\u2019s St',
+        'Molly Malone Statue',
+        'The Temple Bar',
+        'Ha\u2019penny Bridge',
+        'Destilaria de Old Jameson',
+        'Dublinia',
+        'Christ Church Cathedral',
+        'Catedral St. Patrick\u2019s',
+        'Castelo de Dublin',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Ruby Molly Hotel Dublin by IHG',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Temple Bar',
+        'Five Guys',
+        'Bunsen',
+        'Wok In',
+        'Japanese Kitchen by J2 Sushi',
+      ]},
+    ]
+  },
+  {
+    id: 'adis-abeba', name: 'Adis Abeba', country: 'Eti\u00F3pia', flagCode: 'et', countryId: 231,
+    sub: 'Eti\u00F3pia \u00B7 Ver\u00E3o 2025',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Museu Nacional da Etiópia',
+        'Catedral da Santíssima Trindade (Holy Trinity Cathedral)',
+        'Addis Mercato (Mercato)',
+        'Monte Entoto',
+        'Bole Airport Roundabout',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'ADD Restaurant',
+        'TinyTalian',
+        'Jegol',
+        'Ta\'em Cultural Restaurant',
+        'Asian Bay',
+      ]},
+    ]
+  },
+  {
+    id: 'porto', name: 'Porto', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal \u00B7 2025 Ver\u00E3o',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
+        'Mercado do Bolh\u00E3o (seg 08h\u201320h)',
+        'C\u00E2mara Municipal do Porto',
+        'Avenida dos Aliados',
+        'McDonald\u2019s Imperial (imperd\u00EDvel!)',
+        'Esta\u00E7\u00E3o de S\u00E3o Bento',
+        'S\u00E9 do Porto (catedral)',
+        'Ponte Lu\u00EDs I',
+        'Ribeira do Porto',
+        'Igreja dos Cl\u00E9rigos + Torre dos Cl\u00E9rigos (10\u20AC, ap\u00F3s 19h s\u00E3o 5\u20AC)',
+        'Livraria Lello (10\u20AC)',
+        'Rua de Santa Catarina',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Yotel Porto',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Inova Trindade',
+        'Bras\u00E3o Coliseu \u2014 francesinhas',
+        'Casa Guedes Rooftop',
+        'Cana Verde',
+        'A Despensa',
+        'Pizzeria Bella Mia!',
+      ]},
+    ]
+  },
+  {
     id: 'zanzibar', name: 'Zanzibar', country: 'Tanz\u00E2nia', flagCode: 'tz', countryId: 834,
     sub: 'Tanz\u00E2nia \u00B7 Ver\u00E3o 2025',
     sections: [
@@ -5776,6 +5678,104 @@ const GUIDES_DATA = [
         'Il Panzotto (Italiano)',
         'Kulinarium (Gourmet / Fusão)',
         'Yunnan (Asiático)',
+      ]},
+    ]
+  },
+  {
+    id: 'madrid', name: 'Madrid', country: 'Espanha', flagCode: 'es', countryId: 724,
+    sub: 'Espanha \u00B7 2025 Natal',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Templo de Debod',
+        'Gran Vía',
+        'Plaza del Callao',
+        'C. de Preciados',
+        'Puerta del Sol',
+        'Plaza Mayor',
+        'Catedral de Santa María a Real de la Almudena',
+        'Palácio Real',
+        'Mercado de São Miguel',
+        'Edifício Metrópolis',
+        'Parque do Retiro',
+        'Estádio Santiago Bernabéu',
+        'Museu do Prado',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Hotel Riu Plaza España',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Tapa Tapa Montera',
+        'Grosso Napoletano',
+        'Casa Garcia',
+        'Chocolateria San Ginés',
+        'New York Burger',
+        'Scarlett Atocha',
+      ]},
+    ]
+  },
+  {
+    id: 'marselha', name: 'Marselha', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
+    sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Centre de la Vieille Charit\u00E9',
+        'Le Panier',
+        'Catedral de Marselha',
+        'Landmark \u201CMarseille\u201D',
+        'Le Vieux Port',
+        'Pal\u00E1cio Longchamp',
+        'Notre-Dame de la Garde',
+        'Plage des Catalans',
+        'Palais du Pharo',
+        'Parc \u00C9mile Duclaux',
+        'A \u201CEscadaria\u201D Art\u00EDstica: Escaliers du Cours Julien',
+        'Avenida La Canebière',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Residhome Marseille',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Splendido',
+        'Black \u0026 White Burger Marseille Terrasses du Port',
+        'POKAWA Poke Bowls',
+        'Lunicco \u2013 Bourse',
+        'Yaki\u0026Soba \u2013 Restaurant Joliette',
+      ]},
+    ]
+  },
+  {
+    id: 'monaco', name: 'M\u00F3naco', country: 'M\u00F3naco', flagCode: 'mc', countryId: 492,
+    sub: 'M\u00F3naco \u00B7 P\u00E1scoa 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Pal\u00E1cio do Pr\u00EDncipe de M\u00F3naco',
+        'Catedral de S\u00E3o Nicolau',
+        'Vista panor\u00E2mica do M\u00F3naco, 32 Rue des Remparts',
+        'Private Cars Collection of HSH Prince of Monaco',
+        'Casino de Monte Carlo',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Steak \'n Shake',
+        'Smash Club Monaco',
+      ]},
+    ]
+  },
+  {
+    id: 'nice', name: 'Nice', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
+    sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Avenue Jean M\u00E9decin',
+        'Bas\u00EDlica Notre-Dame de l\u2019Assomption',
+        'Place Mass\u00E9na',
+        'Fonte do Sol',
+        'Promenade du Paillon',
+        'Letreiro #ILoveNICE',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Pitaya Tha\u00EF Street Food Nice Jean M\u00E9decin',
+        'Mas Sushi \u0026 Poke Bowl',
+        'Casa Leya',
       ]},
     ]
   },
@@ -5806,6 +5806,12 @@ const GUIDES_DATA = [
       { title: '\uD83C\uDF74 Restaurantes', items: [] },
     ]
   }
+
+
+
+
+
+
 ];
 
 // ─── GUIDES FUNCTIONS ─────────────────────────────────────────────────────────
