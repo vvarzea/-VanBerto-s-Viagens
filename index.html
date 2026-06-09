@@ -2297,39 +2297,24 @@ async function initMap() {
         overlay.appendChild(div);
       });
 
-      // ── Ilhas Portuguesas — bandeiras regionais dos Açores e Madeira ─────────
+      // ── Ilhas Portuguesas — bandeira de Portugal para todas as ilhas ─────────
       const PT_ISLAND_LABELS = [
-        // Açores (bandeira regional pt-20)
-        { name:'São Miguel',   code:'pt-20', geo:[-25.67,37.74] },
-        { name:'Terceira',     code:'pt-20', geo:[-27.22,38.65] },
-        { name:'Faial',        code:'pt-20', geo:[-28.04,38.53] },
-        { name:'Pico',         code:'pt-20', geo:[-28.33,38.47] },
-        { name:'Flores',       code:'pt-20', geo:[-31.11,39.45] },
-        { name:'Graciosa',     code:'pt-20', geo:[-28.97,39.09] },
-        { name:'Santa Maria',  code:'pt-20', geo:[-25.17,36.97] },
-        { name:'Corvo',        code:'pt-20', geo:[-31.13,39.67] },
-        { name:'São Jorge',    code:'pt-20', geo:[-28.72,38.65] },
-        // Madeira (bandeira regional pt-30)
-        { name:'Madeira',      code:'pt-30', geo:[-16.91,32.65] },
+        { name:'São Miguel',   code:'pt', geo:[-25.67,37.74] },
+        { name:'Terceira',     code:'pt', geo:[-27.22,38.65] },
+        { name:'Faial',        code:'pt', geo:[-28.04,38.53] },
+        { name:'Pico',         code:'pt', geo:[-28.33,38.47] },
+        { name:'Flores',       code:'pt', geo:[-31.11,39.45] },
+        { name:'Graciosa',     code:'pt', geo:[-28.97,39.09] },
+        { name:'Santa Maria',  code:'pt', geo:[-25.17,36.97] },
+        { name:'Corvo',        code:'pt', geo:[-31.13,39.67] },
+        { name:'São Jorge',    code:'pt', geo:[-28.72,38.65] },
+        { name:'Madeira',      code:'pt', geo:[-16.91,32.65] },
       ];
       PT_ISLAND_LABELS.forEach(({ name, code, geo }) => {
-        // Bandeira flutuante ilha
-        const flagEl = document.createElement('img');
-        flagEl.className = 'vcl-flag vcl-flag-island';
-        flagEl.dataset.geo = JSON.stringify(geo);
-        flagEl.src = `https://flagcdn.com/w40/${code}.png`;
-        flagEl.alt = name;
-        overlay.appendChild(flagEl);
-
-        // Label ilha: bandeira + nome
+        // Label ilha: só nome (bandeira de Portugal seria redundante)
         const div = document.createElement('div');
         div.className = 'vcl vcl-island';
         div.dataset.geo = JSON.stringify(geo);
-        const flagImg = document.createElement('img');
-        flagImg.className = 'vcl-flag-inline';
-        flagImg.src = `https://flagcdn.com/w40/${code}.png`;
-        flagImg.alt = '';
-        div.appendChild(flagImg);
         const nameSpan = document.createElement('span');
         nameSpan.textContent = name;
         div.appendChild(nameSpan);
@@ -2880,7 +2865,7 @@ function updateLabelsVisibility(k) {
       const sel = d3.select(this);
       const isIsl = sel.attr('data-isisland') === '1';
       const isCp  = sel.attr('data-iscap')    === '1';
-      const show  = isIsl ? showIslandText2 : (isCp ? showCapText2 : showCityText2);
+      const show  = isIsl ? false : (isCp ? showCapText2 : showCityText2); // ilhas usam label HTML
       sel.style('display', show ? null : 'none');
       if (!show) return;
       const pinX = +sel.attr('data-pinx');
@@ -5620,6 +5605,9 @@ const GUIDES_DATA = [
         'Addis Mercato (Mercato)',
         'Monte Entoto',
         'Bole Airport Roundabout',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Ethiopian Skylight Hotel',
       ]},
       { title: '\uD83C\uDF74 Restaurantes', items: [
         'ADD Restaurant',
