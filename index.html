@@ -1358,8 +1358,16 @@ const PLACES = [
   // Canadá
   [-79.38, 43.65, 'Toronto', false],
   [-79.07, 43.09, 'Niagara Falls', false],
-  // Cabo Verde — ilha de Santiago
+  // Cabo Verde — todas as ilhas
   [-23.51, 14.93, 'Santiago \uD83C\uDFDD\uFE0F', true, true],
+  [-25.17, 17.12, 'Santo Ant\u00E3o', false, true],
+  [-25.00, 16.87, 'S\u00E3o Vicente', false, true],
+  [-24.27, 16.58, 'S\u00E3o Nicolau', false, true],
+  [-22.91, 16.73, 'Sal', false, true],
+  [-22.82, 16.09, 'Boa Vista', false, true],
+  [-23.17, 15.23, 'Maio', false, true],
+  [-24.36, 14.93, 'Fogo', false, true],
+  [-24.72, 14.86, 'Brava', false, true],
   // Dinamarca
   [12.57, 55.68, 'Copenhaga', true],
   // Espanha
@@ -1416,8 +1424,180 @@ const PLACES = [
   [-25.17, 36.97, 'Santa Maria \uD83C\uDFDD\uFE0F', false, true],
   [-31.13, 39.67, 'Corvo \uD83C\uDFDD\uFE0F', false, true],
   [-28.72, 38.65, 'S\u00E3o Jorge \uD83C\uDFDD\uFE0F', false, true],
-  // Madeira
+  // Madeira e Porto Santo
   [-16.91, 32.65, 'Madeira \uD83C\uDFDD\uFE0F', false, true],
+  [-16.34, 33.07, 'Porto Santo', false, true],
+  // Ilhas Canárias (Espanha)
+  [-15.43, 28.10, 'Gran Canaria', false, true],
+  [-16.55, 28.29, 'Tenerife', false, true],
+  [-13.60, 28.96, 'Lanzarote', false, true],
+  [-14.00, 28.50, 'Fuerteventura', false, true],
+  [-17.89, 28.68, 'La Palma', false, true],
+  [-17.92, 28.13, 'El Hierro', false, true],
+  [-17.10, 28.10, 'La Gomera', false, true],
+  // Ilhas Baleares (Espanha)
+  [2.65, 39.57, 'Maiorca', false, true],
+  [1.43, 38.91, 'Ibiza', false, true],
+  [4.00, 39.95, 'Menorca', false, true],
+  [1.40, 38.75, 'Formentera', false, true],
+  // Sicília e ilhas italianas
+  [14.01, 37.60, 'Sic\u00EDlia', false, true],
+  [9.06, 40.12, 'Sardenha', false, true],
+  [12.67, 43.92, 'C\u00F3rsega', false, true],
+  [14.92, 37.06, 'Malta', false, true],
+  [14.25, 36.82, 'Gozo', false, true],
+  // Grécia — ilhas principais
+  [25.16, 35.34, 'Creta', false, true],
+  [25.43, 36.38, 'Rodes', false, true],
+  [23.89, 37.00, 'N\u00E1xos', false, true],
+  [22.94, 37.37, 'Hidra', false, true],
+  [25.47, 37.45, 'Cos', false, true],
+  [26.15, 37.73, 'Samos', false, true],
+  [25.38, 37.45, 'Patmos', false, true],
+  [26.97, 39.12, 'Lesbos', false, true],
+  [24.93, 37.45, 'Paros', false, true],
+  [24.44, 36.86, 'Santorini', false, true],
+  [25.33, 37.86, 'Mykonos', false, true],
+  [23.39, 37.96, 'Egina', false, true],
+  // Chipre
+  [33.43, 35.13, 'Chipre', false, true],
+  // Ilhas britânicas
+  [-3.43, 54.37, 'Ilha de Man', false, true],
+  [-2.99, 53.41, 'Anglesey', false, true],
+  [-6.27, 53.74, 'Irlanda', false, true],
+  [-4.20, 56.82, 'Escócia', false, true],
+  [-2.20, 60.47, 'Shetland', false, true],
+  [-3.10, 59.03, 'Orkney', false, true],
+  [-6.37, 57.60, 'Hébridas', false, true],
+  [-1.10, 49.37, 'Jersey', false, true],
+  [-2.53, 49.46, 'Guernsey', false, true],
+  // Atlântico Norte
+  [-21.95, 64.14, 'Isl\u00E2ndia', false, true],
+  [-7.61, 62.00, 'Ilhas Faroé', false, true],
+  // África — ilhas principais
+  [57.55, -20.35, 'Maurícias', false, true],
+  [55.47, -4.68, 'Seychelles', false, true],
+  [44.33, -12.35, 'Mayotte', false, true],
+  [43.35, -11.70, 'Comores', false, true],
+  [47.55, -18.92, 'Madagáscar', false, true],
+  [-5.72, -15.95, 'Santa Helena', false, true],
+  [-14.42, -7.95, 'Ascensão', false, true],
+  [5.63, 0.23, 'São Tomé', false, true],
+  [8.67, 1.62, 'Bioko', false, true],
+  [-25.66, -16.00, 'Tristão da Cunha', false, true],
+  // Atlântico — ilhas
+  [-29.36, 37.73, 'Flores (Açores)', false, true],
+  [-31.13, 39.67, 'Corvo (Açores)', false, true],
+  [-27.22, 38.65, 'Terceira (Açores)', false, true],
+  // Caraíbas
+  [-77.30, 25.07, 'Bahamas', false, true],
+  [-76.80, 17.98, 'Jamaica', false, true],
+  [-80.10, 21.52, 'Cuba', false, true],
+  [-66.59, 18.22, 'Porto Rico', false, true],
+  [-70.99, 21.50, 'República Dominicana', false, true],
+  [-72.29, 19.09, 'Haiti', false, true],
+  [-61.37, 15.30, 'Guadalupe', false, true],
+  [-61.02, 14.67, 'Martinica', false, true],
+  [-61.26, 13.19, 'Santa Lúcia', false, true],
+  [-61.20, 12.70, 'São Vicente', false, true],
+  [-61.79, 12.12, 'Granada', false, true],
+  [-62.19, 16.72, 'Antígua', false, true],
+  [-62.58, 17.67, 'São Cristóvão', false, true],
+  [-63.07, 18.07, 'Anguila', false, true],
+  [-63.06, 18.24, 'Saint-Martin', false, true],
+  [-62.97, 17.33, 'Montserrat', false, true],
+  [-61.35, 15.54, 'Dominica', false, true],
+  [-68.29, 12.18, 'Curaçao', false, true],
+  [-69.97, 12.52, 'Aruba', false, true],
+  [-68.78, 12.13, 'Bonaire', false, true],
+  [-64.64, 18.43, 'Ilhas Virgens (EUA)', false, true],
+  [-64.73, 18.43, 'Ilhas Virgens (UK)', false, true],
+  [-71.59, 21.77, 'Ilhas Turcas e Caicos', false, true],
+  [-74.44, 20.01, 'Ilha da Tortuga', false, true],
+  // Oceano Índico
+  [73.51, 4.17, 'Malé', true, true],
+  [72.89, 7.10, 'Addu', false, true],
+  [68.32, 11.71, 'Laquedivas', false, true],
+  [80.70, 7.87, 'Sri Lanka', false, true],
+  [72.86, 20.67, 'Mumbai (ilha)', false, true],
+  [55.27, -21.12, 'Reunião', false, true],
+  [56.17, -49.35, 'Kerguelen', false, true],
+  // Pacífico — Indonésia e Oceânia
+  [106.82, -6.18, 'Java', false, true],
+  [115.19, -8.41, 'Bali', false, true],
+  [107.61, -7.62, 'Lombok', false, true],
+  [120.00, -8.50, 'Sumbawa', false, true],
+  [110.43, -7.62, 'Borneo (Kalimantan)', false, true],
+  [120.97, 14.60, 'Luzon', false, true],
+  [123.89, 11.68, 'Visayas', false, true],
+  [125.61, 8.96, 'Mindanao', false, true],
+  [128.19, -3.66, 'Seram', false, true],
+  [131.27, -0.87, 'Halmahera', false, true],
+  [134.08, -1.84, 'Papua Nova Guiné', false, true],
+  [172.13, -1.31, 'Ilhas Salomão', false, true],
+  [168.32, -17.73, 'Vanuatu', false, true],
+  [178.44, -18.15, 'Fiji', false, true],
+  [175.20, -21.20, 'Tonga', false, true],
+  [-171.83, -13.76, 'Samoa', false, true],
+  [-170.70, -14.30, 'Samoa Americana', false, true],
+  [-159.78, -21.24, 'Ilhas Cook', false, true],
+  [-149.47, -17.53, 'Taiti (Fr. Polinésia)', false, true],
+  [-138.52, -9.78, 'Marquesas', false, true],
+  [-179.22, -8.52, 'Wallis e Futuna', false, true],
+  [166.93, -0.53, 'Nauru', false, true],
+  [169.53, -0.53, 'Kiribati', false, true],
+  [171.38, 7.09, 'Ilhas Marshall', false, true],
+  [158.17, 6.88, 'Carolinas', false, true],
+  [134.49, 7.35, 'Palau', false, true],
+  [144.74, 13.46, 'Guam', false, true],
+  [145.75, 15.18, 'Ilhas Marianas', false, true],
+  // Austrália e Nova Zelândia
+  [133.78, -25.30, 'Austrália', false, true],
+  [172.64, -42.93, 'Ilha do Sul (NZ)', false, true],
+  [174.76, -36.85, 'Ilha do Norte (NZ)', false, true],
+  [147.32, -42.88, 'Tasmânia', false, true],
+  // Japão
+  [135.50, 34.69, 'Honshu', false, true],
+  [130.84, 31.60, 'Kyushu', false, true],
+  [133.00, 33.85, 'Shikoku', false, true],
+  [141.35, 43.06, 'Hokkaido', false, true],
+  [127.68, 26.21, 'Okinawa', false, true],
+  // América do Norte — ilhas
+  [-52.73, 47.56, 'Terra Nova', false, true],
+  [-63.61, 45.94, 'Ilha do Príncipe Eduardo', false, true],
+  [-60.99, 46.18, 'Ilha do Cabo Bretão', false, true],
+  [-74.02, 45.46, 'Ilha de Montreal', false, true],
+  [-68.88, 48.44, 'Anticosti', false, true],
+  [-64.35, 63.75, 'Baffin', false, true],
+  [-83.04, 62.83, 'Southampton', false, true],
+  [-98.00, 68.00, 'Victoria', false, true],
+  [-98.52, 73.00, 'Príncipe de Gales', false, true],
+  [-110.83, 72.67, 'Ilha Banks', false, true],
+  [-114.00, 69.35, 'Ilha Melville', false, true],
+  [-76.71, 39.02, 'Chesapeake', false, true],
+  [-155.50, 19.57, 'Havaí (Big Island)', false, true],
+  [-156.67, 20.80, 'Maui', false, true],
+  [-157.97, 21.47, 'Oahu', false, true],
+  [-159.50, 22.10, 'Kauai', false, true],
+  [-63.07, 32.30, 'Bermudas', false, true],
+  // América do Sul — ilhas
+  [-81.41, 0.90, 'Galápagos', false, true],
+  [-71.98, -33.62, 'Juan Fernández', false, true],
+  [-46.34, -23.84, 'Ilhéus (São Paulo)', false, true],
+  [-48.50, -27.59, 'Ilha de Santa Catarina', false, true],
+  [-51.07, -0.03, 'Ilha de Marajó', false, true],
+  [-57.65, -20.45, 'Ilha do Bananal', false, true],
+  [-38.50, -13.00, 'Ilha de Itaparica', false, true],
+  [-32.43, -3.85, 'Fernando de Noronha', false, true],
+  [-29.32, -20.50, 'Trindade', false, true],
+  [-57.77, -51.69, 'Ilhas Malvinas', false, true],
+  [-67.72, -55.07, 'Tierra del Fuego', false, true],
+  // Ártico e Antártida
+  [15.60, 78.22, 'Svalbard', false, true],
+  [24.07, 71.16, 'Jan Mayen', false, true],
+  [-18.68, 65.27, 'Groenlândia', false, true],
+  [0.00, -90.00, 'Antártida', false, true],
+  [-38.00, -54.28, 'Geórgia do Sul', false, true],
   // Tanzânia — Zanzibar
   [39.2, -6.16, 'Zanzibar \uD83C\uDFDD\uFE0F', true, true],
   // Países Baixos
@@ -1436,8 +1616,10 @@ const PLACES = [
   [13.0, 55.6, 'Malm\u00F6', false],
   // Tailândia
   [100.52, 13.75, 'Banguecoque', true],
-  [98.39, 7.88, 'Phuket', false],
+  [98.39, 7.88, 'Phuket \uD83C\uDFDD\uFE0F', false, true],
   [98.77, 7.74, 'Phi Phi \uD83C\uDFDD\uFE0F', false, true],
+  [100.06, 9.54, 'Koh Samui \uD83C\uDFDD\uFE0F', false, true],
+  [99.84, 9.87, 'Koh Phangan \uD83C\uDFDD\uFE0F', false, true],
   // Turquia
   [29.05, 40.99, 'Istambul', false],
   [34.83, 38.66, 'Capad\u00F3cia', false],
@@ -2321,6 +2503,29 @@ async function initMap() {
         div.style.display = 'none';
         overlay.appendChild(div);
       });
+
+      // ── Ilhas de Cabo Verde ─────────────────────────────────────────────────
+      const CV_ISLAND_LABELS = [
+        { name:'Santiago',    geo:[-23.61, 14.93] },
+        { name:'Santo Antão', geo:[-25.17, 17.12] },
+        { name:'São Vicente', geo:[-25.00, 16.87] },
+        { name:'São Nicolau', geo:[-24.27, 16.58] },
+        { name:'Sal',         geo:[-22.91, 16.73] },
+        { name:'Boa Vista',   geo:[-22.82, 16.09] },
+        { name:'Maio',        geo:[-23.17, 15.23] },
+        { name:'Fogo',        geo:[-24.36, 14.93] },
+        { name:'Brava',       geo:[-24.72, 14.86] },
+      ];
+      CV_ISLAND_LABELS.forEach(({ name, geo }) => {
+        const div = document.createElement('div');
+        div.className = 'vcl vcl-island';
+        div.dataset.geo = JSON.stringify(geo);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        div.appendChild(nameSpan);
+        div.style.display = 'none';
+        overlay.appendChild(div);
+      });
     })();
 
     // ── HTML overlay for ALL countries (flag + name, same system as visited) ──
@@ -2440,6 +2645,8 @@ async function initMap() {
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
 
+        // vcl-island: usar só texto SVG, não label HTML
+        if (div.classList.contains('vcl-island')) { div.style.display = 'none'; return; }
         if (!SHOW_LABEL) { div.style.display = 'none'; return; }
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
           div.style.display = 'none'; return;
@@ -2528,6 +2735,7 @@ async function initMap() {
       });
 
       overlay.querySelectorAll('.vcl.vcl-island').forEach(div => {
+        div.style.display = 'none'; return; // ilhas: usar só texto SVG
         const geo = JSON.parse(div.dataset.geo || 'null');
         if (!geo) return;
         const sp = projRef(geo);
@@ -2865,7 +3073,7 @@ function updateLabelsVisibility(k) {
       const sel = d3.select(this);
       const isIsl = sel.attr('data-isisland') === '1';
       const isCp  = sel.attr('data-iscap')    === '1';
-      const show  = isIsl ? false : (isCp ? showCapText2 : showCityText2); // ilhas usam label HTML
+      const show  = isIsl ? showIslandText2 : (isCp ? showCapText2 : showCityText2);
       sel.style('display', show ? null : 'none');
       if (!show) return;
       const pinX = +sel.attr('data-pinx');
@@ -4452,34 +4660,30 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'sao-miguel', name: 'S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'A\u00E7ores \u00B7 S\u00E3o Miguel \u00B7 2014, 2018, 2021, 2024',
+    id: 'sao-miguel', name: 'Ilha de S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'A\u00E7ores \u00B7 2014, 2021, 2018, 2024',
     sections: [
-      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Oeste', items: [
-        'Lagoa das Sete Cidades \u2014 imperd\u00EDvel',
-        'Miradouro da Vista do Rei (vista das Sete Cidades)',
-        'Miradouro da Grota do Inferno',
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Lagoa das Sete Cidades',
         'Lagoa do Fogo',
-        'Ch\u00E1 Gorreana \u2014 F\u00E1brica (a mais antiga da Europa)',
-      ]},
-      { title: '\uD83D\uDDFA\uFE0F Roteiro \u2014 Este', items: [
-        'Parque Terra Nostra (termas, entrada ~5\u20AC)',
-        'Fumarolas + Lagoa das Furnas',
-        'Po\u00E7a da Dona Beija (termas ao ar livre)',
+        'Parque Terra Nostra',
+        'Ch\u00E1 Gorreana \u2014 F\u00E1brica',
+        'Miradouro da Vista do Rei',
+        'Miradouro da Grota do Inferno',
         'Centro de Interpreta\u00E7\u00E3o Ambiental da Caldeira Velha',
-        'Miradouro do Tanque \u2014 vista Ilh\u00E9u Vila Franca do Campo',
-      ]},
-      { title: '\uD83D\uDDFA\uFE0F Ponta Delgada', items: [
+        'Lagoa das Furnas',
+        'Po\u00E7a da Dona Beija',
+        'Miradouro do Tanque (vista ilh\u00E9u Vila Franca do Campo)',
         'Portas da Cidade',
       ]},
-      { title: '\uD83C\uDFE8 Hoteis', items: [
+      { title: '\uD83C\uDFE8 Hotel', items: [
         'Hotel Lince',
         'NEAT Hotel Avenida',
         'Azoris Royal Garden',
         'Casa das Arcadas',
       ]},
       { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Parque Atl\u00E2ntico (centro comercial)',
+        'Parque Atl\u00E2ntico',
         'A Tasca',
         'Supl\u00E9xio',
         'Quinta dos A\u00E7ores',
