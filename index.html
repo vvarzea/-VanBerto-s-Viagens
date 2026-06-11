@@ -490,6 +490,15 @@
     letter-spacing: 0;
   }
 
+  /* Island name labels — reference islands (no flag, muted ocean style) */
+  .vcl.vcl-island {
+    background: rgba(0, 60, 100, 0.60);
+    border: 1px solid rgba(140, 200, 230, 0.30);
+    color: #d0eaf8;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
   /* Non-visited country labels — same structure as .vcl but muted blue-grey style */
   .vcl.vcl-all {
     background: rgba(30, 60, 90, 0.72);
@@ -1052,10 +1061,7 @@
       <strong>📍 Ilhas Portuguesas Visitadas (Portugal 🇵🇹)</strong>
       São Miguel (2013 · 2014 · 2015 · 2024) · Terceira (2007 Verão) · São Jorge (2014) · Pico (2017) · Flores (2017) · Santa Maria (2018) · Graciosa (2019) · Corvo (2023 Carnaval) · Faial (2023) · Madeira (2023)
     </div>
-    <div class="azores-box" style="border-left-color:#0e7fa8; background:linear-gradient(135deg,#e6f4f9,#cce8f2); color:#003d55; margin-top:8px;">
-      <strong>🏝️ Zanzibar · Tanzânia 🇹🇿 (2025)</strong>
-      A ilha do Índico — especiarias, praias brancas e cultura swahili
-    </div>
+
     <div class="azores-box" style="border-left-color:#c0392b; background:linear-gradient(135deg,#fdf0ee,#faddda); color:#7a0000; margin-top:8px;">
       <strong>🏠 Nossas Casas</strong>
       <strong>Angra do Heroísmo</strong> · Ilha Terceira · Açores &nbsp;·&nbsp; 🏝️ &nbsp;·&nbsp; <strong>Baleal</strong> · Peniche · Leiria 🌊
@@ -1359,15 +1365,15 @@ const PLACES = [
   [-79.38, 43.65, 'Toronto', false],
   [-79.07, 43.09, 'Niagara Falls', false],
   // Cabo Verde — todas as ilhas
-  [-23.51, 14.93, 'Santiago \uD83C\uDFDD\uFE0F', true, true],
-  [-25.17, 17.12, 'Santo Ant\u00E3o', false, true],
-  [-25.00, 16.87, 'S\u00E3o Vicente', false, true],
-  [-24.27, 16.58, 'S\u00E3o Nicolau', false, true],
-  [-22.91, 16.73, 'Sal', false, true],
-  [-22.82, 16.09, 'Boa Vista', false, true],
-  [-23.17, 15.23, 'Maio', false, true],
-  [-24.36, 14.93, 'Fogo', false, true],
-  [-24.72, 14.86, 'Brava', false, true],
+  [-23.51, 14.93, 'Santiago \uD83C\uDFDD\uFE0F', true, true, true],
+  [-25.17, 17.12, 'Santo Ant\u00E3o', false, true, true],
+  [-25.00, 16.87, 'S\u00E3o Vicente', false, true, true],
+  [-24.27, 16.58, 'S\u00E3o Nicolau', false, true, true],
+  [-22.91, 16.73, 'Sal', false, true, true],
+  [-22.82, 16.09, 'Boa Vista', false, true, true],
+  [-23.17, 15.23, 'Maio', false, true, true],
+  [-24.36, 14.93, 'Fogo', false, true, true],
+  [-24.72, 14.86, 'Brava', false, true, true],
   // Dinamarca
   [12.57, 55.68, 'Copenhaga', true],
   // Espanha
@@ -1384,7 +1390,7 @@ const PLACES = [
   // Finlândia
   [24.94, 60.17, 'Hels\u00EDnquia', true],
   [25.72, 66.50, 'Rovaniemi \uD83C\uDF85', false],
-  [26.0, 68.5, 'Lap\u00F3nia \uD83E\uDD8C', false, true],
+  [26.0, 68.5, 'Lap\u00F3nia \uD83E\uDD8C', false, true, true],
   // Grécia
   [23.72, 37.98, 'Atenas', true],
   // Hungria
@@ -1405,7 +1411,7 @@ const PLACES = [
   // Marrocos
   [-7.99, 31.63, 'Marraquexe', false],
   // Maldivas — ilha
-  [73.51, 4.17, 'Mal\u00E9', true, true],
+  [73.51, 4.17, 'Mal\u00E9', true, true, true],
   // Mónaco
   [7.42, 43.73, 'M\u00F3naco', true],
   // Noruega
@@ -1414,19 +1420,19 @@ const PLACES = [
   [-9.14, 38.72, 'Lisboa', true],
   [-8.61, 41.15, 'Porto', false],
   [-8.42, 37.1, 'Faro', false],
-  // Açores — todas as ilhas visitadas [lng, lat, nome, isCapital, isIsland]
-  [-25.67, 37.74, 'S\u00E3o Miguel \uD83C\uDFDD\uFE0F', true, true],
-  [-27.22, 38.65, 'Terceira \uD83C\uDFDD\uFE0F', false, true],
-  [-28.04, 38.53, 'Faial \uD83C\uDFDD\uFE0F', false, true],
-  [-28.33, 38.47, 'Pico \uD83C\uDFDD\uFE0F', false, true],
-  [-31.11, 39.45, 'Flores \uD83C\uDFDD\uFE0F', false, true],
-  [-28.97, 39.09, 'Graciosa \uD83C\uDFDD\uFE0F', false, true],
-  [-25.17, 36.97, 'Santa Maria \uD83C\uDFDD\uFE0F', false, true],
-  [-31.13, 39.67, 'Corvo \uD83C\uDFDD\uFE0F', false, true],
-  [-28.72, 38.65, 'S\u00E3o Jorge \uD83C\uDFDD\uFE0F', false, true],
+  // Açores — todas as ilhas visitadas [lng, lat, nome, isCapital, isIsland, isVisitedIsland]
+  [-25.67, 37.74, 'S\u00E3o Miguel \uD83C\uDFDD\uFE0F', true, true, true],
+  [-27.22, 38.65, 'Terceira \uD83C\uDFDD\uFE0F', false, true, true],
+  [-28.04, 38.53, 'Faial \uD83C\uDFDD\uFE0F', false, true, true],
+  [-28.33, 38.47, 'Pico \uD83C\uDFDD\uFE0F', false, true, true],
+  [-31.11, 39.45, 'Flores \uD83C\uDFDD\uFE0F', false, true, true],
+  [-28.97, 39.09, 'Graciosa \uD83C\uDFDD\uFE0F', false, true, true],
+  [-25.17, 36.97, 'Santa Maria \uD83C\uDFDD\uFE0F', false, true, true],
+  [-31.13, 39.67, 'Corvo \uD83C\uDFDD\uFE0F', false, true, true],
+  [-28.72, 38.65, 'S\u00E3o Jorge \uD83C\uDFDD\uFE0F', false, true, true],
   // Madeira e Porto Santo
-  [-16.91, 32.65, 'Madeira \uD83C\uDFDD\uFE0F', false, true],
-  [-16.34, 33.07, 'Porto Santo', false, true],
+  [-16.91, 32.65, 'Madeira \uD83C\uDFDD\uFE0F', false, true, true],
+  [-16.34, 33.07, 'Porto Santo', false, true, true],
   // Ilhas Canárias (Espanha)
   [-15.43, 28.10, 'Gran Canaria', false, true],
   [-16.55, 28.29, 'Tenerife', false, true],
@@ -1599,7 +1605,7 @@ const PLACES = [
   [0.00, -90.00, 'Antártida', false, true],
   [-38.00, -54.28, 'Geórgia do Sul', false, true],
   // Tanzânia — Zanzibar
-  [39.2, -6.16, 'Zanzibar \uD83C\uDFDD\uFE0F', true, true],
+  [39.2, -6.16, 'Zanzibar \uD83C\uDFDD\uFE0F', true, true, true],
   // Países Baixos
   [4.9, 52.37, 'Amesterd\u00E3o', true],
   // Polónia
@@ -1810,7 +1816,7 @@ const WORLD_CAPITALS = [
   [64,'Thimphu',27.47,89.64],[68,'Sucre',-19.05,-65.26],[70,'Sarajevo',43.85,18.36],
   [72,'Gaborone',-24.65,25.91],[76,'Bras\u00EDlia',-15.78,-47.93],[96,'Bandar Seri Begawan',4.94,114.95],
   [100,'S\u00F3fia',42.70,23.32],[854,'Ouagadougou',12.37,-1.53],[108,'Gitega',-3.43,29.92],
-  [116,'Phnom Penh',11.57,104.92],[120,'Iacund\u00EA',3.87,11.52],[124,'Otava',45.42,-75.70],
+  [116,'Phnom Penh',11.57,104.92],[120,'Iacund\u00EA',3.87,11.52],[124,'Ottawa',45.42,-75.70],
   [140,'Bangui',4.36,18.55],[144,'Colombo',6.93,79.85],[148,'Ndjam\u00E9na',12.10,15.04],
   [152,'Santiago',-33.46,-70.65],[156,'Pequim',39.91,116.39],[170,'Bogot\u00E1',4.71,-74.07],
   [174,'Moroni',-11.70,43.25],[178,'Brazzaville',-4.27,15.28],[180,'Kinshasa',-4.33,15.32],
@@ -2205,12 +2211,6 @@ async function initMap() {
         .attr('class','cap-dot')
         .attr('data-x', pos[0]).attr('data-y', pos[1])
         .attr('transform', `translate(${pos[0]},${pos[1]})`);
-      cg.append('circle')
-        .attr('r', 1.2).attr('cx', 0).attr('cy', 0)
-        .attr('fill', VISITED[id] ? '#8B2500' : 'rgba(60,40,0,0.55)')
-        .attr('stroke', 'rgba(255,255,255,0.8)')
-        .attr('stroke-width', 0.4)
-        .attr('pointer-events', 'none');
       cg.append('text')
         .attr('y', -2.5)
         .style('font-family', "'Outfit',sans-serif")
@@ -2230,7 +2230,7 @@ async function initMap() {
 
     // ── City / place pin layer ────────────────────────────────────────────────
     citiesG = g.append('g').attr('class','cities-layer');
-    PLACES.forEach(([lng, lat, name, isCap, isIsland]) => {
+    PLACES.forEach(([lng, lat, name, isCap, isIsland, isVisitedIsland]) => {
       const pos = proj([lng, lat]);
       if (!pos || isNaN(pos[0])) return;
       const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
@@ -2239,6 +2239,8 @@ async function initMap() {
       const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
       const haloStroke = isLaponia ? 'rgba(107,63,160,0.45)' : 'rgba(14,127,168,0.45)';
       const dropShadow = isLaponia ? 'drop-shadow(0 1px 4px rgba(107,63,160,0.6))' : 'drop-shadow(0 1px 4px rgba(14,127,168,0.6))';
+      // For islands: show pin only if visited (6th field); always show name label
+      const showPin = !isIsland || !!isVisitedIsland;
       const cg = citiesG.append('g')
         .attr('class', `city-pin${isCap ? ' capital' : ''}${isIsland ? ' island' : ''}`)
         .attr('transform', `translate(${pos[0]},${pos[1]})`)
@@ -2246,11 +2248,12 @@ async function initMap() {
         .attr('data-y', pos[1])
         .attr('data-baser', baseR)
         .attr('data-always', isIsland ? '1' : '0')
-        .style('filter', isIsland ? dropShadow : null)
+        .attr('data-showpin', showPin ? '1' : '0')
+        .style('filter', (isIsland && showPin) ? dropShadow : null)
         .on('click', (evt) => { evt.stopPropagation(); });
 
-      // Subtle halo ring for islands — only for locating them at world zoom
-      if (isIsland) {
+      // Halo ring — only for visited islands
+      if (isIsland && showPin) {
         cg.append('circle')
           .attr('class', 'island-halo')
           .attr('cx', 0)
@@ -2261,22 +2264,24 @@ async function initMap() {
           .attr('stroke-width', 0.5);
       }
 
-      // Pin body (teardrop)
+      // Pin body (teardrop) — only for visited islands
       cg.append('path')
         .attr('class', 'pin-body')
         .attr('d', makeTeardrop(baseR))
         .attr('fill', fillColor)
         .attr('stroke', 'white')
-        .attr('stroke-width', isIsland ? 1.2 : 0.8);
+        .attr('stroke-width', isIsland ? 1.2 : 0.8)
+        .style('display', showPin ? null : 'none');
 
-      // Inner white dot on head
+      // Inner white dot on head — only for visited islands
       cg.append('circle')
         .attr('class', 'pin-dot')
         .attr('cx', 0)
         .attr('cy', -baseR * 2.5)
         .attr('r', baseR * 0.38)
         .attr('fill', 'white')
-        .attr('opacity', 0.9);
+        .attr('opacity', 0.9)
+        .style('display', showPin ? null : 'none');
 
       // Store display name on the group; label is rendered as a sibling (not inside scaled group)
       const displayName = name.replace('\uD83C\uDFDD\uFE0F', '').trim();
@@ -2479,53 +2484,8 @@ async function initMap() {
         overlay.appendChild(div);
       });
 
-      // ── Ilhas Portuguesas — bandeira de Portugal para todas as ilhas ─────────
-      const PT_ISLAND_LABELS = [
-        { name:'São Miguel',   code:'pt', geo:[-25.67,37.74] },
-        { name:'Terceira',     code:'pt', geo:[-27.22,38.65] },
-        { name:'Faial',        code:'pt', geo:[-28.04,38.53] },
-        { name:'Pico',         code:'pt', geo:[-28.33,38.47] },
-        { name:'Flores',       code:'pt', geo:[-31.11,39.45] },
-        { name:'Graciosa',     code:'pt', geo:[-28.97,39.09] },
-        { name:'Santa Maria',  code:'pt', geo:[-25.17,36.97] },
-        { name:'Corvo',        code:'pt', geo:[-31.13,39.67] },
-        { name:'São Jorge',    code:'pt', geo:[-28.72,38.65] },
-        { name:'Madeira',      code:'pt', geo:[-16.91,32.65] },
-      ];
-      PT_ISLAND_LABELS.forEach(({ name, code, geo }) => {
-        // Label ilha: só nome (bandeira de Portugal seria redundante)
-        const div = document.createElement('div');
-        div.className = 'vcl vcl-island';
-        div.dataset.geo = JSON.stringify(geo);
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        div.appendChild(nameSpan);
-        div.style.display = 'none';
-        overlay.appendChild(div);
-      });
-
-      // ── Ilhas de Cabo Verde ─────────────────────────────────────────────────
-      const CV_ISLAND_LABELS = [
-        { name:'Santiago',    geo:[-23.61, 14.93] },
-        { name:'Santo Antão', geo:[-25.17, 17.12] },
-        { name:'São Vicente', geo:[-25.00, 16.87] },
-        { name:'São Nicolau', geo:[-24.27, 16.58] },
-        { name:'Sal',         geo:[-22.91, 16.73] },
-        { name:'Boa Vista',   geo:[-22.82, 16.09] },
-        { name:'Maio',        geo:[-23.17, 15.23] },
-        { name:'Fogo',        geo:[-24.36, 14.93] },
-        { name:'Brava',       geo:[-24.72, 14.86] },
-      ];
-      CV_ISLAND_LABELS.forEach(({ name, geo }) => {
-        const div = document.createElement('div');
-        div.className = 'vcl vcl-island';
-        div.dataset.geo = JSON.stringify(geo);
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        div.appendChild(nameSpan);
-        div.style.display = 'none';
-        overlay.appendChild(div);
-      });
+      // ── Ilhas Portuguesas e Cabo Verde são cobertas pelos SVG labels do PLACES ──
+      // (vcl-island overlay usado apenas para ilhas de referência não presentes no PLACES)
     })();
 
     // ── HTML overlay for ALL countries (flag + name, same system as visited) ──
@@ -2735,26 +2695,20 @@ async function initMap() {
       });
 
       overlay.querySelectorAll('.vcl.vcl-island').forEach(div => {
-        div.style.display = 'none'; return; // ilhas: usar só texto SVG
         const geo = JSON.parse(div.dataset.geo || 'null');
-        if (!geo) return;
+        if (!geo) { div.style.display = 'none'; return; }
         const sp = projRef(geo);
-        if (!sp || isNaN(sp[0])) return;
+        if (!sp || isNaN(sp[0])) { div.style.display = 'none'; return; }
         const [sx, sy] = toCSS(sp);
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
         if (!SHOW_LABEL) { div.style.display = 'none'; return; }
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
         div.style.display = 'flex';
-        const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
+        const fs = Math.min(10, Math.max(4.5, 2.2 * Math.pow(k, 0.65)));
         div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '1px 4px 1px 2px' : '2px 5px 2px 3px';
-        const flagImg = div.querySelector('.vcl-flag-inline');
-        if (flagImg) {
-          const flagW = Math.round(Math.min(18, Math.max(9, fs * 1.5)));
-          flagImg.style.width  = flagW + 'px';
-          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
-        }
+        div.style.padding = '1px 4px 1px 4px';
+        div.style.borderRadius = '3px';
       });
 
       // ── All-country labels (non-visited): flag-only at k≥1.4, flag+name at k≥2.8 ──
@@ -3041,25 +2995,32 @@ function updateLabelsVisibility(k) {
     // Pin size: read from data-baser set during initial render (consistent with pin shape)
     const baseR = +sel.attr('data-baser') || (isIsland ? 3.8 : (isCap ? 3.8 : 2.8));
 
+    const showPin = sel.attr('data-showpin') !== '0';
     if (isIsland && !showIslandFull) {
       sel.attr('transform', `translate(${px},${py})`);
-      sel.select('circle.island-halo')
-        .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
-        .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
+      // Only show halo dot for visited islands at low zoom
+      if (showPin) {
+        sel.select('circle.island-halo')
+          .style('display', null)
+          .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
+          .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
+      } else {
+        sel.select('circle.island-halo').style('display', 'none');
+      }
       sel.select('path.pin-body').style('display', 'none');
       sel.select('circle.pin-dot').attr('r', 0);
       sel.select('text').style('display', 'none');
     } else {
       sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
       if (isIsland) {
-        const hFill = sel.select('circle.island-halo').attr('fill') || 'rgba(14,127,168,0.15)';
-        const hStroke = sel.select('circle.island-halo').attr('stroke') || 'rgba(14,127,168,0.45)';
+        // Only show halo for visited islands
         sel.select('circle.island-halo')
+          .style('display', showPin ? null : 'none')
           .attr('stroke-width', 0.5).attr('r', baseR * 1.1).attr('cy', -baseR * 2.5);
       }
-      sel.select('path.pin-body').style('display', null).attr('d', makeTeardrop(baseR));
-      sel.select('circle.pin-dot').style('display', null)
-        .attr('r', baseR * 0.38).attr('cy', -baseR * 2.5);
+      sel.select('path.pin-body').style('display', showPin ? null : 'none').attr('d', makeTeardrop(baseR));
+      sel.select('circle.pin-dot').style('display', showPin ? null : 'none')
+        .attr('r', showPin ? baseR * 0.38 : 0).attr('cy', -baseR * 2.5);
 
     }
   });
