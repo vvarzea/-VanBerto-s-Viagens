@@ -391,10 +391,9 @@
 
   /* MAP PINS */
   .map-pin {
-    cursor: pointer; transition: transform .15s;
+    cursor: pointer;
     filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
   }
-  .map-pin:hover { transform: scale(1.3) translateY(-2px); }
   .pin-circle { transition: all .15s; }
 
   /* Visited country labels — HTML overlay (always on top, no SVG z-order issues) */
@@ -459,9 +458,7 @@
   .city-pin {
     cursor: pointer;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45));
-    transition: transform .15s;
   }
-  .city-pin:hover { transform: scale(1.4) translateY(-1px); }
   .city-label {
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
@@ -814,8 +811,7 @@
   }
   .notif.show { transform: translateX(-50%) translateY(0); }
 
-  .home-pin { filter: drop-shadow(0 2px 6px rgba(192,57,43,0.55)); transition: transform .15s; }
-  .home-pin:hover { transform: scale(1.25) translateY(-2px); }
+  .home-pin { filter: drop-shadow(0 2px 6px rgba(192,57,43,0.55)); }
 
   #home-modal {
     display: none; position: fixed; inset: 0;
@@ -2226,6 +2222,7 @@ async function initMap() {
         .text(capName);
     });
     window._capsG = capsG;
+    capsG.lower();
 
 
     // ── City / place pin layer ────────────────────────────────────────────────
@@ -2801,7 +2798,6 @@ async function initMap() {
         g.attr('transform', transform);
         currentZoomK = transform.k;
         _wheelTarget = transform.k;
-        if (window._capsG) window._capsG.lower();
         updateLabelsVisibility(transform.k);
         if (window._updateVCL) window._updateVCL(transform);
         const zl = document.getElementById('zoom-level-indicator');
