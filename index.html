@@ -4581,6 +4581,61 @@ function importData(input) {
 // ─── GUIDES DATA ──────────────────────────────────────────────────────────────
 const GUIDES_DATA = [
   {
+    id: 'terceira', name: 'Ilha Terceira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · desde 2007',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Cidade de Angra do Heroísmo',
+        'Monte Brasil',
+        'Jardim Duque de Bragança',
+        'Miradouro Alto da Memória',
+        'Cidade da Praia da Vitória',
+        'Impérios do Divino Espírito Santo',
+        'Algar do Carvão',
+        'Gruta do Natal',
+        'Furnas do Enxofre',
+        'Lagoa das Patas',
+        'Miradouro da Serra do Cume',
+        'Piscinas Naturais dos Biscoitos',
+        'Serra de Santa Bárbara',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'QB',
+        'Mercatto di Osteria',
+        'Taberna do Roberto',
+        'Beira Mar',
+        'O Caneta',
+        'Quinta dos Açores',
+        'Rocha',
+        'Ti Chôa',
+        'O Pescador',
+      ]},
+    ]
+  },
+  {
+    id: 'peneda-geres', name: 'Parque Nacional da Peneda-Gerês', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal · 2011',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Cascata do Arado',
+        'Cascata da Portela do Homem',
+        '7 Lagoas',
+        'Cascata de Pincães',
+        'Miradouro da Pedra Bela',
+        'Miradouro do Fojo',
+        'Soajo (Espigueiros)',
+        'Lindoso (Castelo e Espigueiros)',
+        'Castro Laboreiro',
+        'As Termas de Lobios (Lobios - Espanha)',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Lurdes Capela',
+        'O Abocanhado',
+        'Saber ao Borralho',
+      ]},
+    ]
+  },
+  {
     id: 'londres', name: 'Londres', country: 'Reino Unido', flagCode: 'gb', countryId: 826,
     sub: 'Reino Unido \u00B7 P\u00E1scoa 2014',
     sections: [
@@ -4651,6 +4706,31 @@ const GUIDES_DATA = [
         'Supl\u00E9xio',
         'Quinta dos A\u00E7ores',
         'Restaurante Associa\u00E7\u00E3o Agr\u00EDcola de S\u00E3o Miguel',
+      ]},
+    ]
+  },
+  {
+    id: 'sao-jorge', name: 'Ilha de São Jorge', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2014-2018',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Fajã da Caldeira de Santo Cristo',
+        'Fajã dos Cubres',
+        'Fajã de São João',
+        'Fajã dos Vimes',
+        'Pico da Esperança',
+        'Miradouro da Fajã do Ouvidor',
+        'Poça Simão Dias (Fajã do Ouvidor)',
+        'Velas',
+        'Calheta',
+        'Cooperativa do Queijo de São Jorge (Beira)',
+        'Ponta dos Rosais (e Farol)',
+        'Parque Florestal das Sete Fontes',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'O Forninho',
+        'Restaurante Amaro',
+        'Sabores da Fajã',
       ]},
     ]
   },
@@ -4841,6 +4921,56 @@ const GUIDES_DATA = [
         'Rheinfelder Bierhalle',
         'Holy Cow! Gourmet Burger',
         'Swiss Chuchi',
+      ]},
+    ]
+  },
+  {
+    id: 'pico', name: 'Ilha do Pico', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2017',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Montanha do Pico',
+        'Zona balnear da Madalena',
+        'Piscinas naturais em Criação Velha',
+        'Museu do Vinho do Pico',
+        'Vinhas do Pico',
+        'Gruta das Torres',
+        'Lagoa do Capitão',
+        'Caldeira',
+        'Farol Ponta da Ilha',
+        'Madalena (costa)',
+        'Museu dos Baleeiros',
+        'São Mateus Farol',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'O Ancoradouro',
+        'Cella Bar',
+        'O Tasca',
+      ]},
+    ]
+  },
+  {
+    id: 'flores', name: 'Ilha das Flores', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2017',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Poço da Alagoinha (Poço da Ribeira do Ferreiro)',
+        'Cascata do Poço do Bacalhau',
+        'Rocha dos Bordões',
+        'Sete Lagoas (Lagoa Negra, Comprida, Branca, Seca, Funda, Rasa e Lomba)',
+        'Miradouro de Craveiro Lopes',
+        'Santa Cruz das Flores',
+        'Fajã Grande',
+        'Fábrica da Baleia do Boqueirão',
+        'Ilhéu de Monchique',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Residencia Mateus',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Restaurante Casa do Rei',
+        'Papadias',
+        'Restaurante Sereia',
       ]},
     ]
   },
@@ -5045,6 +5175,59 @@ const GUIDES_DATA = [
         'Mom\'s Kitchen',
         'Hermans',
         'Pelikan',
+      ]},
+    ]
+  },
+  {
+    id: 'graciosa', name: 'Ilha Graciosa', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2019',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Furna do Enxofre',
+        'Termas do Carapacho (e Piscinas Naturais)',
+        'Caldeira da Graciosa',
+        'Santa Cruz da Graciosa',
+        'Miradouro da Praia (Monte de Nossa Senhora da Ajuda)',
+        'Ilhéu da Praia',
+        'Ilhéu de Baixo (Carapacho)',
+        'Fábrica das Queijadas da Graciosa',
+        'Moinhos de Vento de Redondos',
+        'Ponta da Barca (e Farol)',
+        'Baía da Folga',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Graciosa Hotel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Costa do Sol',
+        'O Estrela',
+        'O Telheiro',
+      ]},
+    ]
+  },
+  {
+    id: 'santa-maria', name: 'Ilha de Santa Maria', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2019',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Praia Formosa',
+        'Deserto Vermelho (Barreiro da Faneca)',
+        'Cascata do Aveiro',
+        'Baía de São Lourenço (e Miradouro)',
+        'Vila do Porto (Centro Histórico)',
+        'Miradouro de Santa Bárbara',
+        'Baía dos Anjos (e Estátua de Cristóvão Colombo)',
+        'Poço da Rocha',
+        'Pico Alto',
+        'Forte de São Brás',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Hotel Santa Maria',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Central Pub',
+        'Restaurante Garrafão',
+        'O Forno',
       ]},
     ]
   },
@@ -5315,6 +5498,57 @@ const GUIDES_DATA = [
         'La Gastronomica Burgers&Beers',
         'El Desván Barcelona',
         'Micu Maku',
+      ]},
+    ]
+  },
+  {
+    id: 'faial', name: 'Ilha do Faial', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Vulcão dos Capelinhos',
+        'Caldeira do Faial',
+        'Marina da Horta',
+        'Peter Café Sport',
+        'Piscinas naturais de Castelo Branco + Ponta do Morro',
+        'Praia da Fajã + Miradouro da Ribeira das Cabras',
+        'Praia de Porto Pim',
+        'Piscinas Naturais do Varadouro',
+        'Miradouro de Nossa Senhora da Conceição',
+        'Caldeira',
+        'Jardim Botânico do Faial',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Azoris Faial Garden - Resort Hotel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Atlético',
+        'Ah! Boca Santa',
+        'Peter Café Sport',
+        'Pasquinha',
+        'Aldina Restaurant and Bar',
+      ]},
+    ]
+  },
+  {
+    id: 'corvo', name: 'Ilha do Corvo', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Açores · 2023',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Miradouro Caldeirão + Caldeirão + Lagoa do Caldeirão',
+        'Miradouro do Morro dos Homens',
+        'Miradouro Cabeça do Indio',
+        'Praia da Areia',
+        'Moinhos do Corvo + Farol da Ponta Negra',
+        'Miradouro do Portão',
+        'Ecomuseu',
+      ]},
+      { title: '🏨 Hotel', items: [
+        "Joe & Vera's Vintage Place",
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Caldeirão',
+        'BBC',
       ]},
     ]
   },
