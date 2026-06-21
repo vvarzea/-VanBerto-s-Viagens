@@ -5355,14 +5355,16 @@ async function openGuideModal(guideId) {
 
   // Renderizar imediatamente (sem fotos ou com fotos já em cache)
   renderBody(guide.photos || []);
-  document.getElementById('guide-modal').classList.add('on');
+  const modal = document.getElementById('guide-modal');
+  modal.dataset.activeGuide = guide.id;
+  modal.classList.add('on');
   document.getElementById('backdrop').classList.add('on');
 
   // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
   if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
     loadGuidePhotosBackground(guide, (photos) => {
-      // Actualizar apenas se o modal deste guia ainda estiver aberto
-      if (!document.getElementById('guide-modal').classList.contains('on')) return;
+      // Cancelar se o modal foi fechado OU se já abriu outro guia entretanto
+      if (!modal.classList.contains('on') || modal.dataset.activeGuide !== guide.id) return;
       // Actualizar o bloco de thumbs — substituir no lugar sem duplicar
       const thumbsWrap = document.getElementById('guide-thumbs-' + guide.id);
       if (thumbsWrap) {
@@ -5404,7 +5406,7 @@ function guideThumbScroll(id, dir) {
 
 function openGuidePhotoFull(guideId, startIdx) {
   const guide = GUIDES_DATA.find(g => g.id === guideId);
-  if (!guide || !guide.photos) return;
+  if (!guide || !guide.photos || guide.photos.length === 0) return;
   const photos = guide.photos;
   let cur = startIdx;
   let animating = false;
@@ -5591,28 +5593,8 @@ function openGuidePhotoFull(guideId, startIdx) {
   document.body.appendChild(overlay);
 }
 
-function guideThumbScroll(id, dir) {
-  const el = document.getElementById(id);
-  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
-}
 
 
-function guideThumbScroll(id, dir) {
-  const el = document.getElementById(id);
-  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
-}
-
-
-function guideThumbScroll(id, dir) {
-  const el = document.getElementById(id);
-  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
-}
-
-
-function guideThumbScroll(id, dir) {
-  const el = document.getElementById(id);
-  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
-}
 
 
 function openGuideFromSheet(guideId) {
