@@ -404,6 +404,7 @@ let projRef = null;
 let pathRef = null;
 let currentZoomK = 1;
 let wishCountriesNumeric = new Set();
+let soonCountriesNumeric = new Set(); // países marcados como "a visitar em breve" no mapa
 
 // ─── STORAGE — window.storage (Claude.ai) com fallback automático para localStorage ──
 // Detecta qual API está disponível e usa sempre a melhor opção.
@@ -452,6 +453,9 @@ async function savePins() {
 async function saveWishCountries() {
   try { await _store.set('vb-wish-countries', JSON.stringify([...wishCountriesNumeric])); } catch(e) {}
 }
+async function saveSoonCountries() {
+  try { await _store.set('vb-soon-countries', JSON.stringify([...soonCountriesNumeric])); } catch(e) {}
+}
 async function loadState() {
   try {
     const p = await _store.get('vb-pins');
@@ -461,22 +465,42 @@ async function loadState() {
     const w = await _store.get('vb-wish-countries');
     if (w) wishCountriesNumeric = new Set(JSON.parse(w));
   } catch(e) { wishCountriesNumeric = new Set(); }
+  try {
+    const s = await _store.get('vb-soon-countries');
+    if (s) soonCountriesNumeric = new Set(JSON.parse(s));
+  } catch(e) { soonCountriesNumeric = new Set(); }
 }
 
 // ─── TABS ────────────────────────────────────────────────────────────────────
+let _mapScrollY = 0; // guardar posição de scroll quando saímos do mapa
+
 function switchTab(name) {
+  const currentTab = document.querySelector('.tab.active');
+  const currentName = currentTab ? currentTab.dataset.tab : null;
+
+  // Guardar scroll do mapa ao sair
+  if (currentName === 'map' && name !== 'map') {
+    _mapScrollY = window.scrollY;
+  }
+
   document.querySelectorAll('.tab').forEach((t,i) => {
     const names = ['map','pins','list','guides','timeline'];
     t.classList.toggle('active', names[i] === name);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
+
   // Gerir classe no body para mostrar/esconder zoom controls
-  if (name === 'mapa') {
+  if (name === 'map') {
     document.body.classList.add('tab-mapa-active');
+    // Restaurar scroll do mapa
+    requestAnimationFrame(() => window.scrollTo(0, _mapScrollY));
   } else {
     document.body.classList.remove('tab-mapa-active');
+    // Outros separadores começam sempre no topo
+    window.scrollTo(0, 0);
   }
+
   if (name === 'pins') { renderPinsList(); renderSoonList();
   renderWishList(); }
   if (name === 'list') { renderWishChips(); renderUserChips(); }
@@ -521,7 +545,7 @@ const WORLD_NAMES = {
   756:'Su\u00ED\u00E7a',760:'S\u00EDria',158:'Taiwan',762:'Tajiquist\u00E3o',
   834:'Tanz\u00E2nia',764:'Tail\u00E2ndia',626:'Timor-Leste',768:'Togo',
   780:'Trinidad e Tobago',788:'Tun\u00EDsia',792:'Turquia',800:'Uganda',
-  804:'Ucr\u00E2nia',784:'Emirados \u00C1rabes',826:'Reino Unido',840:'EUA',
+  804:'Ucr\u00E2nia',784:'Emirados \u00C1rabes Unidos',826:'Reino Unido',840:'EUA',
   858:'Uruguai',860:'Uzbequist\u00E3o',862:'Venezuela',704:'Vietname',
   887:'I\u00E9men',894:'Z\u00E2mbia',716:'Zimbabu\u00E9',
   132:'Cabo Verde',462:'Maldivas',492:'M\u00F3naco',336:'Vaticano',
@@ -765,8 +789,12 @@ async function initMap() {
           return;
         }
         if (currentMode === 'pin-soon') {
+          soonCountriesNumeric.add(id);
+          saveSoonCountries();
           d3.select(this).attr('class', 'cpath soon');
           showNotif('\uD83D\uDDD3\uFE0F Adicionado a visitar em breve!');
+          renderSoonList();
+          renderGuides();
           return;
         }
         if (currentMode === 'pin-wish') {
@@ -785,8 +813,12 @@ async function initMap() {
         // Se está marcado como "em breve" e não é um dos 3 Balcãs fixos, permitir remover
         const FIXED_SOON = new Set([688, 807, 383]);
         if (d3.select(this).attr('class') === 'cpath soon' && !FIXED_SOON.has(id)) {
+          soonCountriesNumeric.delete(id);
+          saveSoonCountries();
           d3.select(this).attr('class', 'cpath no');
           showNotif('\uD83D\uDDD3\uFE0F Removido de a visitar em breve');
+          renderSoonList();
+          renderGuides();
           return;
         }
         if (info) {
@@ -2653,7 +2685,8 @@ const SOON_PINS_LIST = [
 function renderSoonList() {
   const soonList = document.getElementById('pins-soon-list');
   if (!soonList) return;
-  soonList.innerHTML = SOON_PINS_LIST.map(p => `
+
+  const pinItemHtml = p => `
     <div class="pin-item">
       <img src="https://flagcdn.com/w40/${p.code}.png"
            style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;"
@@ -2662,9 +2695,18 @@ function renderSoonList() {
         <div class="pin-name">${p.name}</div>
         <div class="pin-meta">${p.year ? p.year + ' \u00B7 ' : ''}${p.note}</div>
       </div>
-      <div style="font-size:10px;color:#e07b00;font-weight:600;flex-shrink:0;">\uD83D\uDDD3\uFE0F</div>
-    </div>
-  `).join('');
+      <div style="font-size:10px;color:#e0457b;font-weight:600;flex-shrink:0;">\uD83D\uDDD3\uFE0F</div>
+    </div>`;
+
+  // Países dinâmicos adicionados no mapa
+  const dynamicItems = [...soonCountriesNumeric].map(id => {
+    id = +id;
+    const name = WORLD_NAMES[id] || `Pa\u00EDs ${id}`;
+    const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
+    return pinItemHtml({ name, code, year: 'Em breve', note: '' });
+  });
+
+  soonList.innerHTML = SOON_PINS_LIST.map(pinItemHtml).join('') + dynamicItems.join('');
 }
 
 // ─── RENDER WISH LIST ────────────────────────────────────────────────────────
@@ -2682,8 +2724,9 @@ function renderWishList() {
   }
 
   const countryItems = [...wishCountriesNumeric].map(id => {
-    const name = getCountryName(id) || `Pa\u00EDs ${id}`;
-    const code = FLAG_CODES[id] || '';
+    id = +id; // garantir que é número
+    const name = WORLD_NAMES[id] || getCountryName(id) || `Pa\u00EDs ${id}`;
+    const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
     const flagImg = code
       ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
       : `<div class="pin-dot wish">\u2B50</div>`;
@@ -2898,6 +2941,10 @@ const FLAG_CODES = {
   348:'hu', 380:'it', 372:'ie', 352:'is', 504:'ma', 462:'mv', 492:'mc',
   578:'no', 620:'pt', 528:'nl', 616:'pl', 634:'qa', 203:'cz', 756:'ch',
   752:'se', 764:'th', 792:'tr', 834:'tz', 336:'va',
+  643:'ru', 156:'cn', 410:'kr', 702:'sg', 554:'nz', 36:'au', 710:'za', 818:'eg',
+  484:'mx', 604:'pe', 32:'ar', 152:'cl', 170:'co', 566:'ng', 404:'ke', 586:'pk',
+  104:'mm', 116:'kh', 704:'vn', 458:'my', 360:'id', 608:'ph', 50:'bd', 144:'lk',
+  364:'ir', 682:'sa', 840:'us', 356:'in',
   688:'rs', 807:'mk', 383:'xk',
 };
 
@@ -5154,8 +5201,23 @@ function renderGuides(filter) {
       const hay = (g.name + g.country + g.sub).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       return hay.includes(q);
     });
-    soonGrid.innerHTML = soonFiltered.map(cardHtml).join('');
-    soonSection.style.display = soonFiltered.length ? '' : 'none';
+    // Países dinâmicos sem guia
+    const dynamicSoonCards = [...soonCountriesNumeric].map(id => {
+      id = +id;
+      const name = WORLD_NAMES[id] || `Pa\u00EDs ${id}`;
+      const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
+      if (!q || name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)) {
+        const flagUrl = code ? `https://flagcdn.com/w40/${code}.png` : '';
+        return `<div class="guide-card" style="opacity:0.7">
+          <img class="guide-card-flag" src="${flagUrl}" alt="${name}" onerror="this.style.display='none'">
+          <div class="guide-card-name">${name}</div>
+          <div class="guide-card-sub">Guia em prepara\u00E7\u00E3o...</div>
+        </div>`;
+      }
+      return '';
+    }).filter(Boolean);
+    soonGrid.innerHTML = soonFiltered.map(cardHtml).join('') + dynamicSoonCards.join('');
+    soonSection.style.display = (soonFiltered.length || dynamicSoonCards.length) ? '' : 'none';
   }
 }
 
