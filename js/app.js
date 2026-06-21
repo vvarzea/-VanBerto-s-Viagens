@@ -5226,29 +5226,31 @@ function renderGuides(filter) {
 function filterGuides(q) { renderGuides(q); }
 
 // ─── AUTO-DETECTAR FOTOS DE UM GUIA (convenção de nomes, máx 50) ─────────────
-function loadGuidePhotosBackground(guide, onPhotoFound) {
+function loadGuidePhotosBackground(guide, onComplete) {
   // Carregar fotos em background uma a uma — sem bloquear a abertura do guia
   if (!guide.photoFolder) return;
   guide.photos = [];
   guide._photosLoading = true;
 
-  let loaded = 0;
   let errors = 0;
   const MAX = 50;
 
   const checkNext = (i) => {
-    if (i > MAX) { guide._photosLoading = false; return; }
+    if (i > MAX) { guide._photosLoading = false; if (onComplete) onComplete(guide.photos.slice()); return; }
     const src = `${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`;
     const img = new Image();
     img.onload = () => {
       guide.photos.push(src);
-      if (onPhotoFound) onPhotoFound(guide.photos.slice());
       errors = 0;
       checkNext(i + 1);
     };
     img.onerror = () => {
       errors++;
-      if (errors >= 3) { guide._photosLoading = false; return; } // 3 falhas seguidas = fim
+      if (errors >= 3) {
+        guide._photosLoading = false;
+        if (onComplete) onComplete(guide.photos.slice()); // callback só no final
+        return;
+      }
       checkNext(i + 1);
     };
     img.src = src;
@@ -5314,19 +5316,19 @@ async function openGuideModal(guideId) {
   // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
   if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
     loadGuidePhotosBackground(guide, (photos) => {
-      // Actualizar miniaturas à medida que chegam (só se o modal ainda estiver aberto)
-      if (document.getElementById('guide-modal').classList.contains('on')) {
-        const thumbsEl = document.getElementById('guide-thumbs-${guide.id}');
-        if (thumbsEl) {
-          // Actualizar apenas o bloco de thumbs sem re-renderizar o guia inteiro
-          const newThumbsHtml = buildThumbsHtml(photos);
-          const wrap = thumbsEl.closest('div[style*="position:relative"]');
-          if (wrap) wrap.outerHTML = newThumbsHtml;
-        } else {
-          // Primeira foto a chegar — inserir o bloco de thumbs no topo
-          const newThumbsHtml = buildThumbsHtml(photos);
-          if (newThumbsHtml) body.insertAdjacentHTML('afterbegin', newThumbsHtml);
-        }
+      // Actualizar apenas se o modal deste guia ainda estiver aberto
+      if (!document.getElementById('guide-modal').classList.contains('on')) return;
+      // Actualizar o bloco de thumbs — substituir no lugar sem duplicar
+      const thumbsWrap = document.getElementById('guide-thumbs-' + guide.id);
+      if (thumbsWrap) {
+        // Já existe — actualizar as imgs dentro
+        const newThumbsHtml = buildThumbsHtml(photos);
+        const container = thumbsWrap.closest('div[style*="position:relative"]');
+        if (container) container.outerHTML = newThumbsHtml;
+      } else {
+        // Ainda não existe — inserir no topo do body
+        const newThumbsHtml = buildThumbsHtml(photos);
+        if (newThumbsHtml) body.insertAdjacentHTML('afterbegin', newThumbsHtml);
       }
     });
   }
@@ -5336,6 +5338,7 @@ async function openGuideModal(guideId) {
 function closeGuideModal(evt) {
   if (evt && evt.target !== document.getElementById('guide-modal')) return;
   document.getElementById('guide-modal').classList.remove('on');
+  document.getElementById('backdrop').classList.remove('on');
 }
 
 function guideThumbScroll(id, dir) {
