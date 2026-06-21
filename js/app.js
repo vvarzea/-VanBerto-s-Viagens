@@ -3031,6 +3031,7 @@ const SEARCH_DATA = [
   {name:'Roma', year:'It\u00E1lia \u00B7 Ver\u00E3o 2016 Ver\u00E3o', id:380, lat:41.9, lng:12.5, type:'city', code:'it'},
   {name:'Veneza', year:'It\u00E1lia \u00B7 Ver\u00E3o 2019 Ver\u00E3o', id:380, lat:45.44, lng:12.34, type:'city', code:'it'},
   {name:'Dublin', year:'Irlanda \u00B7 2025 P\u00E1scoa', id:372, lat:53.33, lng:-6.26, type:'city', code:'ie'},
+  {name:'Peniche', year:'Portugal \u00B7 2025 Ver\u00E3o', id:620, lat:39.36, lng:-9.38, type:'city', code:'pt'},
   {name:'Reykjavik', year:'Isl\u00E2ndia \u00B7 2018 Ver\u00E3o', id:352, lat:64.13, lng:-21.9, type:'city', code:'is'},
   {name:'Marraquexe', year:'Marrocos \u00B7 2023 P\u00E1scoa', id:504, lat:31.63, lng:-7.99, type:'city', code:'ma'},
   {name:'Mal\u00E9', year:'Maldivas \u00B7 2024 Ver\u00E3o', id:462, lat:4.17, lng:73.51, type:'city', code:'mv'},
@@ -3460,7 +3461,7 @@ function importData(input) {
 
 // ─── GUIDES DATA ──────────────────────────────────────────────────────────────
 const GUIDES_DATA = [
-  {
+    {
     id: 'terceira', name: 'Ilha Terceira', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · desde 2007',
     photoFolder: 'images/Ilha_Terceira/Ilha_Terceira',
@@ -3495,7 +3496,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'murcia-benidorm-alicante', name: 'Múrcia · Benidorm · Alicante', country: 'Espanha', flagCode: 'es', countryId: 724,
-    sub: 'Espanha · Páscoa 2008',
+    sub: 'Espanha · Páscoa 2008, 2011',
     photoFolder: 'images/Murcia_Benidorm_Alicante/Murcia_Benidorm_Alicante',
     sections: [
       { title: '🗺️ Múrcia — Locais visitados', items: [
@@ -3552,7 +3553,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'londres', name: 'Londres', country: 'Reino Unido', flagCode: 'gb', countryId: 826,
-    sub: 'Reino Unido \u00B7 P\u00E1scoa 2014',
+    sub: 'Inglaterra \u00B7 Reino Unido \u00B7 P\u00E1scoa 2014',
     photoFolder: 'images/Londres/Londres',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -3690,8 +3691,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
-    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2016',
+    id: 'roma', name: 'Roma & Vaticano', country: 'It\u00E1lia', flagCode: 'it', flagCodes: ['it','va'], countryId: 380,
+    sub: 'It\u00E1lia & Vaticano \u00B7 Ver\u00E3o 2016',
     photoFolder: 'images/Roma/Roma',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -3717,43 +3718,6 @@ const GUIDES_DATA = [
         'Sfizio Pizzeria (pizzaria)',
         'La Nuova Piazzetta',
         'Cantina e Cucina (italiano), próximo da Piazza Navona',
-      ]},
-    ]
-  },
-  {
-    id: 'amesterdao', name: 'Amesterd\u00E3o', country: 'Pa\u00EDses Baixos', flagCode: 'nl', countryId: 528,
-    sub: 'Pa\u00EDses Baixos \u00B7 Ver\u00E3o 2017',
-    photoFolder: 'images/Amesterdao/Amesterdao',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Canais de Amesterdão (tour de barco)',
-        'Amsterdam Centraal',
-        'National Monument',
-        'Madame Tussauds',
-        'Palácio Real de Amesterdão',
-        'Nieuwe Kerk',
-        'Westerkerk',
-        'Casa de Anne Frank',
-        'Amsterdam Dungeon',
-        'Amsterdam Museum',
-        'Leidseplein',
-        'Heineken Experience',
-        'Vondelpark',
-        'Rijksmuseum',
-        'Concertgebouw',
-        'Stedelijk Museum',
-        'Museu Van Gogh',
-        'I amsterdam',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Novotel Amsterdam Schiphol Airport, Hoofddorp',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'PIQNIQ',
-        'Broodje Bert',
-        'Piadina Bar',
-        'Bagels & Beans',
-        'LEON',
       ]},
     ]
   },
@@ -3817,6 +3781,43 @@ const GUIDES_DATA = [
         'Green Stove Cafe Kafe U zelených kamen',
         'U Magistra Kelly',
         'Vegan\'s Prague',
+      ]},
+    ]
+  },
+  {
+    id: 'amesterdao', name: 'Amesterd\u00E3o', country: 'Pa\u00EDses Baixos', flagCode: 'nl', countryId: 528,
+    sub: 'Pa\u00EDses Baixos \u00B7 Ver\u00E3o 2017',
+    photoFolder: 'images/Amesterdao/Amesterdao',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Canais de Amesterdão (tour de barco)',
+        'Amsterdam Centraal',
+        'National Monument',
+        'Madame Tussauds',
+        'Palácio Real de Amesterdão',
+        'Nieuwe Kerk',
+        'Westerkerk',
+        'Casa de Anne Frank',
+        'Amsterdam Dungeon',
+        'Amsterdam Museum',
+        'Leidseplein',
+        'Heineken Experience',
+        'Vondelpark',
+        'Rijksmuseum',
+        'Concertgebouw',
+        'Stedelijk Museum',
+        'Museu Van Gogh',
+        'I amsterdam',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Novotel Amsterdam Schiphol Airport, Hoofddorp',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'PIQNIQ',
+        'Broodje Bert',
+        'Piadina Bar',
+        'Bagels & Beans',
+        'LEON',
       ]},
     ]
   },
@@ -4006,37 +4007,6 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
-    sub: 'Alemanha \u00B7 Ver\u00E3o 2019',
-    photoFolder: 'images/Berlim/Berlim',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Palácio do Reichstag',
-        'Portão de Brandemburgo',
-        'Madame Tussaud Berlim',
-        'Memorial aos Judeus Mortos da Europa',
-        'Potsdamer Platz',
-        'Topografia do Terror (Museu histórico de Berlim)',
-        'Checkpoint Charlie',
-        'Gendarmenmarkt',
-        'Ilha dos Museus (Museu De Pergamón, Catedral de Berlim)',
-        'Siegessäule (Monumento em Berlim)',
-        'Großer Tiergarten',
-        'Berliner Fernsehturm (Torre de TV de Berlim)',
-        'Alexanderplatz',
-      ]},
-      { title: '🏨 Hoteis', items: [
-        'H4 Hotel',
-        'H+ Hotel Berlin Mitte',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Zur Gerichtslaube',
-        'Dicke Wirtin',
-        'Max und Moritz',
-      ]},
-    ]
-  },
-  {
     id: 'veneza', name: 'Veneza', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
     sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2019',
     photoFolder: 'images/Veneza/Veneza',
@@ -4077,6 +4047,37 @@ const GUIDES_DATA = [
         'La Bottiglia (paninis)',
         'Osteria Al Squero',
         'Bacaro Risorto Castello',
+      ]},
+    ]
+  },
+  {
+    id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
+    sub: 'Alemanha \u00B7 Ver\u00E3o 2019',
+    photoFolder: 'images/Berlim/Berlim',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Palácio do Reichstag',
+        'Portão de Brandemburgo',
+        'Madame Tussaud Berlim',
+        'Memorial aos Judeus Mortos da Europa',
+        'Potsdamer Platz',
+        'Topografia do Terror (Museu histórico de Berlim)',
+        'Checkpoint Charlie',
+        'Gendarmenmarkt',
+        'Ilha dos Museus (Museu De Pergamón, Catedral de Berlim)',
+        'Siegessäule (Monumento em Berlim)',
+        'Großer Tiergarten',
+        'Berliner Fernsehturm (Torre de TV de Berlim)',
+        'Alexanderplatz',
+      ]},
+      { title: '🏨 Hoteis', items: [
+        'H4 Hotel',
+        'H+ Hotel Berlin Mitte',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Zur Gerichtslaube',
+        'Dicke Wirtin',
+        'Max und Moritz',
       ]},
     ]
   },
@@ -4241,7 +4242,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'helsinquia', name: 'Hels\u00EDnquia', country: 'Finl\u00E2ndia', flagCode: 'fi', countryId: 246,
-    sub: 'Finl\u00E2ndia \u00B7 Natal 2021',
+    sub: 'Finl\u00E2ndia \u00B7 2018, Natal 2021',
     photoFolder: 'images/Helsinquia/Helsinquia',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
@@ -4293,32 +4294,6 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'capadocia', name: 'Capad\u00F3cia', country: 'Turquia', flagCode: 'tr', countryId: 792,
-    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
-    photoFolder: 'images/Capadocia/Capadocia',
-    sections: [
-      { title: '\uD83C\uDF0B Locais visitados', items: [
-        'Cappadocia Hot Air Balloon',
-        'Pigeon Valley',
-        'Zelve Open Air Museum',
-        'Goreme Historical National Park',
-        'Uchisar Castle',
-        'Goreme Open Air Museum',
-        'Fairy Chimneys',
-        'Rose Valley',
-        'Ortahisar Castle',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Termessos Hotel',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Rocks Terrace Restaurant',
-        'Sedef',
-        'Kapadokya Kebapzade',
-      ]},
-    ]
-  },
-  {
     id: 'istambul', name: 'Istambul', country: 'Turquia', flagCode: 'tr', countryId: 792,
     sub: 'Turquia \u00B7 Ver\u00E3o 2022',
     photoFolder: 'images/Istambul/Istambul',
@@ -4355,6 +4330,32 @@ const GUIDES_DATA = [
         'Ortaklar Kebap',
         'Münhani Istanbul',
         'Old Ottoman Cafe & Restaurant',
+      ]},
+    ]
+  },
+  {
+    id: 'capadocia', name: 'Capad\u00F3cia', country: 'Turquia', flagCode: 'tr', countryId: 792,
+    sub: 'Turquia \u00B7 Ver\u00E3o 2022',
+    photoFolder: 'images/Capadocia/Capadocia',
+    sections: [
+      { title: '\uD83C\uDF0B Locais visitados', items: [
+        'Cappadocia Hot Air Balloon',
+        'Pigeon Valley',
+        'Zelve Open Air Museum',
+        'Goreme Historical National Park',
+        'Uchisar Castle',
+        'Goreme Open Air Museum',
+        'Fairy Chimneys',
+        'Rose Valley',
+        'Ortahisar Castle',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Termessos Hotel',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Rocks Terrace Restaurant',
+        'Sedef',
+        'Kapadokya Kebapzade',
       ]},
     ]
   },
@@ -4412,39 +4413,6 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
-    sub: 'Espanha \u00B7 2023 P\u00E1scoa',
-    photoFolder: 'images/Barcelona/Barcelona',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Plaça d\'Espanya',
-        'Praça da Catalunha',
-        'La Rambla',
-        'Catedral de Barcelona',
-        'La Boqueria',
-        'Monumento a Colón',
-        'Sagrada Família',
-        'Igreja de Santa Maria do Mar',
-        'Parc de la Ciutadella',
-        'Arco do Triunfo de Barcelona',
-        'Casa Milá',
-        'Casa Batló',
-        'Fonte Mágica de Montjuïc',
-        'Plaça d’Espanya',
-      ]},
-      { title: '🏨 Hotel', items: [
-        'B Hotel',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Colom Restaurant',
-        'Honest Greens Rambla Catalunya',
-        'La Gastronomica Burgers&Beers',
-        'El Desván Barcelona',
-        'Micu Maku',
-      ]},
-    ]
-  },
-  {
     id: 'faial', name: 'Ilha do Faial', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2023',
     photoFolder: 'images/Ilha_do_Faial/Ilha_do_Faial',
@@ -4498,6 +4466,39 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
+    sub: 'Espanha \u00B7 P\u00E1scoa 2023',
+    photoFolder: 'images/Barcelona/Barcelona',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Plaça d\'Espanya',
+        'Praça da Catalunha',
+        'La Rambla',
+        'Catedral de Barcelona',
+        'La Boqueria',
+        'Monumento a Colón',
+        'Sagrada Família',
+        'Igreja de Santa Maria do Mar',
+        'Parc de la Ciutadella',
+        'Arco do Triunfo de Barcelona',
+        'Casa Milá',
+        'Casa Batló',
+        'Fonte Mágica de Montjuïc',
+        'Plaça d’Espanya',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'B Hotel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Colom Restaurant',
+        'Honest Greens Rambla Catalunya',
+        'La Gastronomica Burgers&Beers',
+        'El Desván Barcelona',
+        'Micu Maku',
+      ]},
+    ]
+  },
+  {
     id: 'marraquexe', name: 'Marraquexe', country: 'Marrocos', flagCode: 'ma', countryId: 504,
     sub: 'Marrocos \u00B7 P\u00E1scoa 2023',
     photoFolder: 'images/Marraquexe/Marraquexe',
@@ -4525,8 +4526,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'madeira', name: 'Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'Portugal \u00B7 Madeira \u00B7 Maio 2023',
+    id: 'madeira', name: 'Ilha da Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Madeira \u00B7 Maio 2023',
     photoFolder: 'images/Ilha_da_Madeira/Ilha_da_Madeira',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -4645,33 +4646,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
-    sub: 'Pol\u00F3nia \u00B7 Natal 2023',
-    photoFolder: 'images/Cracovia/Cracovia',
-    sections: [
-      { title: '🗺️ Locais visitados', items: [
-        'Galeria Krakowska',
-        'Planty',
-        'Old Kleparz',
-        'Florian\'s Gate',
-        'Floriańska Street',
-        'Rynek Główny',
-        'Basílica de Santa Maria',
-        'Museu MNK Sukiennice',
-        'Rua Grodzka',
-        'Igreja de São Pedro e São Paulo',
-        'Castelo Real de Wawel',
-      ]},
-      { title: '🍴 Restaurantes', items: [
-        'Chimney Cake Bakery',
-        'Moaburger',
-        'GOGO Burger',
-      ]},
-    ]
-  },
-  {
     id: 'varsovia', name: 'Vars\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
-    sub: 'Pol\u00F3nia \u00B7 2023 Natal',
+    sub: 'Pol\u00F3nia \u00B7 Natal 2023',
     photoFolder: 'images/Varsovia/Varsovia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -4703,8 +4679,33 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'cabo-verde', name: 'Santiago \u2014 Cabo Verde', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
-    sub: 'Cabo Verde \u00B7 2024 P\u00E1scoa',
+    id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
+    sub: 'Pol\u00F3nia \u00B7 Natal 2023',
+    photoFolder: 'images/Cracovia/Cracovia',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Galeria Krakowska',
+        'Planty',
+        'Old Kleparz',
+        'Florian\'s Gate',
+        'Floriańska Street',
+        'Rynek Główny',
+        'Basílica de Santa Maria',
+        'Museu MNK Sukiennice',
+        'Rua Grodzka',
+        'Igreja de São Pedro e São Paulo',
+        'Castelo Real de Wawel',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Chimney Cake Bakery',
+        'Moaburger',
+        'GOGO Burger',
+      ]},
+    ]
+  },
+  {
+    id: 'cabo-verde', name: 'Ilha de Santiago', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
+    sub: 'Cabo Verde \u00B7 P\u00E1scoa 2024',
     photoFolder: 'images/Santiago_Cabo_Verde/Santiago_Cabo_Verde',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -4728,26 +4729,6 @@ const GUIDES_DATA = [
         'Linha d\'Água',
         'Alto Mira',
         'Hamburgueria B. Burguer',
-      ]},
-    ]
-  },
-  {
-    id: 'catar', name: 'Catar', country: 'Catar', flagCode: 'qa', countryId: 634,
-    sub: 'Catar \u00B7 Ver\u00E3o 2024',
-    photoFolder: 'images/Qatar/Qatar',
-    sections: [
-      { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
-        'Villagio Mall',
-        'Saf\u00E1ri no deserto com sandboard, passeio de camelo e mar interior',
-        'Souq Waqif',
-        'Doha Corniche',
-        'The Pearl Monument',
-        'Doha Skyline Viewpoint',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Shake Shack',
-        'The Cheesecake Factory',
-        'Outback Steakhouse',
       ]},
     ]
   },
@@ -4777,26 +4758,28 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'abu-dhabi', name: 'Abu Dhabi', country: 'Emirados \u00C1rabes', flagCode: 'ae', countryId: 784,
-    sub: 'Emirados \u00C1rabes \u00B7 Dezembro 2024',
-    photoFolder: 'images/Abu_Dhabi/Abu_Dhabi',
+    id: 'catar', name: 'Catar', country: 'Catar', flagCode: 'qa', countryId: 634,
+    sub: 'Catar \u00B7 Ver\u00E3o 2024',
+    photoFolder: 'images/Qatar/Qatar',
     sections: [
       { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
-        'Louvre Abu Dhabi',
-        'Corniche Street',
-        'Corniche Beach',
-        'Emirates Palace Mandarin Oriental',
-        'Mesquita do Sheikh Zayed',
-        'Yas Mall',
+        'Villagio Mall',
+        'Saf\u00E1ri no deserto com sandboard, passeio de camelo e mar interior',
+        'Souq Waqif',
+        'Doha Corniche',
+        'The Pearl Monument',
+        'Doha Skyline Viewpoint',
       ]},
       { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Yas Mall',
+        'Shake Shack',
+        'The Cheesecake Factory',
+        'Outback Steakhouse',
       ]},
     ]
   },
   {
     id: 'bangkok', name: 'Bangkok', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
-    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    sub: 'Tail\u00E2ndia \u00B7 Natal 2024',
     photoFolder: 'images/Bangkok/Bangkok',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -4828,7 +4811,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'phuket', name: 'Phuket', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
-    sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    sub: 'Tail\u00E2ndia \u00B7 Natal 2024',
     photoFolder: 'images/Phuket/Phuket',
     sections: [
       { title: '\uD83C\uDFD6\uFE0F Locais visitados', items: [
@@ -4854,8 +4837,26 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'abu-dhabi', name: 'Abu Dhabi', country: 'Emirados \u00C1rabes', flagCode: 'ae', countryId: 784,
+    sub: 'Emirados \u00C1rabes Unidos \u00B7 Natal 2024',
+    photoFolder: 'images/Abu_Dhabi/Abu_Dhabi',
+    sections: [
+      { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
+        'Louvre Abu Dhabi',
+        'Corniche Street',
+        'Corniche Beach',
+        'Emirates Palace Mandarin Oriental',
+        'Mesquita do Sheikh Zayed',
+        'Yas Mall',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Yas Mall',
+      ]},
+    ]
+  },
+  {
     id: 'edimburgo', name: 'Edimburgo', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
-    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    sub: 'Esc\u00F3cia \u00B7 Reino Unido \u00B7 Natal 2024',
     photoFolder: 'images/Edimburgo/Edimburgo',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
@@ -4885,7 +4886,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'glasgow', name: 'Glasgow', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
-    sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    sub: 'Esc\u00F3cia \u00B7 Reino Unido \u00B7 Natal 2024',
     photoFolder: 'images/Glasgow/Glasgow',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
@@ -4907,24 +4908,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'irlanda-do-norte', name: 'Irlanda do Norte', country: 'Reino Unido', flagCode: 'gb-nir', countryId: 826,
-    sub: 'Reino Unido \u00B7 P\u00E1scoa 2025',
-    photoFolder: 'images/Irlanda_do_Norte/Irlanda_do_Norte',
-    sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        'Castelo de Dunluce',
-        'Giant\u2019s Causeway',
-        'Museu do Titanic',
-        'Black Taxi Tour',
-        'Catedral de Santa Ana',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'The Nook',
-      ]},
-    ]
-  },
-  {
-    id: 'irlanda-dublin', name: 'Irlanda \u2014 Dublin', country: 'Irlanda', flagCode: 'ie', countryId: 372,
+    id: 'irlanda-dublin', name: 'Dublin', country: 'Irlanda', flagCode: 'ie', countryId: 372,
     sub: 'Irlanda \u00B7 P\u00E1scoa 2025',
     photoFolder: 'images/Dublin/Dublin',
     sections: [
@@ -4958,6 +4942,71 @@ const GUIDES_DATA = [
     ]
   },
   {
+    id: 'irlanda-do-norte', name: 'Irlanda do Norte', country: 'Reino Unido', flagCode: 'gb-nir', countryId: 826,
+    sub: 'Reino Unido \u00B7 P\u00E1scoa 2025',
+    photoFolder: 'images/Irlanda_do_Norte/Irlanda_do_Norte',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Castelo de Dunluce',
+        'Giant\u2019s Causeway',
+        'Museu do Titanic',
+        'Black Taxi Tour',
+        'Catedral de Santa Ana',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'The Nook',
+      ]},
+    ]
+  },
+  {
+    id: 'peniche', name: 'Peniche', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    sub: 'Portugal \u00B7 Ver\u00E3o 2025',
+    photoFolder: 'images/Peniche/Peniche',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Ilha do Baleal',
+        'Berlengas',
+        'Museu Nacional Resistência e Liberdade (Fortaleza)',
+        'Farol do Cabo Carvoeiro + Miradouro',
+        'Praia do Baleal – Norte e Sul',
+        'Praia da Gamboa',
+        'Praia dos Supertubos',
+        'Praia da Consolação',
+        'Praia de Peniche de Cima',
+      ]},
+      { title: '🍴 Restaurantes', items: [
+        'Tasca do Joel',
+        'Taberna do Ganhão',
+        'Italiano O Outro',
+        'Mundano Baleal',
+        'Maresia',
+        'Marisqueira Mirandum',
+      ]},
+    ]
+  },
+  {
+    id: 'zanzibar', name: 'Zanzibar', country: 'Tanz\u00E2nia', flagCode: 'tz', countryId: 834,
+    sub: 'Tanz\u00E2nia \u00B7 Ver\u00E3o 2025',
+    photoFolder: 'images/Zanzibar/Zanzibar',
+    sections: [
+      { title: '🏝️ Locais visitados', items: [
+        'Hotel Riu Jambo',
+        'Kendwa Beach (Moto de água)',
+        'The Lagoons Zanzibar (tartarugas)',
+        'Mnemba (Sandbank + Snorkeling zone + golfinhos)',
+      ]},
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel Riu Jambo',
+      ]},
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Maisha',
+        'Il Panzotto (Italiano)',
+        'Kulinarium (Gourmet / Fusão)',
+        'Yunnan (Asiático)',
+      ]},
+    ]
+  },
+  {
     id: 'adis-abeba', name: 'Adis Abeba', country: 'Eti\u00F3pia', flagCode: 'et', countryId: 231,
     sub: 'Eti\u00F3pia \u00B7 Ver\u00E3o 2025',
     photoFolder: 'images/Adis_Abeba/Adis_Abeba',
@@ -4983,7 +5032,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'porto', name: 'Porto', country: 'Portugal', flagCode: 'pt', countryId: 620,
-    sub: 'Portugal \u00B7 2025 Ver\u00E3o',
+    sub: 'Portugal \u00B7 Ver\u00E3o 2025',
     photoFolder: 'images/Porto/Porto',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
@@ -5013,30 +5062,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'zanzibar', name: 'Zanzibar', country: 'Tanz\u00E2nia', flagCode: 'tz', countryId: 834,
-    sub: 'Tanz\u00E2nia \u00B7 Ver\u00E3o 2025',
-    photoFolder: 'images/Zanzibar/Zanzibar',
-    sections: [
-      { title: '🏝️ Locais visitados', items: [
-        'Hotel Riu Jambo',
-        'Kendwa Beach (Moto de água)',
-        'The Lagoons Zanzibar (tartarugas)',
-        'Mnemba (Sandbank + Snorkeling zone + golfinhos)',
-      ]},
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Hotel Riu Jambo',
-      ]},
-      { title: '\uD83C\uDF74 Restaurantes', items: [
-        'Maisha',
-        'Il Panzotto (Italiano)',
-        'Kulinarium (Gourmet / Fusão)',
-        'Yunnan (Asiático)',
-      ]},
-    ]
-  },
-  {
     id: 'madrid', name: 'Madrid', country: 'Espanha', flagCode: 'es', countryId: 724,
-    sub: 'Espanha \u00B7 2025 Natal',
+    sub: 'Espanha \u00B7 Natal 2025',
     photoFolder: 'images/Madrid/Madrid',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -5178,9 +5205,11 @@ function renderGuides(filter) {
   const q = (filter || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const SOON_IDS = new Set(['belgrado', 'macedonia', 'pristina']);
   const cardHtml = g => {
-    const flagUrl = `https://flagcdn.com/w40/${g.flagCode}.png`;
+    const flagHtml = g.flagCodes && g.flagCodes.length > 1
+      ? g.flagCodes.map(c => `<img class="guide-card-flag" src="https://flagcdn.com/w40/${c}.png" alt="${g.country}" onerror="this.style.display='none'" style="display:inline-block;">`).join('<span style="margin:0 3px;color:#bbb;font-size:14px;">|</span>')
+      : `<img class="guide-card-flag" src="https://flagcdn.com/w40/${g.flagCode}.png" alt="${g.country}" onerror="this.style.display='none'">`;
     return `<div class="guide-card" onclick="openGuideModal('${g.id}')">
-      <img class="guide-card-flag" src="${flagUrl}" alt="${g.country}" onerror="this.style.display='none'">
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:6px;">${flagHtml}</div>
       <div class="guide-card-name">${g.name}</div>
       <div class="guide-card-sub">${g.sub}</div>
     </div>`;
@@ -5226,8 +5255,8 @@ function renderGuides(filter) {
 function filterGuides(q) { renderGuides(q); }
 
 // ─── AUTO-DETECTAR FOTOS DE UM GUIA (convenção de nomes, máx 50) ─────────────
-function loadGuidePhotosBackground(guide, onEachPhoto) {
-  // Carregar fotos em background uma a uma, notificando a cada foto encontrada
+function loadGuidePhotosBackground(guide, onComplete) {
+  // Carregar fotos em background uma a uma — sem bloquear a abertura do guia
   if (!guide.photoFolder) return;
   guide.photos = [];
   guide._photosLoading = true;
@@ -5236,18 +5265,21 @@ function loadGuidePhotosBackground(guide, onEachPhoto) {
   const MAX = 50;
 
   const checkNext = (i) => {
-    if (i > MAX) { guide._photosLoading = false; return; }
+    if (i > MAX) { guide._photosLoading = false; if (onComplete) onComplete(guide.photos.slice()); return; }
     const src = `${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`;
     const img = new Image();
     img.onload = () => {
       guide.photos.push(src);
       errors = 0;
-      if (onEachPhoto) onEachPhoto(src, guide.photos.length - 1); // notificar com a foto e o seu índice
       checkNext(i + 1);
     };
     img.onerror = () => {
       errors++;
-      if (errors >= 3) { guide._photosLoading = false; return; }
+      if (errors >= 3) {
+        guide._photosLoading = false;
+        if (onComplete) onComplete(guide.photos.slice()); // callback só no final
+        return;
+      }
       checkNext(i + 1);
     };
     img.src = src;
@@ -5267,8 +5299,24 @@ async function openGuideModal(guideId) {
   // Abrir o modal imediatamente — sem esperar pelas fotos
   document.getElementById('guide-modal-title').textContent = guide.name;
   const flagEl = document.getElementById('guide-modal-flag');
-  flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
-  flagEl.alt = guide.country;
+  if (guide.flagCodes && guide.flagCodes.length > 1) {
+    flagEl.style.display = 'none';
+    let multiFlags = document.getElementById('guide-modal-flags-extra');
+    if (!multiFlags) {
+      multiFlags = document.createElement('span');
+      multiFlags.id = 'guide-modal-flags-extra';
+      flagEl.parentNode.insertBefore(multiFlags, flagEl);
+    }
+    multiFlags.innerHTML = guide.flagCodes.map(c =>
+      `<img src="https://flagcdn.com/w40/${c}.png" alt="${guide.country}" style="height:20px;border-radius:2px;vertical-align:middle;">`
+    ).join('<span style="margin:0 3px;color:#bbb;font-size:18px;line-height:20px;vertical-align:middle;">|</span>');
+  } else {
+    flagEl.style.display = '';
+    const extra = document.getElementById('guide-modal-flags-extra');
+    if (extra) extra.innerHTML = '';
+    flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
+    flagEl.alt = guide.country;
+  }
 
   const body = document.getElementById('guide-modal-body');
 
@@ -5310,40 +5358,22 @@ async function openGuideModal(guideId) {
   document.getElementById('guide-modal').classList.add('on');
   document.getElementById('backdrop').classList.add('on');
 
-  // Se tem pasta de fotos e ainda não foram carregadas, criar contentor e carregar progressivamente
+  // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
   if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
-    // Inserir contentor vazio imediatamente
-    const containerHtml = `
-      <div id="guide-photo-wrap-${guide.id}" style="position:relative;margin-bottom:16px;display:flex;align-items:center;gap:4px;">
-        <button onclick="guideThumbScroll('guide-thumbs-${guide.id}',-1)" id="guide-arr-l-${guide.id}"
-          style="display:none;background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;align-items:center;justify-content:center;color:#555;">‹</button>
-        <div id="guide-thumbs-${guide.id}" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;min-height:126px;"></div>
-        <button onclick="guideThumbScroll('guide-thumbs-${guide.id}',1)" id="guide-arr-r-${guide.id}"
-          style="display:none;background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;align-items:center;justify-content:center;color:#555;">›</button>
-      </div>`;
-    body.insertAdjacentHTML('afterbegin', containerHtml);
-
-    loadGuidePhotosBackground(guide, (src, idx) => {
-      // Só actualizar se o modal ainda estiver aberto
+    loadGuidePhotosBackground(guide, (photos) => {
+      // Actualizar apenas se o modal deste guia ainda estiver aberto
       if (!document.getElementById('guide-modal').classList.contains('on')) return;
-      const thumbsEl = document.getElementById('guide-thumbs-' + guide.id);
-      if (!thumbsEl) return;
-      // Adicionar apenas esta foto
-      const imgEl = document.createElement('img');
-      imgEl.src = src;
-      imgEl.alt = `${guide.name} ${idx + 1}`;
-      imgEl.loading = 'lazy';
-      imgEl.style.cssText = 'width:144px;height:120px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex-shrink:0;transition:opacity .15s;';
-      imgEl.onmouseover = () => imgEl.style.opacity = '.75';
-      imgEl.onmouseout  = () => imgEl.style.opacity = '1';
-      imgEl.onclick = () => openGuidePhotoFull(guide.id, idx);
-      thumbsEl.appendChild(imgEl);
-      // Mostrar setas se mais de 4 fotos
-      if (guide.photos.length > 4) {
-        const l = document.getElementById('guide-arr-l-' + guide.id);
-        const r = document.getElementById('guide-arr-r-' + guide.id);
-        if (l) l.style.display = 'flex';
-        if (r) r.style.display = 'flex';
+      // Actualizar o bloco de thumbs — substituir no lugar sem duplicar
+      const thumbsWrap = document.getElementById('guide-thumbs-' + guide.id);
+      if (thumbsWrap) {
+        // Já existe — actualizar as imgs dentro
+        const newThumbsHtml = buildThumbsHtml(photos);
+        const container = thumbsWrap.closest('div[style*="position:relative"]');
+        if (container) container.outerHTML = newThumbsHtml;
+      } else {
+        // Ainda não existe — inserir no topo do body
+        const newThumbsHtml = buildThumbsHtml(photos);
+        if (newThumbsHtml) body.insertAdjacentHTML('afterbegin', newThumbsHtml);
       }
     });
   }
@@ -5355,6 +5385,17 @@ function closeGuideModal(evt) {
   document.getElementById('guide-modal').classList.remove('on');
   document.getElementById('backdrop').classList.remove('on');
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  // Só fechar o guide-modal se o slideshow (vb-overlay) não estiver aberto
+  if (document.querySelector('.vb-overlay')) return;
+  const modal = document.getElementById('guide-modal');
+  if (modal && modal.classList.contains('on')) {
+    modal.classList.remove('on');
+    document.getElementById('backdrop').classList.remove('on');
+  }
+});
 
 function guideThumbScroll(id, dir) {
   const el = document.getElementById(id);
@@ -5410,7 +5451,7 @@ function openGuidePhotoFull(guideId, startIdx) {
         -webkit-user-drag:none;
       }
       .vb-dots { display:flex;gap:7px;margin-top:20px;align-items:center;justify-content:center; }
-      .vb-dot  { height:7px;border-radius:4px;cursor:pointer;transition:all .32s; }
+      .vb-dot  { width:14px;height:14px;border-radius:50%;cursor:pointer;transition:background .32s; }
       .vb-arr {
         position:absolute;top:50%;transform:translateY(-50%);
         background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);
@@ -5489,9 +5530,8 @@ function openGuidePhotoFull(guideId, startIdx) {
     photos.forEach((_, i) => {
       const d = document.createElement('div');
       d.className = 'vb-dot';
-      d.style.width      = i === cur ? '22px' : '7px';
       d.style.background = i === cur ? 'var(--gold,#c9951a)' : 'rgba(255,255,255,0.25)';
-      d.onclick = () => { if (!animating && i !== cur) go(i > cur ? 1 : -1); };
+      d.onclick = () => { if (!animating && i !== cur) goTo(i); };
       dotsWrap.appendChild(d);
     });
   };
@@ -5512,6 +5552,14 @@ function openGuidePhotoFull(guideId, startIdx) {
       updateDots();
       animating = false;
     }, 920);
+  };
+
+  // Saltar diretamente para qualquer foto sem animação de slide
+  const goTo = (idx) => {
+    if (animating || idx === cur || photos.length <= 1) return;
+    cur = ((idx % photos.length) + photos.length) % photos.length;
+    buildSlides();
+    updateDots();
   };
 
   prevBtn.onclick = () => go(-1);
