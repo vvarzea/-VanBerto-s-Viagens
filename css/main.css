@@ -874,6 +874,13 @@
   .guide-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
   .guide-day-btn { padding: 4px 12px; border-radius: 14px; font-size: 11px; font-weight: 600; border: 1.5px solid var(--border); background: white; color: var(--muted); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .15s; }
   .guide-day-btn.active { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
+  .guide-gallery-item { flex: 0 0 100%; scroll-snap-align: start; }
+  .guide-gallery::-webkit-scrollbar { display: none; }
+  .guide-gallery-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ddd; transition: background .2s; cursor: pointer;
+  }
+  .guide-gallery-dot.active { background: var(--gold); }
   .guide-all-section { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 10px; }
   .guide-all-section-title { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
   .guide-raw { white-space: pre-wrap; word-break: break-word; font-family: 'Outfit', sans-serif; font-size: 12.5px; line-height: 1.75; color: #3a2a10; }

@@ -3463,7 +3463,7 @@ const GUIDES_DATA = [
   {
     id: 'terceira', name: 'Ilha Terceira', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · desde 2007',
-    photos: ['','','','','','','','','','','','','','','',''],
+    photoFolder: 'images/Ilha_Terceira/Ilha_Terceira',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Cidade de Angra do Heroísmo',
@@ -3496,6 +3496,7 @@ const GUIDES_DATA = [
   {
     id: 'murcia-benidorm-alicante', name: 'Múrcia · Benidorm · Alicante', country: 'Espanha', flagCode: 'es', countryId: 724,
     sub: 'Espanha · Páscoa 2008',
+    photoFolder: 'images/Murcia_Benidorm_Alicante/Murcia_Benidorm_Alicante',
     sections: [
       { title: '🗺️ Múrcia — Locais visitados', items: [
         'Catedral de Múrcia',
@@ -3528,7 +3529,7 @@ const GUIDES_DATA = [
   {
     id: 'peneda-geres', name: 'Parque Nacional da Peneda-Gerês', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Portugal · 2011',
-    photos: ['','','','','','','','',''],
+    photoFolder: 'images/Parque_Nacional_da_Peneda_Geres/Parque_Nacional_da_Peneda_Geres',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Cascata do Arado',
@@ -3552,30 +3553,7 @@ const GUIDES_DATA = [
   {
     id: 'londres', name: 'Londres', country: 'Reino Unido', flagCode: 'gb', countryId: 826,
     sub: 'Reino Unido \u00B7 P\u00E1scoa 2014',
-    photos: [
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      ''
-    ],
+    photoFolder: 'images/Londres/Londres',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Palácio de Westminster e Big Ben',
@@ -3618,6 +3596,7 @@ const GUIDES_DATA = [
   {
     id: 'sao-miguel', name: 'Ilha de S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'A\u00E7ores \u00B7 2014, 2021, 2018, 2024',
+    photoFolder: 'images/Ilha_de_Sao_Miguel/Ilha_de_Sao_Miguel',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Lagoa das Sete Cidades',
@@ -3650,6 +3629,7 @@ const GUIDES_DATA = [
   {
     id: 'sao-jorge', name: 'Ilha de São Jorge', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2014-2018',
+    photoFolder: 'images/Ilha_de_Sao_Jorge/Ilha_de_Sao_Jorge',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Fajã da Caldeira de Santo Cristo',
@@ -3675,34 +3655,7 @@ const GUIDES_DATA = [
   {
     id: 'paris', name: 'Paris', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
     sub: 'Fran\u00E7a \u00B7 Ver\u00E3o 2015',
-    photos: [
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      ''
-    ],
+    photoFolder: 'images/Paris/Paris',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Torre Eiffel',
@@ -3739,6 +3692,7 @@ const GUIDES_DATA = [
   {
     id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
     sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2016',
+    photoFolder: 'images/Roma/Roma',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Piazza del Popolo',
@@ -3769,6 +3723,7 @@ const GUIDES_DATA = [
   {
     id: 'amesterdao', name: 'Amesterd\u00E3o', country: 'Pa\u00EDses Baixos', flagCode: 'nl', countryId: 528,
     sub: 'Pa\u00EDses Baixos \u00B7 Ver\u00E3o 2017',
+    photoFolder: 'images/Amesterdao/Amesterdao',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Canais de Amesterdão (tour de barco)',
@@ -3805,6 +3760,7 @@ const GUIDES_DATA = [
   {
     id: 'bruxelas', name: 'Bruxelas', country: 'B\u00E9lgica', flagCode: 'be', countryId: 56,
     sub: 'B\u00E9lgica \u00B7 Ver\u00E3o 2017',
+    photoFolder: 'images/Bruxelas/Bruxelas',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Atomium',
@@ -3830,6 +3786,7 @@ const GUIDES_DATA = [
   {
     id: 'praga', name: 'Praga', country: 'Rep. Checa', flagCode: 'cz', countryId: 203,
     sub: 'Rep. Checa \u00B7 Ver\u00E3o 2017',
+    photoFolder: 'images/Praga/Praga',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Peace Square',
@@ -3866,6 +3823,7 @@ const GUIDES_DATA = [
   {
     id: 'zurique', name: 'Zurique', country: 'Su\u00ED\u00E7a', flagCode: 'ch', countryId: 756,
     sub: 'Su\u00ED\u00E7a \u00B7 Natal 2017',
+    photoFolder: 'images/Zurique/Zurique',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Altstadt (Cidade Velha)',
@@ -3893,6 +3851,7 @@ const GUIDES_DATA = [
   {
     id: 'pico', name: 'Ilha do Pico', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2017',
+    photoFolder: 'images/Ilha_do_Pico/Ilha_do_Pico',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Montanha do Pico',
@@ -3918,6 +3877,7 @@ const GUIDES_DATA = [
   {
     id: 'flores', name: 'Ilha das Flores', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2017',
+    photoFolder: 'images/Ilha_das_Flores/Ilha_das_Flores',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Poço da Alagoinha (Poço da Ribeira do Ferreiro)',
@@ -3943,6 +3903,7 @@ const GUIDES_DATA = [
   {
     id: 'islandia', name: 'Isl\u00E2ndia', country: 'Isl\u00E2ndia', flagCode: 'is', countryId: 352,
     sub: 'Isl\u00E2ndia \u00B7 Ver\u00E3o 2018',
+    photoFolder: 'images/Islandia/Islandia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Reykjavik (Perlan, Hallgrímskirkja, Solfar Sun Vojager, Harpa Auditório e Centro de Conferência, Tjörnin, Cathedral of Christ the King)',
@@ -3988,6 +3949,7 @@ const GUIDES_DATA = [
   {
     id: 'oslo', name: 'Oslo', country: 'Noruega', flagCode: 'no', countryId: 578,
     sub: 'Noruega \u00B7 Natal 2018',
+    photoFolder: 'images/Oslo/Oslo',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Ópera de Oslo (Operahuset)',
@@ -4018,6 +3980,7 @@ const GUIDES_DATA = [
   {
     id: 'atenas', name: 'Atenas', country: 'Gr\u00E9cia', flagCode: 'gr', countryId: 300,
     sub: 'Gr\u00E9cia \u00B7 Ver\u00E3o 2019',
+    photoFolder: 'images/Atenas/Atenas',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Monte Licabeto',
@@ -4045,6 +4008,7 @@ const GUIDES_DATA = [
   {
     id: 'berlim', name: 'Berlim', country: 'Alemanha', flagCode: 'de', countryId: 276,
     sub: 'Alemanha \u00B7 Ver\u00E3o 2019',
+    photoFolder: 'images/Berlim/Berlim',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Palácio do Reichstag',
@@ -4075,6 +4039,7 @@ const GUIDES_DATA = [
   {
     id: 'veneza', name: 'Veneza', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
     sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2019',
+    photoFolder: 'images/Veneza/Veneza',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Grande Canal de Veneza de Barco',
@@ -4118,6 +4083,7 @@ const GUIDES_DATA = [
   {
     id: 'estocolmo', name: 'Estocolmo', country: 'Su\u00E9cia', flagCode: 'se', countryId: 752,
     sub: 'Su\u00E9cia \u00B7 Natal 2019',
+    photoFolder: 'images/Estocolmo/Estocolmo',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Gamla Stan (Cidade Velha)',
@@ -4147,6 +4113,7 @@ const GUIDES_DATA = [
   {
     id: 'graciosa', name: 'Ilha Graciosa', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2019',
+    photoFolder: 'images/Ilha_da_Graciosa/Ilha_da_Graciosa',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Furna do Enxofre',
@@ -4174,6 +4141,7 @@ const GUIDES_DATA = [
   {
     id: 'santa-maria', name: 'Ilha de Santa Maria', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2019',
+    photoFolder: 'images/Ilha_de_Santa_Maria/Ilha_de_Santa_Maria',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Praia Formosa',
@@ -4200,6 +4168,7 @@ const GUIDES_DATA = [
   {
     id: 'budapeste', name: 'Budapeste', country: 'Hungria', flagCode: 'hu', countryId: 348,
     sub: 'Hungria \u00B7 Ver\u00E3o 2021',
+    photoFolder: 'images/Budapeste/Budapeste',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Parque Városliget',
@@ -4237,6 +4206,7 @@ const GUIDES_DATA = [
   {
     id: 'viena', name: 'Viena', country: '\u00C1ustria', flagCode: 'at', countryId: 40,
     sub: '\u00C1ustria \u00B7 Ver\u00E3o 2021',
+    photoFolder: 'images/Viena/Viena',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Palácio Belvedere',
@@ -4272,6 +4242,7 @@ const GUIDES_DATA = [
   {
     id: 'helsinquia', name: 'Hels\u00EDnquia', country: 'Finl\u00E2ndia', flagCode: 'fi', countryId: 246,
     sub: 'Finl\u00E2ndia \u00B7 Natal 2021',
+    photoFolder: 'images/Helsinquia/Helsinquia',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Kamppi Chapel of Silence (Igreja)',
@@ -4301,6 +4272,7 @@ const GUIDES_DATA = [
   {
     id: 'laponia', name: 'Lap\u00F3nia', country: 'Finl\u00E2ndia', flagCode: 'fi', countryId: 246,
     sub: 'Finl\u00E2ndia \u00B7 Natal 2021',
+    photoFolder: 'images/Laponia/Laponia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Santa Claus Village',
@@ -4323,6 +4295,7 @@ const GUIDES_DATA = [
   {
     id: 'capadocia', name: 'Capad\u00F3cia', country: 'Turquia', flagCode: 'tr', countryId: 792,
     sub: 'Turquia \u00B7 Ver\u00E3o 2022',
+    photoFolder: 'images/Capadocia/Capadocia',
     sections: [
       { title: '\uD83C\uDF0B Locais visitados', items: [
         'Cappadocia Hot Air Balloon',
@@ -4348,6 +4321,7 @@ const GUIDES_DATA = [
   {
     id: 'istambul', name: 'Istambul', country: 'Turquia', flagCode: 'tr', countryId: 792,
     sub: 'Turquia \u00B7 Ver\u00E3o 2022',
+    photoFolder: 'images/Istambul/Istambul',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Parque Gülhane + Palácio de Topkapı',
@@ -4387,6 +4361,7 @@ const GUIDES_DATA = [
   {
     id: 'copenhaga', name: 'Copenhaga', country: 'Dinamarca', flagCode: 'dk', countryId: 208,
     sub: 'Dinamarca \u00B7 Natal 2022',
+    photoFolder: 'images/Copenhaga/Copenhaga',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Jardins de Tivoli',
@@ -4417,6 +4392,7 @@ const GUIDES_DATA = [
   {
     id: 'malmo', name: 'Malm\u00F6', country: 'Su\u00E9cia', flagCode: 'se', countryId: 752,
     sub: 'Su\u00E9cia \u00B7 Natal 2022',
+    photoFolder: 'images/Malmo/Malmo',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Igreja de S\u00E3o Pedro',
@@ -4438,6 +4414,7 @@ const GUIDES_DATA = [
   {
     id: 'barcelona', name: 'Barcelona', country: 'Espanha', flagCode: 'es', countryId: 724,
     sub: 'Espanha \u00B7 2023 P\u00E1scoa',
+    photoFolder: 'images/Barcelona/Barcelona',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Plaça d\'Espanya',
@@ -4470,6 +4447,7 @@ const GUIDES_DATA = [
   {
     id: 'faial', name: 'Ilha do Faial', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2023',
+    photoFolder: 'images/Ilha_do_Faial/Ilha_do_Faial',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Vulcão dos Capelinhos',
@@ -4499,6 +4477,7 @@ const GUIDES_DATA = [
   {
     id: 'corvo', name: 'Ilha do Corvo', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Açores · 2023',
+    photoFolder: 'images/Ilha_do_Corvo/Ilha_do_Corvo',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Miradouro Caldeirão + Caldeirão + Lagoa do Caldeirão',
@@ -4521,6 +4500,7 @@ const GUIDES_DATA = [
   {
     id: 'marraquexe', name: 'Marraquexe', country: 'Marrocos', flagCode: 'ma', countryId: 504,
     sub: 'Marrocos \u00B7 P\u00E1scoa 2023',
+    photoFolder: 'images/Marraquexe/Marraquexe',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Jemaa el-Fnaa',
@@ -4547,6 +4527,7 @@ const GUIDES_DATA = [
   {
     id: 'madeira', name: 'Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Portugal \u00B7 Madeira \u00B7 Maio 2023',
+    photoFolder: 'images/Ilha_da_Madeira/Ilha_da_Madeira',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Miradouro Cristo Rei',
@@ -4591,6 +4572,7 @@ const GUIDES_DATA = [
   {
     id: 'nova-iorque', name: 'Nova Iorque', country: 'EUA', flagCode: 'us', countryId: 840,
     sub: 'EUA \u00B7 Ver\u00E3o 2023',
+    photoFolder: 'images/Nova_Iorque/Nova_Iorque',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Times Square',
@@ -4633,6 +4615,7 @@ const GUIDES_DATA = [
   {
     id: 'toronto', name: 'Toronto & Ni\u00E1gara', country: 'Canad\u00E1', flagCode: 'ca', countryId: 124,
     sub: 'Canad\u00E1 \u00B7 Ver\u00E3o 2023',
+    photoFolder: 'images/Toronto_&_Niagara/Toronto_&_Niagara',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Niagara Falls',
@@ -4664,6 +4647,7 @@ const GUIDES_DATA = [
   {
     id: 'cracovia', name: 'Crac\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
     sub: 'Pol\u00F3nia \u00B7 Natal 2023',
+    photoFolder: 'images/Cracovia/Cracovia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Galeria Krakowska',
@@ -4688,6 +4672,7 @@ const GUIDES_DATA = [
   {
     id: 'varsovia', name: 'Vars\u00F3via', country: 'Pol\u00F3nia', flagCode: 'pl', countryId: 616,
     sub: 'Pol\u00F3nia \u00B7 2023 Natal',
+    photoFolder: 'images/Varsovia/Varsovia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Warsaw Uprising Museum',
@@ -4720,6 +4705,7 @@ const GUIDES_DATA = [
   {
     id: 'cabo-verde', name: 'Santiago \u2014 Cabo Verde', country: 'Cabo Verde', flagCode: 'cv', countryId: 132,
     sub: 'Cabo Verde \u00B7 2024 P\u00E1scoa',
+    photoFolder: 'images/Santiago_Cabo_Verde/Santiago_Cabo_Verde',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Rock of Praia',
@@ -4748,6 +4734,7 @@ const GUIDES_DATA = [
   {
     id: 'catar', name: 'Catar', country: 'Catar', flagCode: 'qa', countryId: 634,
     sub: 'Catar \u00B7 Ver\u00E3o 2024',
+    photoFolder: 'images/Qatar/Qatar',
     sections: [
       { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
         'Villagio Mall',
@@ -4767,6 +4754,7 @@ const GUIDES_DATA = [
   {
     id: 'maldivas', name: 'Maldivas', country: 'Maldivas', flagCode: 'mv', countryId: 462,
     sub: 'Maldivas \u00B7 Ver\u00E3o 2024',
+    photoFolder: 'images/Maldivas/Maldivas',
     sections: [
       { title: '\uD83C\uDFDD\uFE0F Locais visitados', items: [
         'Male',
@@ -4791,6 +4779,7 @@ const GUIDES_DATA = [
   {
     id: 'abu-dhabi', name: 'Abu Dhabi', country: 'Emirados \u00C1rabes', flagCode: 'ae', countryId: 784,
     sub: 'Emirados \u00C1rabes \u00B7 Dezembro 2024',
+    photoFolder: 'images/Abu_Dhabi/Abu_Dhabi',
     sections: [
       { title: '\uD83C\uDFD9\uFE0F Locais visitados', items: [
         'Louvre Abu Dhabi',
@@ -4808,6 +4797,7 @@ const GUIDES_DATA = [
   {
     id: 'bangkok', name: 'Bangkok', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
     sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    photoFolder: 'images/Bangkok/Bangkok',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'The Grand Palace',
@@ -4839,6 +4829,7 @@ const GUIDES_DATA = [
   {
     id: 'phuket', name: 'Phuket', country: 'Tail\u00E2ndia', flagCode: 'th', countryId: 764,
     sub: 'Tail\u00E2ndia \u00B7 Dezembro 2024',
+    photoFolder: 'images/Phuket/Phuket',
     sections: [
       { title: '\uD83C\uDFD6\uFE0F Locais visitados', items: [
         'Patong',
@@ -4865,6 +4856,7 @@ const GUIDES_DATA = [
   {
     id: 'edimburgo', name: 'Edimburgo', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
     sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    photoFolder: 'images/Edimburgo/Edimburgo',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Museum of Edinburgh',
@@ -4894,6 +4886,7 @@ const GUIDES_DATA = [
   {
     id: 'glasgow', name: 'Glasgow', country: 'Esc\u00F3cia', flagCode: 'gb-sct', countryId: 826,
     sub: 'Esc\u00F3cia \u00B7 Natal 2024',
+    photoFolder: 'images/Glasgow/Glasgow',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'George Square',
@@ -4916,6 +4909,7 @@ const GUIDES_DATA = [
   {
     id: 'irlanda-do-norte', name: 'Irlanda do Norte', country: 'Reino Unido', flagCode: 'gb-nir', countryId: 826,
     sub: 'Reino Unido \u00B7 P\u00E1scoa 2025',
+    photoFolder: 'images/Irlanda_do_Norte/Irlanda_do_Norte',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Castelo de Dunluce',
@@ -4932,6 +4926,7 @@ const GUIDES_DATA = [
   {
     id: 'irlanda-dublin', name: 'Irlanda \u2014 Dublin', country: 'Irlanda', flagCode: 'ie', countryId: 372,
     sub: 'Irlanda \u00B7 P\u00E1scoa 2025',
+    photoFolder: 'images/Dublin/Dublin',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'The Church Caf\u00E9 & Restaurant',
@@ -4965,6 +4960,7 @@ const GUIDES_DATA = [
   {
     id: 'adis-abeba', name: 'Adis Abeba', country: 'Eti\u00F3pia', flagCode: 'et', countryId: 231,
     sub: 'Eti\u00F3pia \u00B7 Ver\u00E3o 2025',
+    photoFolder: 'images/Adis_Abeba/Adis_Abeba',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Museu Nacional da Etiópia',
@@ -4988,6 +4984,7 @@ const GUIDES_DATA = [
   {
     id: 'porto', name: 'Porto', country: 'Portugal', flagCode: 'pt', countryId: 620,
     sub: 'Portugal \u00B7 2025 Ver\u00E3o',
+    photoFolder: 'images/Porto/Porto',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Roteiro', items: [
         'Mercado do Bolh\u00E3o (seg 08h\u201320h)',
@@ -5018,6 +5015,7 @@ const GUIDES_DATA = [
   {
     id: 'zanzibar', name: 'Zanzibar', country: 'Tanz\u00E2nia', flagCode: 'tz', countryId: 834,
     sub: 'Tanz\u00E2nia \u00B7 Ver\u00E3o 2025',
+    photoFolder: 'images/Zanzibar/Zanzibar',
     sections: [
       { title: '🏝️ Locais visitados', items: [
         'Hotel Riu Jambo',
@@ -5039,6 +5037,7 @@ const GUIDES_DATA = [
   {
     id: 'madrid', name: 'Madrid', country: 'Espanha', flagCode: 'es', countryId: 724,
     sub: 'Espanha \u00B7 2025 Natal',
+    photoFolder: 'images/Madrid/Madrid',
     sections: [
       { title: '🗺️ Locais visitados', items: [
         'Templo de Debod',
@@ -5071,6 +5070,7 @@ const GUIDES_DATA = [
   {
     id: 'marselha', name: 'Marselha', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
     sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
+    photoFolder: 'images/Marselha/Marselha',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Centre de la Vieille Charit\u00E9',
@@ -5101,6 +5101,7 @@ const GUIDES_DATA = [
   {
     id: 'monaco', name: 'M\u00F3naco', country: 'M\u00F3naco', flagCode: 'mc', countryId: 492,
     sub: 'M\u00F3naco \u00B7 P\u00E1scoa 2026',
+    photoFolder: 'images/Monaco/Monaco',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Pal\u00E1cio do Pr\u00EDncipe de M\u00F3naco',
@@ -5118,6 +5119,7 @@ const GUIDES_DATA = [
   {
     id: 'nice', name: 'Nice', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
     sub: 'Fran\u00E7a \u00B7 P\u00E1scoa 2026',
+    photoFolder: 'images/Nice/Nice',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Avenue Jean M\u00E9decin',
@@ -5223,9 +5225,35 @@ function renderGuides(filter) {
 
 function filterGuides(q) { renderGuides(q); }
 
-function openGuideModal(guideId) {
+// ─── AUTO-DETECTAR FOTOS DE UM GUIA (convenção de nomes, máx 50) ─────────────
+async function loadGuidePhotos(guide) {
+  if (guide.photos) return guide.photos; // já carregadas
+  if (!guide.photoFolder) return [];
+  const photos = [];
+  const checks = [];
+  for (let i = 1; i <= 50; i++) {
+    const n = String(i).padStart(3, '0');
+    const src = `${guide.photoFolder}_${n}.jpg`;
+    checks.push(
+      new Promise(resolve => {
+        const img = new Image();
+        img.onload  = () => resolve(src);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      })
+    );
+  }
+  const results = await Promise.all(checks);
+  results.forEach(r => { if (r) photos.push(r); });
+  guide.photos = photos; // cache para não repetir
+  return photos;
+}
+
+async function openGuideModal(guideId) {
   const guide = GUIDES_DATA.find(g => g.id === guideId);
   if (!guide) return;
+  // Carregar fotos automaticamente se tiver photoFolder
+  if (guide.photoFolder && !guide.photos) await loadGuidePhotos(guide);
   document.getElementById('guide-modal-title').textContent = guide.name;
   const flagEl = document.getElementById('guide-modal-flag');
   flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
@@ -5233,7 +5261,29 @@ function openGuideModal(guideId) {
 
   const body = document.getElementById('guide-modal-body');
 
+  // Grelha de miniaturas com setas (se o guia tiver photos)
+  let photosHtml = '';
+  if (guide.photos && guide.photos.length > 0) {
+    const THUMB_VISIBLE = 4; // quantas miniaturas visíveis de cada vez
+    const thumbs = guide.photos.map((src, i) =>
+      `<img src="${src}" alt="${guide.name} ${i+1}" loading="lazy"
+        onclick="openGuidePhotoFull('${guide.id}',${i})"
+        style="width:144px;height:120px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex-shrink:0;transition:opacity .15s;"
+        onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">`
+    ).join('');
+    const hasSetas = guide.photos.length > THUMB_VISIBLE;
+    photosHtml = `
+      <div style="position:relative;margin-bottom:16px;display:flex;align-items:center;gap:4px;">
+        ${hasSetas ? `<button onclick="guideThumbScroll('guide-thumbs-${guide.id}',-1)" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#555;">‹</button>` : ''}
+        <div id="guide-thumbs-${guide.id}" style="display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;">
+          ${thumbs}
+        </div>
+        ${hasSetas ? `<button onclick="guideThumbScroll('guide-thumbs-${guide.id}',1)" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#555;">›</button>` : ''}
+      </div>`;
+  }
+
   body.innerHTML = `
+    ${photosHtml}
     <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">${guide.sub}</div>
     ${guide.sections.map(s => `
       <div class="guide-all-section">
@@ -5251,34 +5301,217 @@ function closeGuideModal(evt) {
   document.getElementById('guide-modal').classList.remove('on');
 }
 
-function openGuidePhotoFull(guideId, idx) {
+function guideThumbScroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+}
+
+function openGuidePhotoFull(guideId, startIdx) {
   const guide = GUIDES_DATA.find(g => g.id === guideId);
   if (!guide || !guide.photos) return;
   const photos = guide.photos;
-  let cur = idx;
+  let cur = startIdx;
+  let animating = false;
+
+  if (!document.getElementById('vb-slider-style')) {
+    const st = document.createElement('style');
+    st.id = 'vb-slider-style';
+    st.textContent = `
+      .vb-overlay {
+        position:fixed;inset:0;z-index:9999;
+        background:rgba(8,6,3,0.97);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        font-family:'Outfit',sans-serif;
+      }
+      .vb-viewport {
+        position:relative;
+        width:88vw;
+        height:80vh;
+        overflow:hidden;
+      }
+      .vb-track {
+        position:absolute;top:0;left:0;
+        display:flex;
+        height:100%;
+        will-change:transform;
+      }
+      .vb-track.animating {
+        transition:transform .9s cubic-bezier(.4,0,.2,1);
+      }
+      .vb-slide {
+        flex:0 0 88vw;
+        height:100%;
+        display:flex;align-items:center;justify-content:center;
+      }
+      .vb-slide img {
+        max-width:100%;
+        max-height:100%;
+        object-fit:contain;
+        border-radius:6px;
+        display:block;
+        box-shadow:0 24px 60px rgba(0,0,0,0.75);
+        user-select:none;
+        pointer-events:none;
+        -webkit-user-drag:none;
+      }
+      .vb-dots { display:flex;gap:7px;margin-top:20px;align-items:center;justify-content:center; }
+      .vb-dot  { height:7px;border-radius:4px;cursor:pointer;transition:all .32s; }
+      .vb-arr {
+        position:absolute;top:50%;transform:translateY(-50%);
+        background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);
+        border-radius:50%;width:46px;height:46px;color:white;
+        font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+        transition:background .15s;z-index:10;user-select:none;
+      }
+      .vb-arr:hover { background:rgba(255,255,255,0.2); }
+    `;
+    document.head.appendChild(st);
+  }
+
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;';
-  const img = document.createElement('img');
-  img.style.cssText = 'max-width:95vw;max-height:90vh;border-radius:10px;object-fit:contain;user-select:none;';
-  img.src = photos[cur];
-  const close = document.createElement('div');
-  close.textContent = '✕';
-  close.style.cssText = 'position:absolute;top:16px;right:20px;color:white;font-size:24px;cursor:pointer;line-height:1;';
-  close.onclick = () => overlay.remove();
-  const prev = document.createElement('div');
-  prev.textContent = '‹';
-  prev.style.cssText = 'position:absolute;left:12px;color:white;font-size:48px;cursor:pointer;user-select:none;line-height:1;padding:10px;';
-  prev.onclick = () => { cur = (cur - 1 + photos.length) % photos.length; img.src = photos[cur]; };
-  const next = document.createElement('div');
-  next.textContent = '›';
-  next.style.cssText = 'position:absolute;right:12px;color:white;font-size:48px;cursor:pointer;user-select:none;line-height:1;padding:10px;';
-  next.onclick = () => { cur = (cur + 1) % photos.length; img.src = photos[cur]; };
-  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-  overlay.append(close, photos.length > 1 ? prev : '', img, photos.length > 1 ? next : '');
+  overlay.className = 'vb-overlay';
+
+  // Barra top
+  const topBar = document.createElement('div');
+  topBar.style.cssText = 'position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 22px;z-index:30;background:linear-gradient(to bottom,rgba(0,0,0,0.5),transparent);';
+  const titleEl = document.createElement('div');
+  titleEl.style.cssText = 'color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;';
+  titleEl.textContent = guide.name;
+  const closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.16);border-radius:50%;width:34px;height:34px;color:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;';
+  closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255,255,255,0.24)';
+  closeBtn.onmouseout  = () => closeBtn.style.background = 'rgba(255,255,255,0.1)';
+  topBar.append(titleEl, closeBtn);
+
+  // Viewport
+  const viewport = document.createElement('div');
+  viewport.className = 'vb-viewport';
+
+  const track = document.createElement('div');
+  track.className = 'vb-track';
+
+  // Construir 3 slides: prev | cur | next
+  const buildSlides = () => {
+    track.innerHTML = '';
+    const idxs = [
+      (cur - 1 + photos.length) % photos.length,
+      cur,
+      (cur + 1) % photos.length,
+    ];
+    idxs.forEach(i => {
+      const slide = document.createElement('div');
+      slide.className = 'vb-slide';
+      const img = document.createElement('img');
+      img.src = photos[i];
+      slide.appendChild(img);
+      track.appendChild(slide);
+    });
+    // Posicionar no slide central (índice 1), SEM transição
+    track.classList.remove('animating');
+    track.style.transform = `translateX(-88vw)`;
+  };
+
+  buildSlides();
+  viewport.appendChild(track);
+
+  // Setas
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'vb-arr';
+  prevBtn.innerHTML = '&#8249;';
+  prevBtn.style.left = '10px';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'vb-arr';
+  nextBtn.innerHTML = '&#8250;';
+  nextBtn.style.right = '10px';
+  viewport.append(prevBtn, nextBtn);
+
+  // Dots
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'vb-dots';
+  const updateDots = () => {
+    dotsWrap.innerHTML = '';
+    photos.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'vb-dot';
+      d.style.width      = i === cur ? '22px' : '7px';
+      d.style.background = i === cur ? 'var(--gold,#c9951a)' : 'rgba(255,255,255,0.25)';
+      d.onclick = () => { if (!animating && i !== cur) go(i > cur ? 1 : -1); };
+      dotsWrap.appendChild(d);
+    });
+  };
+  updateDots();
+
+  const go = (dir) => {
+    if (animating || photos.length <= 1) return;
+    animating = true;
+
+    // Deslizar para o slide anterior (dir=-1) ou seguinte (dir=1)
+    const targetX = dir > 0 ? '-176vw' : '0vw';
+    track.classList.add('animating');
+    track.style.transform = `translateX(${targetX})`;
+
+    setTimeout(() => {
+      cur = (cur + dir + photos.length) % photos.length;
+      buildSlides();  // reposicionar sem animação
+      updateDots();
+      animating = false;
+    }, 920);
+  };
+
+  prevBtn.onclick = () => go(-1);
+  nextBtn.onclick = () => go(1);
+
+  // Teclado
+  const onKey = e => {
+    if (e.key === 'ArrowLeft')  go(-1);
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'Escape')     destroy();
+  };
+  document.addEventListener('keydown', onKey);
+
+  // Swipe
+  let _tx = null;
+  overlay.addEventListener('touchstart', e => { _tx = e.touches[0].clientX; }, { passive: true });
+  overlay.addEventListener('touchend', e => {
+    if (_tx === null) return;
+    const dx = e.changedTouches[0].clientX - _tx;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    _tx = null;
+  });
+
+  const destroy = () => { overlay.remove(); document.removeEventListener('keydown', onKey); };
+  closeBtn.onclick = destroy;
+  overlay.addEventListener('click', e => { if (e.target === overlay) destroy(); });
+
+  overlay.append(topBar, viewport, dotsWrap);
   document.body.appendChild(overlay);
 }
 
-// Open guide from country sheet
+function guideThumbScroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+}
+
+
+function guideThumbScroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+}
+
+
+function guideThumbScroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+}
+
+
+function guideThumbScroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 160, behavior: 'smooth' });
+}
+
+
 function openGuideFromSheet(guideId) {
   closeAll();
   setTimeout(() => openGuideModal(guideId), 80);
