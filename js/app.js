@@ -5271,13 +5271,13 @@ function loadGuidePhotosBackground(guide, onComplete) {
     img.onload = () => {
       guide.photos.push(src);
       errors = 0;
+      if (onComplete) onComplete(guide.photos.slice()); // progressivo — notifica a cada foto
       checkNext(i + 1);
     };
     img.onerror = () => {
       errors++;
       if (errors >= 3) {
         guide._photosLoading = false;
-        if (onComplete) onComplete(guide.photos.slice()); // callback só no final
         return;
       }
       checkNext(i + 1);
