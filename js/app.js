@@ -5226,8 +5226,8 @@ function renderGuides(filter) {
 function filterGuides(q) { renderGuides(q); }
 
 // ─── AUTO-DETECTAR FOTOS DE UM GUIA (convenção de nomes, máx 50) ─────────────
-function loadGuidePhotosBackground(guide, onComplete) {
-  // Carregar fotos em background uma a uma — sem bloquear a abertura do guia
+function loadGuidePhotosBackground(guide, onEachPhoto) {
+  // Carregar fotos em background uma a uma, notificando a cada foto encontrada
   if (!guide.photoFolder) return;
   guide.photos = [];
   guide._photosLoading = true;
@@ -5236,21 +5236,18 @@ function loadGuidePhotosBackground(guide, onComplete) {
   const MAX = 50;
 
   const checkNext = (i) => {
-    if (i > MAX) { guide._photosLoading = false; if (onComplete) onComplete(guide.photos.slice()); return; }
+    if (i > MAX) { guide._photosLoading = false; return; }
     const src = `${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`;
     const img = new Image();
     img.onload = () => {
       guide.photos.push(src);
       errors = 0;
+      if (onEachPhoto) onEachPhoto(src, guide.photos.length - 1); // notificar com a foto e o seu índice
       checkNext(i + 1);
     };
     img.onerror = () => {
       errors++;
-      if (errors >= 3) {
-        guide._photosLoading = false;
-        if (onComplete) onComplete(guide.photos.slice()); // callback só no final
-        return;
-      }
+      if (errors >= 3) { guide._photosLoading = false; return; }
       checkNext(i + 1);
     };
     img.src = src;
@@ -5313,22 +5310,40 @@ async function openGuideModal(guideId) {
   document.getElementById('guide-modal').classList.add('on');
   document.getElementById('backdrop').classList.add('on');
 
-  // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
+  // Se tem pasta de fotos e ainda não foram carregadas, criar contentor e carregar progressivamente
   if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
-    loadGuidePhotosBackground(guide, (photos) => {
-      // Actualizar apenas se o modal deste guia ainda estiver aberto
+    // Inserir contentor vazio imediatamente
+    const containerHtml = `
+      <div id="guide-photo-wrap-${guide.id}" style="position:relative;margin-bottom:16px;display:flex;align-items:center;gap:4px;">
+        <button onclick="guideThumbScroll('guide-thumbs-${guide.id}',-1)" id="guide-arr-l-${guide.id}"
+          style="display:none;background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;align-items:center;justify-content:center;color:#555;">‹</button>
+        <div id="guide-thumbs-${guide.id}" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;min-height:126px;"></div>
+        <button onclick="guideThumbScroll('guide-thumbs-${guide.id}',1)" id="guide-arr-r-${guide.id}"
+          style="display:none;background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;align-items:center;justify-content:center;color:#555;">›</button>
+      </div>`;
+    body.insertAdjacentHTML('afterbegin', containerHtml);
+
+    loadGuidePhotosBackground(guide, (src, idx) => {
+      // Só actualizar se o modal ainda estiver aberto
       if (!document.getElementById('guide-modal').classList.contains('on')) return;
-      // Actualizar o bloco de thumbs — substituir no lugar sem duplicar
-      const thumbsWrap = document.getElementById('guide-thumbs-' + guide.id);
-      if (thumbsWrap) {
-        // Já existe — actualizar as imgs dentro
-        const newThumbsHtml = buildThumbsHtml(photos);
-        const container = thumbsWrap.closest('div[style*="position:relative"]');
-        if (container) container.outerHTML = newThumbsHtml;
-      } else {
-        // Ainda não existe — inserir no topo do body
-        const newThumbsHtml = buildThumbsHtml(photos);
-        if (newThumbsHtml) body.insertAdjacentHTML('afterbegin', newThumbsHtml);
+      const thumbsEl = document.getElementById('guide-thumbs-' + guide.id);
+      if (!thumbsEl) return;
+      // Adicionar apenas esta foto
+      const imgEl = document.createElement('img');
+      imgEl.src = src;
+      imgEl.alt = `${guide.name} ${idx + 1}`;
+      imgEl.loading = 'lazy';
+      imgEl.style.cssText = 'width:144px;height:120px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex-shrink:0;transition:opacity .15s;';
+      imgEl.onmouseover = () => imgEl.style.opacity = '.75';
+      imgEl.onmouseout  = () => imgEl.style.opacity = '1';
+      imgEl.onclick = () => openGuidePhotoFull(guide.id, idx);
+      thumbsEl.appendChild(imgEl);
+      // Mostrar setas se mais de 4 fotos
+      if (guide.photos.length > 4) {
+        const l = document.getElementById('guide-arr-l-' + guide.id);
+        const r = document.getElementById('guide-arr-r-' + guide.id);
+        if (l) l.style.display = 'flex';
+        if (r) r.style.display = 'flex';
       }
     });
   }
