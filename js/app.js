@@ -5229,29 +5229,24 @@ function filterGuides(q) { renderGuides(q); }
 async function loadGuidePhotos(guide) {
   if (guide.photos) return guide.photos; // já carregadas
   if (!guide.photoFolder) return [];
-  const photos = [];
-  // Usar fetch HEAD para verificar existência — mais fiável em servidores remotos
-  // Fazemos sequencialmente e paramos quando não encontrar 3 seguidas
-  let misses = 0;
+
+  // Verificar todas as 50 fotos em paralelo simultaneamente — muito mais rápido
+  const checkImg = (src) => new Promise(resolve => {
+    const img = new Image();
+    const timer = setTimeout(() => { img.src = ''; resolve(null); }, 4000);
+    img.onload  = () => { clearTimeout(timer); resolve(src); };
+    img.onerror = () => { clearTimeout(timer); resolve(null); };
+    img.src = src;
+  });
+
+  const bases = [];
   for (let i = 1; i <= 50; i++) {
-    const n = String(i).padStart(3, '0');
-    const src = `${guide.photoFolder}_${n}.jpg`;
-    try {
-      const res = await fetch(src, { method: 'HEAD' });
-      if (res.ok) {
-        photos.push(src);
-        misses = 0;
-      } else {
-        misses++;
-        if (misses >= 3) break; // 3 em falta seguidas = parar
-      }
-    } catch {
-      misses++;
-      if (misses >= 3) break;
-    }
+    bases.push(`${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`);
   }
-  guide.photos = photos; // cache para não repetir
-  return photos;
+
+  const results = await Promise.all(bases.map(checkImg));
+  guide.photos = results.filter(Boolean);
+  return guide.photos;
 }
 
 async function openGuideModal(guideId) {
