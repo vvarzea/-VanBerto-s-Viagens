@@ -2659,7 +2659,7 @@ const VISITED_PINS_LIST = [
   { name:'Irlanda \uD83C\uDDEE\uD83C\uDDEA', year:'2025', note:'Dublin \u2014 o Temple Bar animado, o Trinity College e o Book of Kells, Guinness na sua origem e a energia contagiante de uma cidade sempre viva \uD83C\uDF40\uD83C\uDF7A\uD83C\uDFF0', code:'ie' },
   { name:'Irlanda do Norte \uD83C\uDDEC\uD83C\uDDE7', year:'2025', note:'Belfast \u2014 o Titanic Quarter e a hist\u00F3ria do navio mais famoso do mundo. Giant\'s Causeway \u2014 as colunas de basalto hexagonais no Atl\u00E2ntico, um lugar de outro mundo \u2618\uFE0F\uD83C\uDDFF\uD83C\uDF0A', code:'gb-nir' },
   { name:'Isl\u00E2ndia \uD83C\uDDEE\uD83C\uDDF8', year:'2018', note:'Vulc\u00F5es, cascatas e aurora boreal \uD83C\uDF0B\uD83C\uDF0C', code:'is' },
-  { name:'It\u00E1lia \uD83C\uDDEE\uD83C\uDDF9', year:'2016/19', note:'Roma e Vaticano (2016) \u2014 Col\u00EDseu, arte e pizza. Veneza (2019) \u2014 g\u00F3ndolas, canais e a magia de uma cidade flutuante \uD83C\uDF55\uD83D\uDEF6\uD83C\uDF09', code:'it' },
+  { name:'It\u00E1lia \uD83C\uDDEE\uD83C\uDDF9', year:'2016/19', note:'Roma (2016) \u2014 Coliseu, arte e pizza. Veneza (2019) \u2014 g\u00F4ndolas, canais e a magia de uma cidade flutuante \uD83C\uDF55\uD83D\uDEF6\uD83C\uDF09', code:'it' },
   { name:'Maldivas \uD83C\uDDF2\uD83C\uDDFB', year:'2024', note:'Para\u00EDso na Terra \u2014 Water Villas sobre a \u00E1gua turquesa, snorkel com tubar\u00F5es-baleia, p\u00F4res-do-sol cor de laranja e o sil\u00EAncio absoluto do \u00CDndico \uD83D\uDC20\uD83C\uDF34\uD83C\uDF05', code:'mv' },
   { name:'Marrocos \uD83C\uDDF2\uD83C\uDDE6', year:'2023', note:'Marraquexe \u2014 a medina labirintica e a Pra\u00E7a Jemaa el-Fna ao anoitecer. Deserto de Agafay \u2014 noite sob as estrelas no sil\u00EAncio do deserto \uD83E\uDE94\u2728\uD83C\uDF05', code:'ma' },
   { name:'M\u00F3naco \uD83C\uDDF2\uD83C\uDDE8', year:'2026', note:'O principado mais glamoroso \u2014 o circuito de F1 a p\u00E9, o Casino de Monte Carlo e iates no Porto H\u00E9rcules \uD83C\uDFCE\uFE0F\u2728\uD83C\uDFB0', code:'mc' },
@@ -3691,8 +3691,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'roma', name: 'Roma & Vaticano', country: 'It\u00E1lia', flagCode: 'it', flagCodes: ['it','va'], countryId: 380,
-    sub: 'It\u00E1lia & Vaticano \u00B7 Ver\u00E3o 2016',
+    id: 'roma', name: 'Roma', country: 'It\u00E1lia', flagCode: 'it', countryId: 380,
+    sub: 'It\u00E1lia \u00B7 Ver\u00E3o 2016',
     photoFolder: 'images/Roma/Roma',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -3705,7 +3705,6 @@ const GUIDES_DATA = [
         'Ponte Sant\'Angelo',
         'Piazza Navona',
         'Panteão',
-        'Vaticano (Museus do Vaticano, Praça de São Pedro, Basílica de São Pedro)',
       ]},
       { title: '🏨 Hoteis', items: [
         'Hotel San Paolo Roma',
@@ -3718,6 +3717,19 @@ const GUIDES_DATA = [
         'Sfizio Pizzeria (pizzaria)',
         'La Nuova Piazzetta',
         'Cantina e Cucina (italiano), próximo da Piazza Navona',
+      ]},
+    ]
+  },
+  {
+    id: 'vaticano', name: 'Vaticano', country: 'Vaticano', flagCode: 'va', countryId: 336,
+    sub: 'Vaticano \u00B7 Ver\u00E3o 2016',
+    photoFolder: 'images/Vaticano/Vaticano',
+    sections: [
+      { title: '🗺️ Locais visitados', items: [
+        'Museus do Vaticano',
+        'Capela Sistina',
+        'Praça de São Pedro',
+        'Basílica de São Pedro',
       ]},
     ]
   },
