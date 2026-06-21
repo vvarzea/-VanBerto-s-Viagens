@@ -5226,34 +5226,46 @@ function renderGuides(filter) {
 function filterGuides(q) { renderGuides(q); }
 
 // ─── AUTO-DETECTAR FOTOS DE UM GUIA (convenção de nomes, máx 50) ─────────────
-async function loadGuidePhotos(guide) {
-  if (guide.photos) return guide.photos; // já carregadas
-  if (!guide.photoFolder) return [];
+function loadGuidePhotosBackground(guide, onPhotoFound) {
+  // Carregar fotos em background uma a uma — sem bloquear a abertura do guia
+  if (!guide.photoFolder) return;
+  guide.photos = [];
+  guide._photosLoading = true;
 
-  // Verificar todas as 50 fotos em paralelo simultaneamente — muito mais rápido
-  const checkImg = (src) => new Promise(resolve => {
+  let loaded = 0;
+  let errors = 0;
+  const MAX = 50;
+
+  const checkNext = (i) => {
+    if (i > MAX) { guide._photosLoading = false; return; }
+    const src = `${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`;
     const img = new Image();
-    const timer = setTimeout(() => { img.src = ''; resolve(null); }, 4000);
-    img.onload  = () => { clearTimeout(timer); resolve(src); };
-    img.onerror = () => { clearTimeout(timer); resolve(null); };
+    img.onload = () => {
+      guide.photos.push(src);
+      if (onPhotoFound) onPhotoFound(guide.photos.slice());
+      errors = 0;
+      checkNext(i + 1);
+    };
+    img.onerror = () => {
+      errors++;
+      if (errors >= 3) { guide._photosLoading = false; return; } // 3 falhas seguidas = fim
+      checkNext(i + 1);
+    };
     img.src = src;
-  });
+  };
+  checkNext(1);
+}
 
-  const bases = [];
-  for (let i = 1; i <= 50; i++) {
-    bases.push(`${guide.photoFolder}_${String(i).padStart(3, '0')}.jpg`);
-  }
-
-  const results = await Promise.all(bases.map(checkImg));
-  guide.photos = results.filter(Boolean);
+async function loadGuidePhotos(guide) {
+  if (guide.photos !== undefined) return guide.photos; // já carregadas ou a carregar
+  guide.photos = [];
   return guide.photos;
 }
 
 async function openGuideModal(guideId) {
   const guide = GUIDES_DATA.find(g => g.id === guideId);
   if (!guide) return;
-  // Carregar fotos automaticamente se tiver photoFolder
-  if (guide.photoFolder && !guide.photos) await loadGuidePhotos(guide);
+  // Abrir o modal imediatamente — sem esperar pelas fotos
   document.getElementById('guide-modal-title').textContent = guide.name;
   const flagEl = document.getElementById('guide-modal-flag');
   flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
@@ -5261,39 +5273,64 @@ async function openGuideModal(guideId) {
 
   const body = document.getElementById('guide-modal-body');
 
-  // Grelha de miniaturas com setas (se o guia tiver photos)
-  let photosHtml = '';
-  if (guide.photos && guide.photos.length > 0) {
-    const THUMB_VISIBLE = 4; // quantas miniaturas visíveis de cada vez
-    const thumbs = guide.photos.map((src, i) =>
+  // Função para gerar HTML das miniaturas
+  const buildThumbsHtml = (photos) => {
+    if (!photos || photos.length === 0) return '';
+    const thumbs = photos.map((src, i) =>
       `<img src="${src}" alt="${guide.name} ${i+1}" loading="lazy"
         onclick="openGuidePhotoFull('${guide.id}',${i})"
         style="width:144px;height:120px;object-fit:cover;border-radius:8px;cursor:zoom-in;flex-shrink:0;transition:opacity .15s;"
         onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">`
     ).join('');
-    const hasSetas = guide.photos.length > THUMB_VISIBLE;
-    photosHtml = `
+    const hasSetas = photos.length > 4;
+    return `
       <div style="position:relative;margin-bottom:16px;display:flex;align-items:center;gap:4px;">
         ${hasSetas ? `<button onclick="guideThumbScroll('guide-thumbs-${guide.id}',-1)" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#555;">‹</button>` : ''}
-        <div id="guide-thumbs-${guide.id}" style="display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;">
-          ${thumbs}
-        </div>
+        <div id="guide-thumbs-${guide.id}" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;">${thumbs}</div>
         ${hasSetas ? `<button onclick="guideThumbScroll('guide-thumbs-${guide.id}',1)" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#555;">›</button>` : ''}
       </div>`;
+  };
+
+  const renderBody = (photos) => {
+    const photosHtml = buildThumbsHtml(photos);
+    body.innerHTML = `
+      ${photosHtml}
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">${guide.sub}</div>
+      ${guide.sections.map(s => `
+        <div class="guide-all-section">
+          <div class="guide-all-section-title">${s.title}</div>
+          ${s.items.map(item => `<div class="guide-item"><span class="guide-item-num">\u2022</span><span>${item}</span></div>`).join('')}
+        </div>
+      `).join('')}
+    `;
+    body.scrollTop = 0;
+  };
+
+  // Renderizar imediatamente (sem fotos ou com fotos já em cache)
+  renderBody(guide.photos || []);
+  document.getElementById('guide-modal').classList.add('on');
+  document.getElementById('backdrop').classList.add('on');
+
+  // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
+  if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
+    loadGuidePhotosBackground(guide, (photos) => {
+      // Actualizar miniaturas à medida que chegam (só se o modal ainda estiver aberto)
+      if (document.getElementById('guide-modal').classList.contains('on')) {
+        const thumbsEl = document.getElementById('guide-thumbs-${guide.id}');
+        if (thumbsEl) {
+          // Actualizar apenas o bloco de thumbs sem re-renderizar o guia inteiro
+          const newThumbsHtml = buildThumbsHtml(photos);
+          const wrap = thumbsEl.closest('div[style*="position:relative"]');
+          if (wrap) wrap.outerHTML = newThumbsHtml;
+        } else {
+          // Primeira foto a chegar — inserir o bloco de thumbs no topo
+          const newThumbsHtml = buildThumbsHtml(photos);
+          if (newThumbsHtml) body.insertAdjacentHTML('afterbegin', newThumbsHtml);
+        }
+      }
+    });
   }
 
-  body.innerHTML = `
-    ${photosHtml}
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">${guide.sub}</div>
-    ${guide.sections.map(s => `
-      <div class="guide-all-section">
-        <div class="guide-all-section-title">${s.title}</div>
-        ${s.items.map(item => `<div class="guide-item"><span class="guide-item-num">\u2022</span><span>${item}</span></div>`).join('')}
-      </div>
-    `).join('')}
-  `;
-  body.scrollTop = 0;
-  document.getElementById('guide-modal').classList.add('on');
 }
 
 function closeGuideModal(evt) {
