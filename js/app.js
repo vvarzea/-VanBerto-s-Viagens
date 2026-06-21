@@ -5230,21 +5230,26 @@ async function loadGuidePhotos(guide) {
   if (guide.photos) return guide.photos; // já carregadas
   if (!guide.photoFolder) return [];
   const photos = [];
-  const checks = [];
+  // Usar fetch HEAD para verificar existência — mais fiável em servidores remotos
+  // Fazemos sequencialmente e paramos quando não encontrar 3 seguidas
+  let misses = 0;
   for (let i = 1; i <= 50; i++) {
     const n = String(i).padStart(3, '0');
     const src = `${guide.photoFolder}_${n}.jpg`;
-    checks.push(
-      new Promise(resolve => {
-        const img = new Image();
-        img.onload  = () => resolve(src);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      })
-    );
+    try {
+      const res = await fetch(src, { method: 'HEAD' });
+      if (res.ok) {
+        photos.push(src);
+        misses = 0;
+      } else {
+        misses++;
+        if (misses >= 3) break; // 3 em falta seguidas = parar
+      }
+    } catch {
+      misses++;
+      if (misses >= 3) break;
+    }
   }
-  const results = await Promise.all(checks);
-  results.forEach(r => { if (r) photos.push(r); });
   guide.photos = photos; // cache para não repetir
   return photos;
 }
