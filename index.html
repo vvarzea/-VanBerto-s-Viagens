@@ -46,9 +46,9 @@
 <div class="tabs">
   <div class="tab active" data-tab="map" onclick="switchTab('map')"><span class="tab-icon">🗺️</span>Mapa</div>
   <div class="tab" data-tab="pins" onclick="switchTab('pins')"><span class="tab-icon">📍</span>Pins</div>
-  <div class="tab" data-tab="list" onclick="switchTab('list')"><span class="tab-icon">🌍</span>Países</div>
   <div class="tab" data-tab="guides" onclick="switchTab('guides')"><span class="tab-icon">📖</span>Guias</div>
-  <div class="tab" data-tab="timeline" onclick="switchTab('timeline')"><span class="tab-icon">📅</span>Timeline</div>
+  <div class="tab" data-tab="list" onclick="switchTab('list')"><span class="tab-icon">🌍</span>Países por Continente</div>
+
 </div>
 
 <!-- MAP TAB -->
@@ -157,7 +157,7 @@
 <!-- LIST TAB -->
 <div id="tab-list" class="tab-panel">
   <div class="section">
-    <div class="sec-title">🌍 Países Visitados</div>
+    <div class="sec-title">🌍 Países visitados por continente</div>
 
     <div class="cont-group">
       <div class="cont-lbl" id="lbl-europa">Europa · 25 países/territórios</div>
@@ -269,30 +269,6 @@
       <div class="guide-modal-close" onclick="closeGuideModal()">&times;</div>
     </div>
     <div class="guide-modal-body" id="guide-modal-body"></div>
-  </div>
-</div>
-
-<!-- TIMELINE TAB -->
-<div id="tab-timeline" class="tab-panel">
-  <div class="section">
-    <div class="sec-title">📅 Linha do Tempo</div>
-  </div>
-  <div class="tl-section">
-    <div class="tl-row"><div class="tl-year">2007</div><div class="tl-countries">Terceira · Espanha — Benidorm &amp; Loret del Mar &amp; Múrcia</div></div>
-    <div class="tl-row"><div class="tl-year">2011</div><div class="tl-countries">Espanha — Lobios, Galiza</div></div>
-    <div class="tl-row"><div class="tl-year">2013</div><div class="tl-countries">São Miguel (1ª vez)</div></div>
-    <div class="tl-row"><div class="tl-year">2014</div><div class="tl-countries">Inglaterra — Londres · São Jorge · São Miguel</div></div>
-    <div class="tl-row"><div class="tl-year">2015</div><div class="tl-countries">França — Paris &amp; Disneyland · São Miguel</div></div>
-    <div class="tl-row"><div class="tl-year">2016</div><div class="tl-countries">Itália — Roma · Vaticano</div></div>
-    <div class="tl-row"><div class="tl-year">2017</div><div class="tl-countries">Bélgica — Bruxelas · Países Baixos — Amesterdão · Rep. Checa — Praga · Pico · Flores · Suíça — Zurique</div></div>
-    <div class="tl-row"><div class="tl-year">2018</div><div class="tl-countries">Islândia · Finlândia — Helsínquia · Santa Maria · Noruega — Oslo</div></div>
-    <div class="tl-row"><div class="tl-year">2019</div><div class="tl-countries">Alemanha — Berlim · Grécia — Atenas · Itália — Veneza · Graciosa · Suécia — Estocolmo</div></div>
-    <div class="tl-row"><div class="tl-year">2021</div><div class="tl-countries">Áustria — Viena · Hungria — Budapeste · São Miguel · Finlândia — Helsínquia &amp; Lapónia</div></div>
-    <div class="tl-row"><div class="tl-year">2022</div><div class="tl-countries">Turquia — Istambul &amp; Capadócia · Dinamarca — Copenhaga · Suécia — Malmö</div></div>
-    <div class="tl-row"><div class="tl-year">2023</div><div class="tl-countries">Corvo · Espanha — Barcelona · Marrocos — Marraquexe · Canadá — Toronto &amp; Niagara Falls · EUA — Nova York · Faial · Madeira · Polónia — Varsóvia &amp; Cracóvia</div></div>
-    <div class="tl-row"><div class="tl-year">2024</div><div class="tl-countries">Cabo Verde — Santiago · Maldivas · Qatar — Doha · São Miguel · Emirados Árabes Unidos — Abu Dhabi · Escócia — Edimburgo &amp; Glasgow · Tailândia — Banguecoque &amp; Phuket</div></div>
-    <div class="tl-row"><div class="tl-year">2025</div><div class="tl-countries">Irlanda — Dublin · Irlanda do Norte — Belfast &amp; Giant's Causeway · Peniche · Etiópia — Adis Abeba · Tanzânia — Zanzibar · Espanha — Madrid</div></div>
-    <div class="tl-row"><div class="tl-year">2026</div><div class="tl-countries">França — Marselha &amp; Nice · Mónaco<span class="tl-future" data-available="2026-08-25"> · Sérvia — Belgrado · Macedónia do Norte — Escópia &amp; Ohrid · Kosovo — Pristina</span></div></div>
   </div>
 </div>
 

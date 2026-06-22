@@ -484,7 +484,7 @@ function switchTab(name) {
   }
 
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['map','pins','list','guides','timeline'];
+    const names = ['map','pins','guides','list'];
     t.classList.toggle('active', names[i] === name);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
