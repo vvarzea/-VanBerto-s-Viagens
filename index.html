@@ -73,7 +73,6 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
-      <span style="font-size:9.5px;color:var(--muted);" id="mode-tip-mini">📍 ⭐ Pins</span>
       <span class="map-toggle-chevron" id="map-chevron">▾</span>
     </div>
   </div>
@@ -128,11 +127,6 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
       <div class="sec-title" style="margin:0">📍 Os meus pins</div>
       <div style="display:flex;gap:6px;align-items:center;">
-        <button class="tool-btn" style="font-size:10px;background:rgba(45,122,79,0.1);color:var(--green);border-color:var(--green);" onclick="exportData()" title="Exportar dados como JSON">⬇ Exportar</button>
-        <label class="tool-btn" style="font-size:10px;background:rgba(26,107,181,0.1);color:#1a6bb5;border-color:#1a6bb5;cursor:pointer;" title="Importar dados de JSON">
-          ⬆ Importar
-          <input type="file" accept=".json" style="display:none" onchange="importData(this)">
-        </label>
         <button class="tool-btn visited" style="font-size:11px;" onclick="openPinForm(null,null,'pin-visited')">+ Adicionar</button>
       </div>
     </div>
