@@ -112,14 +112,14 @@ const PLACES = [
   [-79.07, 43.09, 'Niagara Falls', false],
   // Cabo Verde — todas as ilhas
   [-23.51, 14.93, 'Santiago \uD83C\uDFDD\uFE0F', true, true, true],
-  [-25.17, 17.12, 'Santo Ant\u00E3o', false, true, true],
-  [-25.00, 16.87, 'S\u00E3o Vicente', false, true, true],
-  [-24.27, 16.58, 'S\u00E3o Nicolau', false, true, true],
-  [-22.91, 16.73, 'Sal', false, true, true],
-  [-22.82, 16.09, 'Boa Vista', false, true, true],
-  [-23.17, 15.23, 'Maio', false, true, true],
-  [-24.36, 14.93, 'Fogo', false, true, true],
-  [-24.72, 14.86, 'Brava', false, true, true],
+  [-25.17, 17.12, 'Santo Ant\u00E3o', false, true, false],
+  [-25.00, 16.87, 'S\u00E3o Vicente', false, true, false],
+  [-24.27, 16.58, 'S\u00E3o Nicolau', false, true, false],
+  [-22.91, 16.73, 'Sal', false, true, false],
+  [-22.82, 16.09, 'Boa Vista', false, true, false],
+  [-23.17, 15.23, 'Maio', false, true, false],
+  [-24.36, 14.93, 'Fogo', false, true, false],
+  [-24.72, 14.86, 'Brava', false, true, false],
   // Dinamarca
   [12.57, 55.68, 'Copenhaga', true],
   // Espanha
@@ -474,6 +474,14 @@ async function loadState() {
 // ─── TABS ────────────────────────────────────────────────────────────────────
 let _mapScrollY = 0; // guardar posição de scroll quando saímos do mapa
 
+
+// Bandeiras especiais (não disponíveis na flagcdn.com)
+function getFlagSrc(code, size) {
+  if (code === 'azores') return 'images/bandeiras_ilhas_portuguesas/flag_azores.webp';
+  if (code === 'madeira') return 'images/bandeiras_ilhas_portuguesas/flag_madeira.webp';
+  return `https://flagcdn.com/w${size || 40}/${code}.png`;
+}
+
 function switchTab(name) {
   const currentTab = document.querySelector('.tab.active');
   const currentName = currentTab ? currentTab.dataset.tab : null;
@@ -675,6 +683,7 @@ const NUM_TO_CODE = {
   788:'tn',792:'tr',800:'ug',804:'ua',784:'ae',826:'gb',840:'us',858:'uy',
   860:'uz',862:'ve',704:'vn',887:'ye',894:'zm',716:'zw',132:'cv',462:'mv',
   492:'mc',336:'va',352:'is',
+  728:'ss',
 };
 
 // ─── Posições de capitais por ID (para zoom em países não-visitados) ──────────
@@ -1220,7 +1229,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag';
           flagEl.dataset.id = id;
-          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.src = getFlagSrc(code, 40);
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1233,7 +1242,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.src = getFlagSrc(code, 40);
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1267,7 +1276,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag vcl-flag-uk';
           flagEl.dataset.geo = JSON.stringify(svgGeo);
-          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.src = getFlagSrc(code, 40);
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1279,7 +1288,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.src = getFlagSrc(code, 40);
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1304,7 +1313,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag vcl-flag-all';
           flagEl.dataset.allId = id;
-          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+          flagEl.src = getFlagSrc(code, 40);
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1316,7 +1325,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+          flagImg.src = getFlagSrc(code, 40);
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1951,7 +1960,7 @@ function showMapTooltip(evt, id) {
   // Fill content
   const flagImg = document.getElementById('tt-flag-img');
   if (code) {
-    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+    flagImg.src = getFlagSrc(code, 40);
     flagImg.style.display = 'block';
   } else {
     flagImg.style.display = 'none';
@@ -2334,7 +2343,7 @@ function pfSearch(q) {
   sug.style.display = 'block';
   sug.innerHTML = matches.map(([id, name]) => {
     const code = FLAG_CODES[+id] || '';
-    const flag = code ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:18px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '\uD83C\uDF0D ';
+    const flag = code ? `<img src=getFlagSrc(code, 20) style="width:18px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '\uD83C\uDF0D ';
     return `<div onclick="pfSelect(${id},'${name.replace(/'/g,"\\'")}')"
       style="padding:8px 14px;cursor:pointer;display:flex;align-items:center;font-size:13px;border-bottom:1px solid #f1f5f9;"
       onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"
@@ -2501,7 +2510,7 @@ function addFlagToMap(pin) {
     const flagEl = document.createElement('img');
     flagEl.className = 'vcl-flag';
     flagEl.dataset.id = id;
-    flagEl.src = `https://flagcdn.com/w40/${code}.png`;
+    flagEl.src = getFlagSrc(code, 40);
     flagEl.alt = name;
     window._vclOverlay.appendChild(flagEl);
   }
@@ -2514,7 +2523,7 @@ function addFlagToMap(pin) {
   if (code) {
     const flagImg = document.createElement('img');
     flagImg.className = 'vcl-flag-inline';
-    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
+    flagImg.src = getFlagSrc(code, 40);
     flagImg.alt = '';
     div.appendChild(flagImg);
   }
@@ -2728,7 +2737,7 @@ function renderWishList() {
     const name = WORLD_NAMES[id] || getCountryName(id) || `Pa\u00EDs ${id}`;
     const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
     const flagImg = code
-      ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
+      ? `<img src=getFlagSrc(code, 40) style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
       : `<div class="pin-dot wish">\u2B50</div>`;
     return `<div class="pin-item">
       ${flagImg}
@@ -2777,7 +2786,7 @@ function renderPinsList() {
     ${userVisited.map(p => {
       const code = (p.emoji && p.emoji.length <= 3) ? p.emoji : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
       const flagEl = code
-        ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" onerror="this.style.display='none'" alt="">`
+        ? `<img src=getFlagSrc(code, 40) style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" onerror="this.style.display='none'" alt="">`
         : `<div class="pin-dot vis">\uD83D\uDCCD</div>`;
       return `
       <div class="pin-item">
@@ -2842,7 +2851,7 @@ function renderUserChips() {
     const code = (p.emoji && p.emoji.length <= 3) ? p.emoji
       : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
     const flagImg = code
-      ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
+      ? `<img src=getFlagSrc(code, 20) style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
       : '';
     const chip = document.createElement('div');
     chip.className = 'chip user-pin-chip';
@@ -3462,7 +3471,7 @@ function importData(input) {
 // ─── GUIDES DATA ──────────────────────────────────────────────────────────────
 const GUIDES_DATA = [
     {
-    id: 'terceira', name: 'Ilha Terceira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'terceira', name: 'Ilha Terceira', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · desde 2007',
     photoFolder: 'images/Ilha_Terceira/Ilha_Terceira',
     sections: [
@@ -3595,7 +3604,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'sao-miguel', name: 'Ilha de S\u00E3o Miguel', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'sao-miguel', name: 'Ilha de S\u00E3o Miguel', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'A\u00E7ores \u00B7 2014, 2021, 2018, 2024',
     photoFolder: 'images/Ilha_de_Sao_Miguel/Ilha_de_Sao_Miguel',
     sections: [
@@ -3628,7 +3637,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'sao-jorge', name: 'Ilha de São Jorge', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'sao-jorge', name: 'Ilha de São Jorge', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2014-2018',
     photoFolder: 'images/Ilha_de_Sao_Jorge/Ilha_de_Sao_Jorge',
     sections: [
@@ -3862,7 +3871,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'pico', name: 'Ilha do Pico', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'pico', name: 'Ilha do Pico', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2017',
     photoFolder: 'images/Ilha_do_Pico/Ilha_do_Pico',
     sections: [
@@ -3888,7 +3897,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'flores', name: 'Ilha das Flores', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'flores', name: 'Ilha das Flores', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2017',
     photoFolder: 'images/Ilha_das_Flores/Ilha_das_Flores',
     sections: [
@@ -4124,7 +4133,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'graciosa', name: 'Ilha Graciosa', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'graciosa', name: 'Ilha Graciosa', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2019',
     photoFolder: 'images/Ilha_da_Graciosa/Ilha_da_Graciosa',
     sections: [
@@ -4152,7 +4161,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'santa-maria', name: 'Ilha de Santa Maria', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'santa-maria', name: 'Ilha de Santa Maria', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2019',
     photoFolder: 'images/Ilha_de_Santa_Maria/Ilha_de_Santa_Maria',
     sections: [
@@ -4425,7 +4434,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'faial', name: 'Ilha do Faial', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'faial', name: 'Ilha do Faial', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2023',
     photoFolder: 'images/Ilha_do_Faial/Ilha_do_Faial',
     sections: [
@@ -4455,7 +4464,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'corvo', name: 'Ilha do Corvo', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'corvo', name: 'Ilha do Corvo', country: 'Portugal', flagCode: 'azores', countryId: 620,
     sub: 'Açores · 2023',
     photoFolder: 'images/Ilha_do_Corvo/Ilha_do_Corvo',
     sections: [
@@ -4538,7 +4547,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'madeira', name: 'Ilha da Madeira', country: 'Portugal', flagCode: 'pt', countryId: 620,
+    id: 'madeira', name: 'Ilha da Madeira', country: 'Portugal', flagCode: 'madeira', countryId: 620,
     sub: 'Madeira \u00B7 Maio 2023',
     photoFolder: 'images/Ilha_da_Madeira/Ilha_da_Madeira',
     sections: [
@@ -5218,8 +5227,8 @@ function renderGuides(filter) {
   const SOON_IDS = new Set(['belgrado', 'macedonia', 'pristina']);
   const cardHtml = g => {
     const flagHtml = g.flagCodes && g.flagCodes.length > 1
-      ? g.flagCodes.map(c => `<img class="guide-card-flag" src="https://flagcdn.com/w40/${c}.png" alt="${g.country}" onerror="this.style.display='none'" style="display:inline-block;">`).join('<span style="margin:0 3px;color:#bbb;font-size:14px;">|</span>')
-      : `<img class="guide-card-flag" src="https://flagcdn.com/w40/${g.flagCode}.png" alt="${g.country}" onerror="this.style.display='none'">`;
+      ? g.flagCodes.map(c => `<img class="guide-card-flag" src="${getFlagSrc(c, 40)}" alt="${g.country}" onerror="this.style.display='none'" style="display:inline-block;">`).join('<span style="margin:0 3px;color:#bbb;font-size:14px;">|</span>')
+      : `<img class="guide-card-flag" src="${getFlagSrc(g.flagCode, 40)}" alt="${g.country}" onerror="this.style.display='none'">`;
     return `<div class="guide-card" onclick="openGuideModal('${g.id}')">
       <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:6px;">${flagHtml}</div>
       <div class="guide-card-name">${g.name}</div>
@@ -5250,7 +5259,7 @@ function renderGuides(filter) {
       const name = WORLD_NAMES[id] || `Pa\u00EDs ${id}`;
       const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
       if (!q || name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)) {
-        const flagUrl = code ? `https://flagcdn.com/w40/${code}.png` : '';
+        const flagUrl = code ? getFlagSrc(code, 40) : '';
         return `<div class="guide-card" style="opacity:0.7">
           <img class="guide-card-flag" src="${flagUrl}" alt="${name}" onerror="this.style.display='none'">
           <div class="guide-card-name">${name}</div>
@@ -5320,13 +5329,13 @@ async function openGuideModal(guideId) {
       flagEl.parentNode.insertBefore(multiFlags, flagEl);
     }
     multiFlags.innerHTML = guide.flagCodes.map(c =>
-      `<img src="https://flagcdn.com/w40/${c}.png" alt="${guide.country}" style="height:20px;border-radius:2px;vertical-align:middle;">`
+      `<img src="${getFlagSrc(c, 40)}" alt="${guide.country}" style="height:20px;border-radius:2px;vertical-align:middle;">`
     ).join('<span style="margin:0 3px;color:#bbb;font-size:18px;line-height:20px;vertical-align:middle;">|</span>');
   } else {
     flagEl.style.display = '';
     const extra = document.getElementById('guide-modal-flags-extra');
     if (extra) extra.innerHTML = '';
-    flagEl.src = `https://flagcdn.com/w40/${guide.flagCode}.png`;
+    flagEl.src = getFlagSrc(guide.flagCode, 40);
     flagEl.alt = guide.country;
   }
 
