@@ -477,9 +477,9 @@
     stroke: rgba(255,255,255,0.98);
   }
 
-  .city-pin.island path.pin-body { fill: #0e7fa8; }
+  .city-pin.island path.pin-body { fill: #8B2500; }
   .city-pin.island circle.pin-dot { fill: white; }
-  .city-pin.island { filter: drop-shadow(0 1px 4px rgba(14,127,168,0.6)); }
+  .city-pin.island { filter: drop-shadow(0 1px 4px rgba(139,37,0,0.6)); }
   .city-label.island-lbl {
     fill: #003050;
     font-weight: 900;

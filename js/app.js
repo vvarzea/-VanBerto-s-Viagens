@@ -1050,10 +1050,10 @@ async function initMap() {
       if (!pos || isNaN(pos[0])) return;
       const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
       const isLaponia = isIsland && name.includes('Lap\u00F3nia');
-      const fillColor = isLaponia ? '#6b3fa0' : isIsland ? '#0e7fa8' : (isCap ? '#8B2500' : '#c9951a');
-      const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
-      const haloStroke = isLaponia ? 'rgba(107,63,160,0.45)' : 'rgba(14,127,168,0.45)';
-      const dropShadow = isLaponia ? 'drop-shadow(0 1px 4px rgba(107,63,160,0.6))' : 'drop-shadow(0 1px 4px rgba(14,127,168,0.6))';
+      const fillColor = '#8B2500';
+      const haloFill = 'rgba(139,37,0,0.15)';
+      const haloStroke = 'rgba(139,37,0,0.45)';
+      const dropShadow = 'drop-shadow(0 1px 4px rgba(139,37,0,0.6))';
       // For islands: show pin only if visited (6th field); always show name label
       const showPin = !isIsland || !!isVisitedIsland;
       const cg = citiesG.append('g')
@@ -1820,7 +1820,7 @@ function updateLabelsVisibility(k) {
       if (showPin) {
         sel.select('circle.island-halo')
           .style('display', null)
-          .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
+          .attr('fill', 'rgba(139,37,0,0.15)').attr('stroke', 'rgba(255,255,255,0.9)')
           .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
       } else {
         sel.select('circle.island-halo').style('display', 'none');
