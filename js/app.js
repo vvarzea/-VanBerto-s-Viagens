@@ -2654,48 +2654,48 @@ async function deletePin(id) {
 // Countries to display specially in pins tab
 const VISITED_PINS_LIST = [
   // Portugal — sempre em primeiro
-  { name:'Portugal \uD83C\uDDF5\uD83C\uDDF9', year:'', note:'Casa \u2014 o pa\u00EDs mais bonito do mundo \uD83D\uDC9B', code:'pt' },
+  { name:'Portugal \uD83C\uDDF5\uD83C\uDDF9', year:'', note:'Casa \u2014 o pa\u00EDs mais bonito do mundo', code:'pt' },
   // Restantes por ordem alfabética
-  { name:'Alemanha \uD83C\uDDE9\uD83C\uDDEA', year:'2019', note:'Berlim \u2014 cidade que reinventou a sua hist\u00F3ria. Arte de rua, o Muro, Checkpoint Charlie e uma vida nocturna inigual\u00E1vel \uD83C\uDF7A\uD83C\uDFA8\uD83C\uDFDB\uFE0F', code:'de' },
-  { name:'\u00C1ustria \uD83C\uDDE6\uD83C\uDDF9', year:'2021', note:'Viena \u2014 elegância imperial, caf\u00E9 da tarde no Sch\u00F6nbrunn, a \u00D3pera e Mozart em cada esquina \u2615\uD83C\uDFB6\uD83C\uDFF0', code:'at' },
-  { name:'B\u00E9lgica \uD83C\uDDE7\uD83C\uDDEA', year:'2017', note:'Bruxelas \u2014 a Grand-Place deslumbrante, capital da Europa, waffles quentes na rua e a melhor cerveja trapista do mundo \uD83C\uDF6B\uD83C\uDF7A\uD83C\uDFDB\uFE0F', code:'be' },
-  { name:'Cabo Verde \uD83C\uDDE8\uD83C\uDDFB', year:'2024', note:'Ilhas atl\u00E2nticas de l\u00EDngua portuguesa \uD83C\uDF0A\uD83C\uDDF5\uD83C\uDDF9', code:'cv' },
-  { name:'Canad\u00E1 \uD83C\uDDE8\uD83C\uDDE6', year:'2023', note:'Toronto \u2014 metr\u00F3pole multicultural \u00E0s margens do Lago Ontario e Cataratas do Ni\u00E1gara \uD83C\uDF41\uD83D\uDCA6\uD83C\uDF06', code:'ca' },
-  { name:'Dinamarca \uD83C\uDDE9\uD83C\uDDF0', year:'2022', note:'Copenhaga \u2014 design n\u00F3rdico e bicicletas \uD83D\uDEB2', code:'dk' },
-  { name:'Emirados \u00C1rabes Unidos \uD83C\uDDE6\uD83C\uDDEA', year:'2024', note:'Abu Dhabi \u2014 a mesquita Sheikh Zayed em m\u00E1rmore branco e o contraste entre tradi\u00E7\u00E3o bedu\u00EDna e modernidade futurista \uD83D\uDD4C\u2728\uD83C\uDFDC\uFE0F', code:'ae' },
-  { name:'Esc\u00F3cia \uD83C\uDDEC\uD83C\uDDE7', year:'2024', note:'Glasgow e Edimburgo \u2014 o Castelo iluminado na rocha, a Royal Mile e o whisky a aquecer a noite escocesa \uD83E\uDD43\uD83C\uDFF0\u2744\uFE0F', code:'gb-sct' },
-  { name:'Espanha \uD83C\uDDEA\uD83C\uDDF8', year:'2023/25', note:'Vizinho sempre presente \u2014 sol, tapas e cultura \u2600\uFE0F\uD83E\uDD58', code:'es' },
-  { name:'Estados Unidos da Am\u00E9rica \uD83C\uDDFA\uD83C\uDDF8', year:'2023', note:'Nova Iorque \u2014 Est\u00E1tua da Liberdade, Empire State Building, Central Park ao amanhecer, Times Square com a sua energia inigual\u00E1vel e museus de classe mundial numa cidade que \u00E9 literalmente um universo pr\u00F3prio \uD83D\uDDFD\uD83D\uDDFC\uD83C\uDF06', code:'us' },
-  { name:'Eti\u00F3pia \uD83C\uDDEA\uD83C\uDDF9', year:'2025', note:'\u00C1frica oriental \u2014 cultura milenar e caf\u00E9 \u2615', code:'et' },
-  { name:'Finl\u00E2ndia \uD83C\uDDEB\uD83C\uDDEE', year:'2021', note:'Hels\u00EDnquia \u2014 design n\u00F3rdico \u00E0 beira do B\u00E1ltico. Lap\u00F3nia \u2014 terra do Pai Natal, ca\u00E7a \u00E0 aurora boreal e renas na neve \uD83C\uDF85\uD83C\uDF0C\u2744\uFE0F', code:'fi' },
-  { name:'Fran\u00E7a \uD83C\uDDEB\uD83C\uDDF7', year:'2015/26', note:'Paris \u2014 Torre Eiffel ao anoitecer e a magia da Disneyland (2015). C\u00F4te d\'Azur \u2014 Marselha e Nice na Riviera Francesa (2026) \uD83D\uDDFC\uD83C\uDFF0\uD83C\uDF0A', code:'fr' },
-  { name:'Gr\u00E9cia \uD83C\uDDEC\uD83C\uDDF7', year:'2019', note:'Atenas \u2014 Acr\u00F3pole e Partenon ao p\u00F4r-do-sol, hist\u00F3ria antiga \u00E0s camadas e gastronomia incr\u00EDvel no Monastiraki \uD83E\uDED2\uD83C\uDFDB\uFE0F\uD83C\uDF05', code:'gr' },
-  { name:'Hungria \uD83C\uDDED\uD83C\uDDFA', year:'2021', note:'Budapeste \u2014 a p\u00E9rola do Dan\u00FAbio \uD83C\uDFF0', code:'hu' },
-  { name:'Inglaterra \uD83C\uDDEC\uD83C\uDDE7', year:'2014', note:'Londres \u2014 museus, teatros e fish & chips \uD83C\uDFAD\uD83C\uDF5F', code:'gb-eng' },
-  { name:'Irlanda \uD83C\uDDEE\uD83C\uDDEA', year:'2025', note:'Dublin \u2014 o Temple Bar animado, o Trinity College e o Book of Kells, Guinness na sua origem e a energia contagiante de uma cidade sempre viva \uD83C\uDF40\uD83C\uDF7A\uD83C\uDFF0', code:'ie' },
-  { name:'Irlanda do Norte \uD83C\uDDEC\uD83C\uDDE7', year:'2025', note:'Belfast \u2014 o Titanic Quarter e a hist\u00F3ria do navio mais famoso do mundo. Giant\'s Causeway \u2014 as colunas de basalto hexagonais no Atl\u00E2ntico, um lugar de outro mundo \u2618\uFE0F\uD83C\uDDFF\uD83C\uDF0A', code:'gb-nir' },
-  { name:'Isl\u00E2ndia \uD83C\uDDEE\uD83C\uDDF8', year:'2018', note:'Vulc\u00F5es, cascatas e aurora boreal \uD83C\uDF0B\uD83C\uDF0C', code:'is' },
-  { name:'It\u00E1lia \uD83C\uDDEE\uD83C\uDDF9', year:'2016/19', note:'Roma (2016) \u2014 Coliseu, arte e pizza. Veneza (2019) \u2014 g\u00F4ndolas, canais e a magia de uma cidade flutuante \uD83C\uDF55\uD83D\uDEF6\uD83C\uDF09', code:'it' },
-  { name:'Maldivas \uD83C\uDDF2\uD83C\uDDFB', year:'2024', note:'Para\u00EDso na Terra \u2014 Water Villas sobre a \u00E1gua turquesa, snorkel com tubar\u00F5es-baleia, p\u00F4res-do-sol cor de laranja e o sil\u00EAncio absoluto do \u00CDndico \uD83D\uDC20\uD83C\uDF34\uD83C\uDF05', code:'mv' },
-  { name:'Marrocos \uD83C\uDDF2\uD83C\uDDE6', year:'2023', note:'Marraquexe \u2014 a medina labirintica e a Pra\u00E7a Jemaa el-Fna ao anoitecer. Deserto de Agafay \u2014 noite sob as estrelas no sil\u00EAncio do deserto \uD83E\uDE94\u2728\uD83C\uDF05', code:'ma' },
-  { name:'M\u00F3naco \uD83C\uDDF2\uD83C\uDDE8', year:'2026', note:'O principado mais glamoroso \u2014 o circuito de F1 a p\u00E9, o Casino de Monte Carlo e iates no Porto H\u00E9rcules \uD83C\uDFCE\uFE0F\u2728\uD83C\uDFB0', code:'mc' },
-  { name:'Noruega \uD83C\uDDF3\uD83C\uDDF4', year:'2018', note:'Fiordes majestosos e natureza \u00E9pica do norte \uD83C\uDFD4\uFE0F', code:'no' },
-  { name:'Pa\u00EDses Baixos \uD83C\uDDF3\uD83C\uDDF1', year:'2017', note:'Amesterd\u00E3o \u2014 canais ao p\u00F4r-do-sol, o Rijksmuseum, a Anne Frank House e bicicletas em todo o lado \uD83D\uDEB2\uD83C\uDFDB\uFE0F\uD83C\uDF0A', code:'nl' },
-  { name:'Pol\u00F3nia \uD83C\uDDF5\uD83C\uDDF1', year:'2023', note:'Vars\u00F3via \u2014 cidade reconstru\u00EDda das cinzas. Crac\u00F3via \u2014 a Pra\u00E7a do Mercado medieval e o Castelo de Wawel \uD83E\uDD5F\uD83C\uDFF0\uD83C\uDF09', code:'pl' },
-  { name:'Qatar \uD83C\uDDF6\uD83C\uDDE6', year:'2024', note:'Doha \u2014 modernidade \u00E1rabe e surpreendente \uD83C\uDFD9\uFE0F', code:'qa' },
-  { name:'Rep. Checa \uD83C\uDDE8\uD83C\uDDFF', year:'2017', note:'Praga \u2014 a cidade das cem torres \uD83C\uDF7A\uD83C\uDFF0', code:'cz' },
-  { name:'Su\u00E9cia \uD83C\uDDF8\uD83C\uDDEA', year:'2019', note:'Estocolmo e o charme escandinavo \u2744\uFE0F\uD83C\uDF32', code:'se' },
-  { name:'Su\u00ED\u00E7a \uD83C\uDDE8\uD83C\uDDED', year:'2017', note:'Alpes, chocolate, rel\u00F3gios e precis\u00E3o su\u00ED\u00E7a \u26F0\uFE0F\uD83C\uDF6B', code:'ch' },
-  { name:'Tail\u00E2ndia \uD83C\uDDF9\uD83C\uDDED', year:'2024', note:'Bangkok \u2014 templos dourados e caos delicioso. Phuket \u2014 parasailing na Patong Beach, a ic\u00F3nica Ilha de James Bond e Ilhas Phi Phi com a Maya Bay \uD83C\uDFDD\uFE0F\uD83C\uDF0A\uD83E\uDE82', code:'th' },
-  { name:'Tanz\u00E2nia \uD83C\uDDF9\uD83C\uDDFF', year:'2025', note:'Zanzibar \u2014 Kendwa Beach com o p\u00F4r-do-sol mais belo do \u00CDndico, snorkel, nadar com golfinhos e mota de \u00E1gua nas \u00E1guas cristalinas \uD83C\uDFDD\uFE0F\uD83D\uDC2C\uD83C\uDF05', code:'tz' },
-  { name:'Turquia \uD83C\uDDF9\uD83C\uDDF7', year:'2022', note:'Istambul \u2014 Hagia Sophia e o B\u00F3sforo entre dois mundos. Capad\u00F3cia \u2014 bal\u00F5es ao amanhecer sobre uma paisagem lunar \uD83D\uDD4C\uD83C\uDF88\uD83C\uDF05', code:'tr' },
-  { name:'Vaticano \uD83C\uDDFB\uD83C\uDDE6', year:'2016', note:'O menor estado soberano do mundo \uD83D\uDD4A\uFE0F\uD83C\uDFA8', code:'va' },
+  { name:'Alemanha \uD83C\uDDE9\uD83C\uDDEA', year:'2019', note:'Berlim \u2014 cidade que reinventou a sua hist\u00F3ria. Arte de rua, o Muro, Checkpoint Charlie e uma vida nocturna inigual\u00E1vel', code:'de' },
+  { name:'\u00C1ustria \uD83C\uDDE6\uD83C\uDDF9', year:'2021', note:'Viena \u2014 elegância imperial, caf\u00E9 da tarde no Sch\u00F6nbrunn, a \u00D3pera e Mozart em cada esquina', code:'at' },
+  { name:'B\u00E9lgica \uD83C\uDDE7\uD83C\uDDEA', year:'2017', note:'Bruxelas \u2014 a Grand-Place deslumbrante, capital da Europa, waffles quentes na rua e a melhor cerveja trapista do mundo', code:'be' },
+  { name:'Cabo Verde \uD83C\uDDE8\uD83C\uDDFB', year:'2024', note:'Ilhas atl\u00E2nticas de l\u00EDngua portuguesa', code:'cv' },
+  { name:'Canad\u00E1 \uD83C\uDDE8\uD83C\uDDE6', year:'2023', note:'Toronto \u2014 metr\u00F3pole multicultural \u00E0s margens do Lago Ontario e Cataratas do Ni\u00E1gara', code:'ca' },
+  { name:'Dinamarca \uD83C\uDDE9\uD83C\uDDF0', year:'2022', note:'Copenhaga \u2014 design n\u00F3rdico e bicicletas', code:'dk' },
+  { name:'Emirados \u00C1rabes Unidos \uD83C\uDDE6\uD83C\uDDEA', year:'2024', note:'Abu Dhabi \u2014 a mesquita Sheikh Zayed em m\u00E1rmore branco e o contraste entre tradi\u00E7\u00E3o bedu\u00EDna e modernidade futurista', code:'ae' },
+  { name:'Esc\u00F3cia \uD83C\uDDEC\uD83C\uDDE7', year:'2024', note:'Glasgow e Edimburgo \u2014 o Castelo iluminado na rocha, a Royal Mile e o whisky a aquecer a noite escocesa', code:'gb-sct' },
+  { name:'Espanha \uD83C\uDDEA\uD83C\uDDF8', year:'2023/25', note:'Vizinho sempre presente \u2014 sol, tapas e cultura', code:'es' },
+  { name:'Estados Unidos da Am\u00E9rica \uD83C\uDDFA\uD83C\uDDF8', year:'2023', note:'Nova Iorque \u2014 Est\u00E1tua da Liberdade, Empire State Building, Central Park ao amanhecer, Times Square com a sua energia inigual\u00E1vel e museus de classe mundial numa cidade que \u00E9 literalmente um universo pr\u00F3prio', code:'us' },
+  { name:'Eti\u00F3pia \uD83C\uDDEA\uD83C\uDDF9', year:'2025', note:'\u00C1frica oriental \u2014 cultura milenar e caf\u00E9', code:'et' },
+  { name:'Finl\u00E2ndia \uD83C\uDDEB\uD83C\uDDEE', year:'2021', note:'Hels\u00EDnquia \u2014 design n\u00F3rdico \u00E0 beira do B\u00E1ltico. Lap\u00F3nia \u2014 terra do Pai Natal, ca\u00E7a \u00E0 aurora boreal e renas na neve', code:'fi' },
+  { name:'Fran\u00E7a \uD83C\uDDEB\uD83C\uDDF7', year:'2015/26', note:'Paris \u2014 Torre Eiffel ao anoitecer e a magia da Disneyland (2015). C\u00F4te d\'Azur \u2014 Marselha e Nice na Riviera Francesa (2026)', code:'fr' },
+  { name:'Gr\u00E9cia \uD83C\uDDEC\uD83C\uDDF7', year:'2019', note:'Atenas \u2014 Acr\u00F3pole e Partenon ao p\u00F4r-do-sol, hist\u00F3ria antiga \u00E0s camadas e gastronomia incr\u00EDvel no Monastiraki', code:'gr' },
+  { name:'Hungria \uD83C\uDDED\uD83C\uDDFA', year:'2021', note:'Budapeste \u2014 a p\u00E9rola do Dan\u00FAbio', code:'hu' },
+  { name:'Inglaterra \uD83C\uDDEC\uD83C\uDDE7', year:'2014', note:'Londres \u2014 museus, teatros e fish & chips', code:'gb-eng' },
+  { name:'Irlanda \uD83C\uDDEE\uD83C\uDDEA', year:'2025', note:'Dublin \u2014 o Temple Bar animado, o Trinity College e o Book of Kells, Guinness na sua origem e a energia contagiante de uma cidade sempre viva', code:'ie' },
+  { name:'Irlanda do Norte \uD83C\uDDEC\uD83C\uDDE7', year:'2025', note:'Belfast \u2014 o Titanic Quarter e a hist\u00F3ria do navio mais famoso do mundo. Giant\'s Causeway \u2014 as colunas de basalto hexagonais no Atl\u00E2ntico, um lugar de outro mundo', code:'gb-nir' },
+  { name:'Isl\u00E2ndia \uD83C\uDDEE\uD83C\uDDF8', year:'2018', note:'Vulc\u00F5es, cascatas e aurora boreal', code:'is' },
+  { name:'It\u00E1lia \uD83C\uDDEE\uD83C\uDDF9', year:'2016/19', note:'Roma (2016) \u2014 Coliseu, arte e pizza. Veneza (2019) \u2014 g\u00F4ndolas, canais e a magia de uma cidade flutuante', code:'it' },
+  { name:'Maldivas \uD83C\uDDF2\uD83C\uDDFB', year:'2024', note:'Para\u00EDso na Terra \u2014 Water Villas sobre a \u00E1gua turquesa, snorkel com tubar\u00F5es-baleia, p\u00F4res-do-sol cor de laranja e o sil\u00EAncio absoluto do \u00CDndico', code:'mv' },
+  { name:'Marrocos \uD83C\uDDF2\uD83C\uDDE6', year:'2023', note:'Marraquexe \u2014 a medina labirintica e a Pra\u00E7a Jemaa el-Fna ao anoitecer. Deserto de Agafay \u2014 noite sob as estrelas no sil\u00EAncio do deserto', code:'ma' },
+  { name:'M\u00F3naco \uD83C\uDDF2\uD83C\uDDE8', year:'2026', note:'O principado mais glamoroso \u2014 o circuito de F1 a p\u00E9, o Casino de Monte Carlo e iates no Porto H\u00E9rcules', code:'mc' },
+  { name:'Noruega \uD83C\uDDF3\uD83C\uDDF4', year:'2018', note:'Fiordes majestosos e natureza \u00E9pica do norte', code:'no' },
+  { name:'Pa\u00EDses Baixos \uD83C\uDDF3\uD83C\uDDF1', year:'2017', note:'Amesterd\u00E3o \u2014 canais ao p\u00F4r-do-sol, o Rijksmuseum, a Anne Frank House e bicicletas em todo o lado', code:'nl' },
+  { name:'Pol\u00F3nia \uD83C\uDDF5\uD83C\uDDF1', year:'2023', note:'Vars\u00F3via \u2014 cidade reconstru\u00EDda das cinzas. Crac\u00F3via \u2014 a Pra\u00E7a do Mercado medieval e o Castelo de Wawel', code:'pl' },
+  { name:'Qatar \uD83C\uDDF6\uD83C\uDDE6', year:'2024', note:'Doha \u2014 modernidade \u00E1rabe e surpreendente', code:'qa' },
+  { name:'Rep. Checa \uD83C\uDDE8\uD83C\uDDFF', year:'2017', note:'Praga \u2014 a cidade das cem torres', code:'cz' },
+  { name:'Su\u00E9cia \uD83C\uDDF8\uD83C\uDDEA', year:'2019', note:'Estocolmo e o charme escandinavo', code:'se' },
+  { name:'Su\u00ED\u00E7a \uD83C\uDDE8\uD83C\uDDED', year:'2017', note:'Alpes, chocolate, rel\u00F3gios e precis\u00E3o su\u00ED\u00E7a', code:'ch' },
+  { name:'Tail\u00E2ndia \uD83C\uDDF9\uD83C\uDDED', year:'2024', note:'Bangkok \u2014 templos dourados e caos delicioso. Phuket \u2014 parasailing na Patong Beach, a ic\u00F3nica Ilha de James Bond e Ilhas Phi Phi com a Maya Bay', code:'th' },
+  { name:'Tanz\u00E2nia \uD83C\uDDF9\uD83C\uDDFF', year:'2025', note:'Zanzibar \u2014 Kendwa Beach com o p\u00F4r-do-sol mais belo do \u00CDndico, snorkel, nadar com golfinhos e mota de \u00E1gua nas \u00E1guas cristalinas', code:'tz' },
+  { name:'Turquia \uD83C\uDDF9\uD83C\uDDF7', year:'2022', note:'Istambul \u2014 Hagia Sophia e o B\u00F3sforo entre dois mundos. Capad\u00F3cia \u2014 bal\u00F5es ao amanhecer sobre uma paisagem lunar', code:'tr' },
+  { name:'Vaticano \uD83C\uDDFB\uD83C\uDDE6', year:'2016', note:'O menor estado soberano do mundo', code:'va' },
 ];
 
 const SOON_PINS_LIST = [
-  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente \uD83D\uDD4A\uFE0F', code:'xk' },
-  { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'Agosto 2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado \uD83C\uDFD9\uFE0F\uD83C\uDF0A', code:'mk' },
-  { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'Agosto 2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel \uD83C\uDFDB\uFE0F\uD83C\uDF7A', code:'rs' },
+  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente', code:'xk' },
+  { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'Agosto 2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado', code:'mk' },
+  { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'Agosto 2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel', code:'rs' },
 ];
 
 function renderSoonList() {
@@ -2897,6 +2897,7 @@ function renderUserChips() {
 function renderWishChips() {
   const section = document.getElementById('wish-countries-section');
   const container = document.getElementById('wish-chips');
+  if (!section || !container) return;
   const wishPins = pins.filter(p => p.type === 'pin-wish');
 
   if (wishCountriesNumeric.size === 0 && wishPins.length === 0) {
@@ -2904,8 +2905,13 @@ function renderWishChips() {
   }
   section.style.display = 'block';
   const countryNames = [...wishCountriesNumeric].map(id => {
-    const n = getCountryName(id);
-    return n ? `<div class="chip wish-chip">${n}</div>` : '';
+    id = +id; // garantir número
+    const n = WORLD_NAMES[id] || getCountryName(id);
+    const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
+    const flagHtml = code
+      ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:20px;height:14px;border-radius:2px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;vertical-align:middle;margin-right:5px;" onerror="this.style.display='none'">`
+      : '';
+    return n ? `<div class="chip wish-chip" style="display:flex;align-items:center;gap:4px;">${flagHtml}${n}</div>` : '';
   }).filter(Boolean);
 
   const pinChips = wishPins.map(p =>
@@ -5649,6 +5655,7 @@ async function _init() {
   initSearch();
   renderFlagStrip();
   renderGuides();
+  renderWishChips();  // garantir que wishlist aparece no tab países por continente
   document.body.classList.add('tab-mapa-active'); // mapa é o tab inicial
   window.scrollTo(0, 0); // garantir que o mapa começa no topo
 
