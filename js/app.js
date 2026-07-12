@@ -475,7 +475,6 @@ async function loadState() {
 let _mapScrollY = 0; // guardar posição de scroll quando saímos do mapa
 
 
-// Bandeiras especiais (não disponíveis na flagcdn.com)
 function getFlagSrc(code, size) {
   if (code === 'azores') return 'images/bandeiras_ilhas_portuguesas/flag_azores.webp';
   if (code === 'madeira') return 'images/bandeiras_ilhas_portuguesas/flag_madeira.webp';
@@ -1051,9 +1050,9 @@ async function initMap() {
       const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
       const isLaponia = isIsland && name.includes('Lap\u00F3nia');
       const fillColor = '#8B2500';
-      const haloFill = 'rgba(139,37,0,0.15)';
-      const haloStroke = 'rgba(139,37,0,0.45)';
-      const dropShadow = 'drop-shadow(0 1px 4px rgba(139,37,0,0.6))';
+      const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
+      const haloStroke = isLaponia ? 'rgba(107,63,160,0.45)' : 'rgba(14,127,168,0.45)';
+      const dropShadow = isLaponia ? 'drop-shadow(0 1px 4px rgba(107,63,160,0.6))' : 'drop-shadow(0 1px 4px rgba(14,127,168,0.6))';
       // For islands: show pin only if visited (6th field); always show name label
       const showPin = !isIsland || !!isVisitedIsland;
       const cg = citiesG.append('g')
@@ -1229,7 +1228,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag';
           flagEl.dataset.id = id;
-          flagEl.src = getFlagSrc(code, 40);
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1242,7 +1241,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = getFlagSrc(code, 40);
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1276,7 +1275,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag vcl-flag-uk';
           flagEl.dataset.geo = JSON.stringify(svgGeo);
-          flagEl.src = getFlagSrc(code, 40);
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1288,7 +1287,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = getFlagSrc(code, 40);
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1313,7 +1312,7 @@ async function initMap() {
           const flagEl = document.createElement('img');
           flagEl.className = 'vcl-flag vcl-flag-all';
           flagEl.dataset.allId = id;
-          flagEl.src = getFlagSrc(code, 40);
+          flagEl.src = `https://flagcdn.com/w40/${code}.png`;
           flagEl.alt = name;
           overlay.appendChild(flagEl);
         }
@@ -1325,7 +1324,7 @@ async function initMap() {
         if (code) {
           const flagImg = document.createElement('img');
           flagImg.className = 'vcl-flag-inline';
-          flagImg.src = getFlagSrc(code, 40);
+          flagImg.src = `https://flagcdn.com/w40/${code}.png`;
           flagImg.alt = '';
           div.appendChild(flagImg);
         }
@@ -1799,11 +1798,19 @@ function updateLabelsVisibility(k) {
   const showIslandText = k >= 2.0;
   const showCapText    = k >= 2.5;
 
+  // Ilhas dos Açores secundárias (exceto S. Miguel) e Lapónia — só zoom ≥ 2.0
+  const SECONDARY_PINS = new Set([
+    'Terceira','Faial','Pico','Flores','Graciosa','Santa Maria','Corvo','São Jorge',
+    'Lapónia'
+  ]);
+
   citiesG.selectAll('.city-pin').each(function() {
     const isCap = this.classList.contains('capital');
     const isIsland = this.classList.contains('island');
-    const visible = isIsland || isCap || showAllCities;
     const sel = d3.select(this);
+    const label = (sel.attr('data-label') || '').replace(/\s*🏝️\s*/g,'').trim();
+    const isSecondary = SECONDARY_PINS.has(label);
+    const visible = isSecondary ? k >= 2.0 : (isIsland || isCap || showAllCities);
     sel.style('display', visible ? null : 'none');
     if (!visible) return;
 
@@ -1820,7 +1827,7 @@ function updateLabelsVisibility(k) {
       if (showPin) {
         sel.select('circle.island-halo')
           .style('display', null)
-          .attr('fill', 'rgba(139,37,0,0.15)').attr('stroke', 'rgba(255,255,255,0.9)')
+          .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
           .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
       } else {
         sel.select('circle.island-halo').style('display', 'none');
@@ -1960,7 +1967,7 @@ function showMapTooltip(evt, id) {
   // Fill content
   const flagImg = document.getElementById('tt-flag-img');
   if (code) {
-    flagImg.src = getFlagSrc(code, 40);
+    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
     flagImg.style.display = 'block';
   } else {
     flagImg.style.display = 'none';
@@ -2343,7 +2350,7 @@ function pfSearch(q) {
   sug.style.display = 'block';
   sug.innerHTML = matches.map(([id, name]) => {
     const code = FLAG_CODES[+id] || '';
-    const flag = code ? `<img src=getFlagSrc(code, 20) style="width:18px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '\uD83C\uDF0D ';
+    const flag = code ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:18px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;">` : '\uD83C\uDF0D ';
     return `<div onclick="pfSelect(${id},'${name.replace(/'/g,"\\'")}')"
       style="padding:8px 14px;cursor:pointer;display:flex;align-items:center;font-size:13px;border-bottom:1px solid #f1f5f9;"
       onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"
@@ -2510,7 +2517,7 @@ function addFlagToMap(pin) {
     const flagEl = document.createElement('img');
     flagEl.className = 'vcl-flag';
     flagEl.dataset.id = id;
-    flagEl.src = getFlagSrc(code, 40);
+    flagEl.src = `https://flagcdn.com/w40/${code}.png`;
     flagEl.alt = name;
     window._vclOverlay.appendChild(flagEl);
   }
@@ -2523,7 +2530,7 @@ function addFlagToMap(pin) {
   if (code) {
     const flagImg = document.createElement('img');
     flagImg.className = 'vcl-flag-inline';
-    flagImg.src = getFlagSrc(code, 40);
+    flagImg.src = `https://flagcdn.com/w40/${code}.png`;
     flagImg.alt = '';
     div.appendChild(flagImg);
   }
@@ -2737,7 +2744,7 @@ function renderWishList() {
     const name = WORLD_NAMES[id] || getCountryName(id) || `Pa\u00EDs ${id}`;
     const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
     const flagImg = code
-      ? `<img src=getFlagSrc(code, 40) style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
+      ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
       : `<div class="pin-dot wish">\u2B50</div>`;
     return `<div class="pin-item">
       ${flagImg}
@@ -2786,7 +2793,7 @@ function renderPinsList() {
     ${userVisited.map(p => {
       const code = (p.emoji && p.emoji.length <= 3) ? p.emoji : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
       const flagEl = code
-        ? `<img src=getFlagSrc(code, 40) style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" onerror="this.style.display='none'" alt="">`
+        ? `<img src="https://flagcdn.com/w40/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;" onerror="this.style.display='none'" alt="">`
         : `<div class="pin-dot vis">\uD83D\uDCCD</div>`;
       return `
       <div class="pin-item">
@@ -2851,7 +2858,7 @@ function renderUserChips() {
     const code = (p.emoji && p.emoji.length <= 3) ? p.emoji
       : (FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '');
     const flagImg = code
-      ? `<img src=getFlagSrc(code, 20) style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
+      ? `<img src="https://flagcdn.com/w20/${code}.png" style="width:16px;height:11px;border-radius:2px;object-fit:cover;margin-right:3px;vertical-align:middle;" onerror="this.style.display='none'">`
       : '';
     const chip = document.createElement('div');
     chip.className = 'chip user-pin-chip';
@@ -5259,7 +5266,7 @@ function renderGuides(filter) {
       const name = WORLD_NAMES[id] || `Pa\u00EDs ${id}`;
       const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
       if (!q || name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)) {
-        const flagUrl = code ? getFlagSrc(code, 40) : '';
+        const flagUrl = code ? `https://flagcdn.com/w40/${code}.png` : '';
         return `<div class="guide-card" style="opacity:0.7">
           <img class="guide-card-flag" src="${flagUrl}" alt="${name}" onerror="this.style.display='none'">
           <div class="guide-card-name">${name}</div>
