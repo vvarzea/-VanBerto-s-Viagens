@@ -86,7 +86,8 @@ const COUNTRY_LABEL_POS = {
   492:[7.42,43.73], 578:[10,62], 620:[-8,39.5], 528:[5.3,52.3], 616:[19.5,52],
   634:[51.5,25.35], 203:[15.5,49.8], 756:[8.2,46.8], 752:[18,60], 764:[101,13],
   792:[35,39], 834:[33,-6],
-  336:[12.45,41.9],
+  336:[12.10,42.00],   // Vaticano — afastado de Roma para não sobrepor os pins
+  191:[16.3,45.3],   // Croácia — o centróide geométrico cai dentro da Bósnia (forma em ferradura)
   // Balcãs — países pequenos que precisam de posição explícita
   688:[21.00,44.00],   // Sérvia — centrado excluindo Kosovo
   499:[19.4,42.7],   // Montenegro
@@ -176,9 +177,9 @@ const PLACES = [
   [-25.17, 36.97, 'Santa Maria \uD83C\uDFDD\uFE0F', false, true, true],
   [-31.13, 39.67, 'Corvo \uD83C\uDFDD\uFE0F', false, true, true],
   [-28.72, 38.65, 'S\u00E3o Jorge \uD83C\uDFDD\uFE0F', false, true, true],
-  // Madeira e Porto Santo
+  // Madeira
   [-16.91, 32.65, 'Madeira \uD83C\uDFDD\uFE0F', false, true, true],
-  [-16.34, 33.07, 'Porto Santo', false, true, true],
+  [-16.34, 33.07, 'Arquipélago da Madeira', false, true],
   // Ilhas Canárias (Espanha)
   [-15.43, 28.10, 'Gran Canaria', false, true],
   [-16.55, 28.29, 'Tenerife', false, true],
@@ -195,9 +196,9 @@ const PLACES = [
   // Sicília e ilhas italianas
   [14.01, 37.60, 'Sic\u00EDlia', false, true],
   [9.06, 40.12, 'Sardenha', false, true],
-  [12.67, 43.92, 'C\u00F3rsega', false, true],
-  [14.92, 37.06, 'Malta', false, true],
-  [14.25, 36.82, 'Gozo', false, true],
+  [9.15, 42.15, 'C\u00F3rsega', false, true],
+  [14.45, 35.90, 'Malta', false, true],
+  [14.24, 36.05, 'Gozo', false, true],
   // Grécia — ilhas principais
   [25.16, 35.34, 'Creta', false, true],
   [25.43, 36.38, 'Rodes', false, true],
@@ -216,15 +217,12 @@ const PLACES = [
   // Ilhas britânicas
   [-3.43, 54.37, 'Ilha de Man', false, true],
   [-2.99, 53.41, 'Anglesey', false, true],
-  [-6.27, 53.74, 'Irlanda', false, true],
-  [-4.20, 56.82, 'Escócia', false, true],
   [-2.20, 60.47, 'Shetland', false, true],
   [-3.10, 59.03, 'Orkney', false, true],
   [-6.37, 57.60, 'Hébridas', false, true],
   [-1.10, 49.37, 'Jersey', false, true],
   [-2.53, 49.46, 'Guernsey', false, true],
   // Atlântico Norte
-  [-21.95, 64.14, 'Isl\u00E2ndia', false, true],
   [-7.61, 62.00, 'Ilhas Faroé', false, true],
   // África — ilhas principais
   [57.55, -20.35, 'Maurícias', false, true],
@@ -238,9 +236,7 @@ const PLACES = [
   [8.67, 1.62, 'Bioko', false, true],
   [-25.66, -16.00, 'Tristão da Cunha', false, true],
   // Atlântico — ilhas
-  [-29.36, 37.73, 'Flores (Açores)', false, true],
-  [-31.13, 39.67, 'Corvo (Açores)', false, true],
-  [-27.22, 38.65, 'Terceira (Açores)', false, true],
+  [-29.36, 37.73, 'Arquipélago dos Açores', false, true],
   // Caraíbas
   [-77.30, 25.07, 'Bahamas', false, true],
   [-76.80, 17.98, 'Jamaica', false, true],
@@ -368,7 +364,7 @@ const PLACES = [
   [13.0, 55.6, 'Malm\u00F6', false],
   // Tailândia
   [100.52, 13.75, 'Banguecoque', true],
-  [98.39, 7.88, 'Phuket \uD83C\uDFDD\uFE0F', false, true],
+  [98.39, 7.88, 'Phuket \uD83C\uDFDD\uFE0F', false, true, true],
   [98.77, 7.74, 'Phi Phi \uD83C\uDFDD\uFE0F', false, true],
   [100.06, 9.54, 'Koh Samui \uD83C\uDFDD\uFE0F', false, true],
   [99.84, 9.87, 'Koh Phangan \uD83C\uDFDD\uFE0F', false, true],
@@ -382,7 +378,7 @@ const PLACES = [
   // EUA — Nova Iorque
   [-74.0, 40.71, 'Nova Iorque', false],
   // Vaticano
-  [12.45, 41.9, 'Vaticano', true],
+  [12.10, 42.00, 'Cidade do Vaticano', true],
   // Sérvia
   [20.46, 44.82, 'Belgrado', true],
   // Macedónia do Norte
@@ -390,6 +386,20 @@ const PLACES = [
   // Kosovo
   [21.17, 42.67, 'Pristina', true],
 ];
+
+// Países visitados sem a capital como pin — mostram 1 pin "representante" já no zoom inicial,
+// do mesmo tamanho visual das capitais (usado tanto no desenho do pin como na visibilidade por zoom)
+const PRIORITY_PINS = new Set([
+  'Toronto','Nova Iorque','Belfast','Londres','Edimburgo','Istambul','Zurique'
+]);
+
+// Territórios tão pequenos que clicar no país no mapa é quase impossível — clicar no pin
+// abre a ficha do país diretamente (nome do pin → id numérico do país em VISITED)
+const SMALL_TERRITORY_PINS = {
+  'Santiago': 132, 'Santo Antão': 132, 'São Vicente': 132, 'São Nicolau': 132,
+  'Sal': 132, 'Boa Vista': 132, 'Maio': 132, 'Fogo': 132, 'Brava': 132,
+  'Malé': 462
+};
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let pins = [];
@@ -891,7 +901,7 @@ async function initMap() {
     // Micro-state fallbacks — store geo coords for accurate dynamic reprojection
     const MICRO_STATES = [
       { id:492, geo:[7.42,43.73], name:'M\u00F3naco' },
-      { id:336, geo:[12.45,41.9], name:'Vaticano' },
+      { id:336, geo:[12.10,42.00], name:'Vaticano' },
       { id:462, geo:[73.51,4.17], name:'Maldivas' },
       { id:634, geo:[51.5,25.35], name:'Qatar' },
       { id:383, geo:[20.92,42.60], name:'Kosovo' },
@@ -951,12 +961,16 @@ async function initMap() {
     })();
 
     // ── Kosovo: polygon overlay (not present as separate feature in countries-50m) ──
-    // Simplified border polygon in [lng, lat] order
+    // Border polygon in [lng, lat] order — fonte: dataset dedicado de fronteiras do Kosovo
+    // (a versão anterior, mais grosseira, não chegava à fronteira real a oeste/sudoeste,
+    // deixando uma faixa de território da Sérvia por identificar entre o Kosovo e o Montenegro/Albânia)
     const kosovoCoords = [
-      [20.76,43.19],[21.00,43.07],[21.56,43.12],[21.78,43.27],[22.06,43.26],
-      [22.07,43.12],[21.94,42.87],[21.63,42.67],[21.56,42.42],[21.33,42.20],
-      [21.14,42.21],[20.96,42.31],[20.63,42.54],[20.52,42.69],[20.49,42.88],
-      [20.57,43.11],[20.76,43.19]
+      [20.76216,42.05186],[20.71731,41.84711],[20.59023,41.85541],[20.52295,42.21787],
+      [20.28374,42.32025],[20.0707,42.58863],[20.25758,42.81275],[20.49679,42.88469],
+      [20.63508,43.21671],[20.81448,43.27205],[20.95651,43.13094],[21.143395,43.068685],
+      [21.27421,42.90959],[21.43866,42.86255],[21.63302,42.67717],[21.77505,42.6827],
+      [21.66292,42.43922],[21.54332,42.32025],[21.576636,42.245224],[21.3527,42.2068],
+      [20.76216,42.05186]
     ];
     const kosovoFeature = {
       type:'Feature', geometry:{ type:'Polygon', coordinates:[kosovoCoords] }
@@ -988,6 +1002,11 @@ async function initMap() {
       .on('mouseleave.tt', hideMapTooltip);
     window._kosovoGroup = kosovoGroup;
 
+    // Reaplicar cores agora que o Kosovo já existe no DOM — a 1ª chamada a updateMapColors()
+    // (mais acima) corre antes deste polígono ser criado, por isso nunca o apanhava e ele
+    // ficava sempre "visitado" (dourado) em vez de "a visitar em breve" (rosa), como a Sérvia.
+    updateMapColors();
+
     // ── French Guiana: accurate border polygon (not a rectangle) ─────────────
     const fgCoords = [
       [-54.6,5.95],[-54.0,5.9],[-53.5,5.8],[-52.9,5.65],
@@ -1009,6 +1028,26 @@ async function initMap() {
       .attr('pointer-events', 'none');
 
     // Guiana Francesa label is handled via _allCountryLabelData HTML overlay
+
+    // ── Corvo, Graciosa e Porto Santo: ilhas pequenas demais para o dataset de países ──
+    // do mapa base (countries-50m) — o pin e o nome já existem, faltava só o "terreno".
+    // Preenchimento manual com o contorno real de cada ilha, na cor de "visitado" (douradO),
+    // igual ao resto de Portugal.
+    const SMALL_ISLAND_OVERLAYS = [
+      { name: 'Corvo', coords: [[-31.116911169111688,39.727714481510134],[-31.080910809108076,39.72264874970048],[-31.080910809108076,39.69394293611248],[-31.098910989109896,39.6635485452546],[-31.131311313113116,39.65848281344495],[-31.131311313113116,39.66523712252447],[-31.149311493114936,39.69563151338237],[-31.152911529115272,39.70069724519202],[-31.149311493114936,39.710828708811306],[-31.14211142111421,39.72096017243061],[-31.127711277112752,39.727714481510134],[-31.116911169111688,39.727714481510134]] },
+      { name: 'Graciosa', coords: [[-27.98487984879847,39.015134873619644],[-28.00288002880029,39.015134873619644],[-28.024480244802447,39.01851202815941],[-28.046080460804603,39.02526633723893],[-28.06048060480603,39.03708637812811],[-28.071280712807123,39.05228357355706],[-28.071280712807123,39.067480768986],[-28.05328053280533,39.097875159843895],[-28.046080460804603,39.10294089165353],[-28.03528035280351,39.10462946892342],[-28.024480244802447,39.10294089165353],[-28.013680136801355,39.097875159843895],[-28.006480064800655,39.10462946892342],[-27.9920799207992,39.08774369622459],[-27.95967959679595,39.06579219171611],[-27.94167941679416,39.05228357355706],[-27.93447934479343,39.035397800858235],[-27.948879488794887,39.023577759969044],[-27.96687966879668,39.01682345088952],[-27.98487984879847,39.015134873619644]] },
+      { name: 'Porto Santo', coords: [[-16.33876338763386,33.057834265473474],[-16.353163531635317,33.04432564731441],[-16.36396363963638,33.03419418369512],[-16.378363783637838,33.03250560642523],[-16.399963999639994,33.03925991550477],[-16.399963999639994,33.0460142245843],[-16.3891638916389,33.047702801854186],[-16.378363783637838,33.05107995639395],[-16.374763747637473,33.057834265473474],[-16.360363603636017,33.08991723360124],[-16.342363423634225,33.105114429030195],[-16.317163171631705,33.110180160839846],[-16.29556295562955,33.10173727449043],[-16.28836288362882,33.10849158356996],[-16.28836288362882,33.07978576998195],[-16.284762847628457,33.067965729092776],[-16.273962739627393,33.05952284274336],[-16.309963099630977,33.06627715182289],[-16.324363243632433,33.06627715182289],[-16.33876338763386,33.057834265473474]] },
+    ];
+    const smallIslandsGroup = g.insert('g', '.labels-layer').attr('class','small-island-overlays');
+    SMALL_ISLAND_OVERLAYS.forEach(({ coords }) => {
+      const feature = { type:'Feature', geometry:{ type:'Polygon', coordinates:[coords] } };
+      smallIslandsGroup.append('path')
+        .datum(feature).attr('d', path)
+        .attr('fill', 'var(--gold)')
+        .attr('stroke', 'rgba(255,255,255,0.8)')
+        .attr('stroke-width', 0.35)
+        .attr('pointer-events', 'none');
+    });
 
     // ── World Capitals layer (subtle dots + names) ────────────────────────────
     let capsG = g.append('g').attr('class','caps-layer');
@@ -1047,7 +1086,9 @@ async function initMap() {
     PLACES.forEach(([lng, lat, name, isCap, isIsland, isVisitedIsland]) => {
       const pos = proj([lng, lat]);
       if (!pos || isNaN(pos[0])) return;
-      const baseR = isIsland ? 3.8 : (isCap ? 3.8 : 2.8);
+      const displayName = name.replace('\uD83C\uDFDD\uFE0F', '').trim();
+      const isPriorityPin = PRIORITY_PINS.has(name);
+      const baseR = isIsland ? 3.8 : ((isCap || isPriorityPin) ? 3.8 : 2.8);
       const isLaponia = isIsland && name.includes('Lap\u00F3nia');
       const fillColor = '#8B2500';
       const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
@@ -1064,7 +1105,15 @@ async function initMap() {
         .attr('data-always', isIsland ? '1' : '0')
         .attr('data-showpin', showPin ? '1' : '0')
         .style('filter', (isIsland && showPin) ? dropShadow : null)
-        .on('click', (evt) => { evt.stopPropagation(); });
+        .on('click', (evt) => {
+          evt.stopPropagation();
+          // Cabo Verde / Maldivas: território minúsculo, quase impossível de clicar no mapa —
+          // clicar no pin abre a ficha do país diretamente (só em modo de visualização normal)
+          if (currentMode !== 'view') return;
+          const countryId = SMALL_TERRITORY_PINS[displayName];
+          const info = countryId && VISITED[countryId];
+          if (info) openSheet(info, countryId);
+        });
 
       // Halo ring — only for visited islands
       if (isIsland && showPin) {
@@ -1098,8 +1147,11 @@ async function initMap() {
         .style('display', showPin ? null : 'none');
 
       // Store display name on the group; label is rendered as a sibling (not inside scaled group)
-      const displayName = name.replace('\uD83C\uDFDD\uFE0F', '').trim();
-      cg.attr('data-label', displayName)
+      // Mónaco e Vaticano já têm o nome mostrado pelo chip do país exatamente no mesmo ponto
+      // (o "pin de cidade" e a "capital" são o mesmo sítio) — suprimir o label duplicado aqui.
+      const REDUNDANT_WITH_COUNTRY_CHIP = new Set(['Mónaco', 'Cidade do Vaticano']);
+      const labelToShow = REDUNDANT_WITH_COUNTRY_CHIP.has(displayName) ? '' : displayName;
+      cg.attr('data-label', labelToShow)
         .attr('data-iscap', isCap ? '1' : '0')
         .attr('data-isisland', isIsland ? '1' : '0');
     });
@@ -1795,7 +1847,7 @@ function updateLabelsVisibility(k) {
   const showIslandFull = k >= 1.0;
   // Text labels only visible when sufficiently zoomed in
   const showCityText   = k >= 3.5;
-  const showIslandText = k >= 2.0;
+  const showIslandText = k >= 5.0;
   const showCapText    = k >= 2.5;
 
   // Ilhas dos Açores secundárias (exceto S. Miguel) e Lapónia — só zoom ≥ 2.0
@@ -1803,14 +1855,17 @@ function updateLabelsVisibility(k) {
     'Terceira','Faial','Pico','Flores','Graciosa','Santa Maria','Corvo','São Jorge',
     'Lapónia'
   ]);
+  // PRIORITY_PINS (Toronto, Nova Iorque, Belfast, Londres, Edimburgo, Istambul, Zurique) é partilhada — definida junto ao PLACES
 
   citiesG.selectAll('.city-pin').each(function() {
     const isCap = this.classList.contains('capital');
     const isIsland = this.classList.contains('island');
     const sel = d3.select(this);
-    const label = (sel.attr('data-label') || '').replace(/\s*🏝️\s*/g,'').trim();
+    // Remove qualquer emoji (e não só 🏝️) do fim do nome antes de comparar, para apanhar casos como 'Lapónia 🦌'
+    const label = (sel.attr('data-label') || '').replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]+\s*$/u,'').trim();
     const isSecondary = SECONDARY_PINS.has(label);
-    const visible = isSecondary ? k >= 2.0 : (isIsland || isCap || showAllCities);
+    const isPriority = PRIORITY_PINS.has(label);
+    const visible = isSecondary ? k >= 2.0 : (isIsland || isCap || isPriority || showAllCities);
     sel.style('display', visible ? null : 'none');
     if (!visible) return;
 
@@ -1853,7 +1908,7 @@ function updateLabelsVisibility(k) {
   // ── Position city labels (separate layer, not inside scaled groups) ────────
   if (window._cityLabelsG) {
     const showCityText2   = k >= 3.5;
-    const showIslandText2 = k >= 2.0;
+    const showIslandText2 = k >= 5.0;
     const showCapText2    = k >= 2.5;
     window._cityLabelsG.selectAll('text').each(function() {
       const sel = d3.select(this);
