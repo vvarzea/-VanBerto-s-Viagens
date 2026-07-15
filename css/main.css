@@ -176,17 +176,26 @@
   }
   .map-toggle-chevron.open { transform: rotate(180deg); }
 
+  .map-outer { position: relative; }
   #map-wrap { width: 100%; background: var(--ocean); position: relative; overflow: hidden; }
   #map-wrap svg { display: block; width: 100%; }
 
   /* ZOOM CONTROLS — two big thumb-friendly buttons, stacked vertically, left side */
+  /* Âncora com a altura toda do mapa, para o "sticky" nunca sair da divisão do mapa */
+  .zoom-controls-anchor {
+    position: absolute; inset: 0; z-index: 200;
+    display: flex; justify-content: flex-end; align-items: flex-start;
+    pointer-events: none; /* deixa o mapa clicável por baixo */
+  }
   .zoom-controls {
-    position: fixed; right: 10px; bottom: 14px; z-index: 200;
+    position: sticky; top: 50%; transform: translateY(-50%);
+    margin-right: 10px;
     display: flex; flex-direction: column; gap: 6px;
     align-items: center;
+    pointer-events: auto; /* os botões voltam a ser clicáveis */
   }
   /* Esconder controlos de zoom quando o separador mapa não está activo */
-  body:not(.tab-mapa-active) .zoom-controls { display: none; }
+  body:not(.tab-mapa-active) .zoom-controls-anchor { display: none; }
   .zoom-btn {
     width: 52px; height: 52px; background: white;
     border: 1px solid rgba(0,0,0,0.13); border-radius: 16px;

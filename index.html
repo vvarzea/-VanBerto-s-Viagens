@@ -89,18 +89,10 @@
     <span class="tool-tip" id="mode-tip">Toca num país</span>
   </div>
 
+  <div class="map-outer">
   <div id="map-wrap" role="application" aria-label="Mapa interativo de viagens — usa os controlos de zoom ou o rato/toque para navegar">
     <div id="map-loading" style="text-align:center;padding:50px 20px;color:#999;font-size:13px" aria-live="polite">
       🌍 A carregar mapa…
-    </div>
-    <div class="zoom-controls" role="group" aria-label="Controlos de zoom do mapa">
-      <button class="zoom-btn" id="zbtn-in" aria-label="Aproximar (zoom in)" title="Aproximar">+</button>
-      <input type="range" id="zoom-slider" class="zoom-slider"
-             min="0" max="4.906890595" step="0.01" value="0"
-             oninput="mapZoomSlider(this.value)" aria-label="Nível de zoom" title="Nível de zoom">
-      <div class="zoom-level" id="zoom-level-indicator" aria-live="polite" aria-label="Zoom atual">1×</div>
-      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Repor zoom" title="Repor zoom">⊙</button>
-      <button class="zoom-btn" id="zbtn-out" aria-label="Afastar (zoom out)" title="Afastar">−</button>
     </div>
 
     <!-- MAP TOOLTIP -->
@@ -115,6 +107,19 @@
       </div>
       <div class="tt-arrow"></div>
     </div>
+  </div>
+
+  <div class="zoom-controls-anchor">
+    <div class="zoom-controls" role="group" aria-label="Controlos de zoom do mapa">
+      <button class="zoom-btn" id="zbtn-in" aria-label="Aproximar (zoom in)" title="Aproximar">+</button>
+      <input type="range" id="zoom-slider" class="zoom-slider"
+             min="0" max="4.906890595" step="0.01" value="0"
+             oninput="mapZoomSlider(this.value)" aria-label="Nível de zoom" title="Nível de zoom">
+      <div class="zoom-level" id="zoom-level-indicator" aria-live="polite" aria-label="Zoom atual">1×</div>
+      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Repor zoom" title="Repor zoom">⊙</button>
+      <button class="zoom-btn" id="zbtn-out" aria-label="Afastar (zoom out)" title="Afastar">−</button>
+    </div>
+  </div>
   </div>
 
 </div>
