@@ -33,33 +33,17 @@
 
   /* HEADER */
   header {
-    background: var(--ink);
+    background: white;
     position: relative;
     overflow: hidden;
     padding: 28px 20px 22px;
     text-align: center;
-  }
-  header::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 50%, rgba(201,149,26,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 50%, rgba(45,122,79,0.10) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  header::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(
-      -55deg, transparent, transparent 20px,
-      rgba(255,255,255,0.012) 20px, rgba(255,255,255,0.012) 21px
-    );
-    pointer-events: none;
+    border-bottom: 1px solid var(--border);
   }
   .header-logo {
     display: block;
     width: 100%;
-    max-width: 480px;
+    max-width: 240px;
     height: auto;
     margin: 10px auto;
   }
