@@ -363,6 +363,17 @@ if (typeof topojson === 'undefined') {
 </script>
 <script src="js/app.js?v=20260714c"></script>
 
+<script>
+// Regista o service worker para permitir instalar a app e funcionar offline
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((err) => {
+      console.warn('Falha ao registar o service worker:', err);
+    });
+  });
+}
+</script>
+
 <div class="flag-strip">
   <div class="flag-scroll" id="flag-strip-row">
     <!-- Populated by JS -->
