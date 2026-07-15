@@ -173,13 +173,14 @@ const PLACES = [
   [-28.04, 38.53, 'Faial \uD83C\uDFDD\uFE0F', false, true, true],
   [-28.33, 38.47, 'Pico \uD83C\uDFDD\uFE0F', false, true, true],
   [-31.11, 39.45, 'Flores \uD83C\uDFDD\uFE0F', false, true, true],
-  [-28.97, 39.09, 'Graciosa \uD83C\uDFDD\uFE0F', false, true, true],
+  [-28.01, 39.06, 'Graciosa \uD83C\uDFDD\uFE0F', false, true, true],
   [-25.17, 36.97, 'Santa Maria \uD83C\uDFDD\uFE0F', false, true, true],
   [-31.13, 39.67, 'Corvo \uD83C\uDFDD\uFE0F', false, true, true],
   [-28.72, 38.65, 'S\u00E3o Jorge \uD83C\uDFDD\uFE0F', false, true, true],
   // Madeira
   [-16.91, 32.65, 'Madeira \uD83C\uDFDD\uFE0F', false, true, true],
-  [-16.34, 33.07, 'Arquipélago da Madeira', false, true],
+  [-16.34, 33.07, 'Porto Santo', false, true],
+  [-16.6, 32.2, 'Arquipélago da Madeira', false, true],
   // Ilhas Canárias (Espanha)
   [-15.43, 28.10, 'Gran Canaria', false, true],
   [-16.55, 28.29, 'Tenerife', false, true],
@@ -197,7 +198,6 @@ const PLACES = [
   [14.01, 37.60, 'Sic\u00EDlia', false, true],
   [9.06, 40.12, 'Sardenha', false, true],
   [9.15, 42.15, 'C\u00F3rsega', false, true],
-  [14.45, 35.90, 'Malta', false, true],
   [14.24, 36.05, 'Gozo', false, true],
   // Grécia — ilhas principais
   [25.16, 35.34, 'Creta', false, true],
@@ -213,23 +213,17 @@ const PLACES = [
   [25.33, 37.86, 'Mykonos', false, true],
   [23.39, 37.96, 'Egina', false, true],
   // Chipre
-  [33.43, 35.13, 'Chipre', false, true],
   // Ilhas britânicas
-  [-3.43, 54.37, 'Ilha de Man', false, true],
   [-2.99, 53.41, 'Anglesey', false, true],
   [-2.20, 60.47, 'Shetland', false, true],
   [-3.10, 59.03, 'Orkney', false, true],
   [-6.37, 57.60, 'Hébridas', false, true],
-  [-1.10, 49.37, 'Jersey', false, true],
-  [-2.53, 49.46, 'Guernsey', false, true],
   // Atlântico Norte
   [-7.61, 62.00, 'Ilhas Faroé', false, true],
   // África — ilhas principais
   [57.55, -20.35, 'Maurícias', false, true],
   [55.47, -4.68, 'Seychelles', false, true],
   [44.33, -12.35, 'Mayotte', false, true],
-  [43.35, -11.70, 'Comores', false, true],
-  [47.55, -18.92, 'Madagáscar', false, true],
   [-5.72, -15.95, 'Santa Helena', false, true],
   [-14.42, -7.95, 'Ascensão', false, true],
   [5.63, 0.23, 'São Tomé', false, true],
@@ -238,23 +232,14 @@ const PLACES = [
   // Atlântico — ilhas
   [-29.36, 37.73, 'Arquipélago dos Açores', false, true],
   // Caraíbas
-  [-77.30, 25.07, 'Bahamas', false, true],
-  [-76.80, 17.98, 'Jamaica', false, true],
-  [-80.10, 21.52, 'Cuba', false, true],
-  [-66.59, 18.22, 'Porto Rico', false, true],
   [-70.99, 21.50, 'República Dominicana', false, true],
-  [-72.29, 19.09, 'Haiti', false, true],
   [-61.37, 15.30, 'Guadalupe', false, true],
   [-61.02, 14.67, 'Martinica', false, true],
-  [-61.26, 13.19, 'Santa Lúcia', false, true],
   [-61.20, 12.70, 'São Vicente', false, true],
-  [-61.79, 12.12, 'Granada', false, true],
   [-62.19, 16.72, 'Antígua', false, true],
   [-62.58, 17.67, 'São Cristóvão', false, true],
-  [-63.07, 18.07, 'Anguila', false, true],
   [-63.06, 18.24, 'Saint-Martin', false, true],
   [-62.97, 17.33, 'Montserrat', false, true],
-  [-61.35, 15.54, 'Dominica', false, true],
   [-68.29, 12.18, 'Curaçao', false, true],
   [-69.97, 12.52, 'Aruba', false, true],
   [-68.78, 12.13, 'Bonaire', false, true],
@@ -266,7 +251,6 @@ const PLACES = [
   [73.51, 4.17, 'Malé', true, true],
   [72.89, 7.10, 'Addu', false, true],
   [68.32, 11.71, 'Laquedivas', false, true],
-  [80.70, 7.87, 'Sri Lanka', false, true],
   [72.86, 20.67, 'Mumbai (ilha)', false, true],
   [55.27, -21.12, 'Reunião', false, true],
   [56.17, -49.35, 'Kerguelen', false, true],
@@ -283,24 +267,17 @@ const PLACES = [
   [131.27, -0.87, 'Halmahera', false, true],
   [134.08, -1.84, 'Papua Nova Guiné', false, true],
   [172.13, -1.31, 'Ilhas Salomão', false, true],
-  [168.32, -17.73, 'Vanuatu', false, true],
   [178.44, -18.15, 'Fiji', false, true],
   [175.20, -21.20, 'Tonga', false, true],
-  [-171.83, -13.76, 'Samoa', false, true],
   [-170.70, -14.30, 'Samoa Americana', false, true],
-  [-159.78, -21.24, 'Ilhas Cook', false, true],
   [-149.47, -17.53, 'Taiti (Fr. Polinésia)', false, true],
   [-138.52, -9.78, 'Marquesas', false, true],
   [-179.22, -8.52, 'Wallis e Futuna', false, true],
-  [166.93, -0.53, 'Nauru', false, true],
   [169.53, -0.53, 'Kiribati', false, true],
-  [171.38, 7.09, 'Ilhas Marshall', false, true],
   [158.17, 6.88, 'Carolinas', false, true],
-  [134.49, 7.35, 'Palau', false, true],
   [144.74, 13.46, 'Guam', false, true],
   [145.75, 15.18, 'Ilhas Marianas', false, true],
   // Austrália e Nova Zelândia
-  [133.78, -25.30, 'Austrália', false, true],
   [172.64, -42.93, 'Ilha do Sul (NZ)', false, true],
   [174.76, -36.85, 'Ilha do Norte (NZ)', false, true],
   [147.32, -42.88, 'Tasmânia', false, true],
@@ -338,7 +315,6 @@ const PLACES = [
   [-38.50, -13.00, 'Ilha de Itaparica', false, true],
   [-32.43, -3.85, 'Fernando de Noronha', false, true],
   [-29.32, -20.50, 'Trindade', false, true],
-  [-57.77, -51.69, 'Ilhas Malvinas', false, true],
   [-67.72, -55.07, 'Tierra del Fuego', false, true],
   // Ártico e Antártida
   [15.60, 78.22, 'Svalbard', false, true],
@@ -364,7 +340,7 @@ const PLACES = [
   [13.0, 55.6, 'Malm\u00F6', false],
   // Tailândia
   [100.52, 13.75, 'Banguecoque', true],
-  [98.39, 7.88, 'Phuket \uD83C\uDFDD\uFE0F', false, true, true],
+  [98.39, 7.88, 'Phuket \uD83C\uDFDD\uFE0F', false],
   [98.77, 7.74, 'Phi Phi \uD83C\uDFDD\uFE0F', false, true],
   [100.06, 9.54, 'Koh Samui \uD83C\uDFDD\uFE0F', false, true],
   [99.84, 9.87, 'Koh Phangan \uD83C\uDFDD\uFE0F', false, true],
@@ -783,8 +759,31 @@ async function initMap() {
     gRef = g;
 
     // Countries
+    // O Vaticano (336) tem duas representações nos dados do mapa base: um "buraco"
+    // dentro do polígono de Itália (para a Itália não ficar colorida por cima dele) e
+    // um micro-polígono próprio, com menos de 0.5 km². A tentativa anterior só excluiu
+    // o micro-polígono, o que deixou o buraco vazio à vista (daí a manchinha junto a
+    // Roma). A correção certa: tapar esse buraco com a mesma cor de Itália (o Vaticano
+    // é pequeno demais para fazer diferença visual a qualquer zoom razoável) e manter a
+    // exclusão do micro-polígono. O Vaticano continua representado pelo chip com
+    // bandeira e pelo pin.
+    const worldFeatures = topojson.feature(world, world.objects.countries).features;
+    const italyFeature = worldFeatures.find(f => +f.id === 380);
+    if (italyFeature && italyFeature.geometry && italyFeature.geometry.type === 'MultiPolygon') {
+      italyFeature.geometry.coordinates = italyFeature.geometry.coordinates.map(poly => {
+        if (poly.length <= 1) return poly;
+        return poly.filter((ring, idx) => {
+          if (idx === 0) return true; // anel exterior, manter sempre
+          let sx = 0, sy = 0;
+          ring.forEach(p => { sx += p[0]; sy += p[1]; });
+          const cx = sx / ring.length, cy = sy / ring.length;
+          const isVaticanHole = Math.abs(cx - 12.435) < 0.05 && Math.abs(cy - 41.901) < 0.05;
+          return !isVaticanHole; // descarta só o buraco do Vaticano; o de São Marino fica intacto
+        });
+      });
+    }
     g.selectAll('.cpath')
-      .data(topojson.feature(world, world.objects.countries).features)
+      .data(worldFeatures.filter(d => +d.id !== 336))
       .join('path')
       .attr('class', d => {
         const id = +d.id;
