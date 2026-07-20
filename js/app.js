@@ -743,7 +743,10 @@ async function initMap() {
     const H = Math.round(W * (isMobile ? 0.82 : 0.62));
     wrap.style.height = H + 'px';
 
-    const proj = d3.geoNaturalEarth1().scale(W / 6.28).translate([W / 2, H * 0.36]);
+    // No mobile o mapa fica maior e centrado na vertical (antes sobrava muito oceano vazio por baixo)
+    const scaleMult = isMobile ? 1.6 : 1;
+    const translateY = isMobile ? H / 2 : H * 0.36;
+    const proj = d3.geoNaturalEarth1().scale((W / 6.28) * scaleMult).translate([W / 2, translateY]);
     const path = d3.geoPath().projection(proj);
     projRef = proj; pathRef = path;
 
@@ -847,6 +850,12 @@ async function initMap() {
         } else if (wishCountriesNumeric.has(id)) {
           const name = WORLD_NAMES[id] || getCountryName(id);
           openSheetWish({ name: name || `Pa\u00EDs ${id}`, id });
+        } else {
+          // País não visitado e sem wishlist: mostrar bandeira + nome ao
+          // clicar/tocar (mesmo tooltip usado no hover), sem aparecer sozinho por zoom.
+          const t = evt.changedTouches && evt.changedTouches[0];
+          const pointerEvt = (evt.clientX != null) ? evt : { clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0 };
+          showMapTooltip(pointerEvt, id);
         }
       });
 
@@ -1576,54 +1585,11 @@ async function initMap() {
         div.style.borderRadius = '3px';
       });
 
-      // ── All-country labels (non-visited): flag-only at k≥1.4, flag+name at k≥2.8 ──
-      const allData = window._allCountryLabelData || [];
-
-      // Flag-only markers (intermediate zoom) — use cached array for performance
-      (window._allFlagEls || []).forEach(flagEl => {
-        const allId = flagEl.dataset.allId;
-        const entry = allData.find(d => String(d.id) === String(allId));
-        if (!entry) { flagEl.style.display = 'none'; return; }
-        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
-        if (!cssPos) { flagEl.style.display = 'none'; return; }
-        const [sx, sy] = cssPos;
-        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
-        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
-        const flagW = Math.round(Math.min(22, Math.max(10, 9 * k)));
-        const flagH = Math.round(flagW * 0.67);
-        flagEl.style.left   = sx + 'px';
-        flagEl.style.top    = sy + 'px';
-        flagEl.style.width  = flagW + 'px';
-        flagEl.style.height = flagH + 'px';
-        flagEl.style.display = 'block';
-      });
-
-      // Flag + name labels (high zoom) — use cached array for performance
-      (window._allLabelEls || []).forEach(div => {
-        const allId = div.dataset.allId;
-        const entry = allData.find(d => String(d.id) === String(allId));
-        if (!entry) { div.style.display = 'none'; return; }
-        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
-        if (!cssPos) { div.style.display = 'none'; return; }
-        const [sx, sy] = cssPos;
-        div.style.left = sx + 'px';
-        div.style.top  = sy + 'px';
-        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
-        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
-        const tier = div.dataset.tier || 'small';
-        const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
-        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.8, 0.5)));
-        div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '2px 4px 2px 2px' : '2px 5px 2px 3px';
-        div.style.borderRadius = k < 4 ? '3px' : '5px';
-        div.style.display = 'flex';
-        const flagImg = div.querySelector('.vcl-flag-inline');
-        if (flagImg) {
-          const flagW = Math.round(Math.min(20, Math.max(10, fs * 1.5)));
-          flagImg.style.width  = flagW + 'px';
-          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
-        }
-      });
+      // ── Países NÃO visitados: já não aparecem automaticamente por zoom. ──────
+      // O nome/bandeira só é mostrado ao clicar/tocar no país (ver showMapTooltip
+      // no handler de click do .cpath). Os elementos .vcl-flag-all / .vcl-all
+      // ficam sempre ocultos (display:none por CSS) — mantemos os dados em
+      // window._allCountryLabelData caso venham a ser úteis noutra funcionalidade.
     };
 
     // ── Zoom with smooth momentum on wheel ──────────────────────────────────
@@ -1737,6 +1703,7 @@ async function initMap() {
     // Click on ocean to close / place pin
     svg.on('click', (evt) => {
       if (evt.target.tagName === 'svg' || (evt.target.tagName === 'path' && !evt.target.classList.contains('cpath'))) {
+        hideMapTooltip();
         if (currentMode === 'pin-visited' || currentMode === 'pin-wish') {
           const [mx, my] = d3.pointer(evt);
           const coords = proj.invert([mx, my]);

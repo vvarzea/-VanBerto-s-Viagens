@@ -232,6 +232,20 @@
     .zoom-btn { width: 44px; height: 44px; font-size: 22px; }
     .zoom-btn.reset { height: 36px; width: 44px; }
   }
+  /* Mobile (<600px): +/- juntos numa única pill, canto inferior direito, botão de repor à parte — estilo Google Maps */
+  @media (max-width: 599.98px) {
+    .zoom-controls {
+      position: absolute; top: auto; bottom: 16px; right: 10px;
+      transform: none; margin-right: 0; gap: 0;
+    }
+    .zoom-level { display: none; }
+    #zbtn-in  { order: 1; border-radius: 16px 16px 0 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
+    #zbtn-out { order: 2; border-radius: 0 0 16px 16px; }
+    .zoom-btn.reset {
+      order: 3; margin-top: 10px;
+      width: 44px; height: 44px; border-radius: 50%; font-size: 17px;
+    }
+  }
   .zoom-slider::-webkit-slider-runnable-track {
     width: 4px; background: #e0dbd4; border-radius: 2px;
   }
