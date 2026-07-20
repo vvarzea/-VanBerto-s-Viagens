@@ -797,8 +797,10 @@ async function initMap() {
       .attr('d', path)
       .attr('data-id', d => d.id)
       .on('click touchend', function(evt, d) {
-        // Ignore touchend if the finger dragged (pan gesture)
-        if (evt.type === 'touchend' && window._touchDragged) return;
+        // Ignore touchend if the finger dragged (pan gesture).
+        // preventDefault aqui evita que o telemóvel dispare, ~300ms depois,
+        // um "click" fantasma sobre o país onde o dedo largou o ecrã.
+        if (evt.type === 'touchend' && window._touchDragged) { evt.preventDefault(); return; }
         evt.stopPropagation(); evt.preventDefault();
         const id = +d.id;
         const centroid = path.centroid(d);
@@ -994,7 +996,7 @@ async function initMap() {
       .attr('data-id', '383')
       .style('cursor', VISITED[383] ? 'pointer' : 'crosshair')
       .on('click touchend', function(evt, d) {
-        if (evt.type === 'touchend' && window._touchDragged) return;
+        if (evt.type === 'touchend' && window._touchDragged) { evt.preventDefault(); return; }
         evt.stopPropagation(); evt.preventDefault();
         const id = 383;
         const info = VISITED[id];
@@ -1654,6 +1656,11 @@ async function initMap() {
         _touchStartX = evt.touches[0].clientX;
         _touchStartY = evt.touches[0].clientY;
         window._touchDragged = false;
+      } else if (evt.touches.length > 1) {
+        // 2º dedo a tocar = gesto de pinça (zoom), nunca um toque simples —
+        // marcar já como "arrastado" para o touchend de cada dedo não disparar
+        // o clique do país onde esse dedo pousou.
+        window._touchDragged = true;
       }
     }, { passive: true });
     svg.on('touchmove.dragtrack', function(evt) {
