@@ -239,11 +239,12 @@
       transform: none; margin-right: 0; gap: 0;
     }
     .zoom-level { display: none; }
-    #zbtn-in  { order: 1; border-radius: 16px 16px 0 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
-    #zbtn-out { order: 2; border-radius: 0 0 16px 16px; }
+    #zbtn-in, #zbtn-out { width: 44px; height: 44px; font-size: 20px; }
+    #zbtn-in  { order: 1; border-radius: 14px 14px 0 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
+    #zbtn-out { order: 2; border-radius: 0 0 14px 14px; }
     .zoom-btn.reset {
-      order: 3; margin-top: 10px;
-      width: 44px; height: 44px; border-radius: 50%; font-size: 17px;
+      order: 3; margin-top: 8px;
+      width: 36px; height: 36px; border-radius: 50%; font-size: 14px;
     }
   }
   .zoom-slider::-webkit-slider-runnable-track {

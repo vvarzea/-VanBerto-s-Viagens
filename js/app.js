@@ -1443,7 +1443,9 @@ async function initMap() {
 
       // Zoom thresholds
       const SHOW_FLAG_ONLY = k >= 1.4;   // só bandeira, sem texto
-      const SHOW_LABEL     = k >= 2.8;   // bandeira + nome
+      // Nome do país: países grandes aparecem mais cedo (têm espaço à volta),
+      // pequenos/apertados (Benelux, Balcãs...) só mais tarde, quando já há espaço entre eles
+      const LABEL_K = { large: 1.8, medium: 2.8, small: 4.2 };
 
       // ── Bandeiras flutuantes (só bandeira, zoom intermédio) ─────────────────
       overlay.querySelectorAll('.vcl-flag:not(.vcl-flag-uk)').forEach(flagEl => {
@@ -1459,7 +1461,8 @@ async function initMap() {
           flagEl.style.display = 'none'; return;
         }
 
-        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        const labelK = LABEL_K[entry.tier] || LABEL_K.small;
+        if (!SHOW_FLAG_ONLY || k >= labelK) { flagEl.style.display = 'none'; return; }
 
         // Size scales with zoom: 14px at k=1.4 → 22px at k=2.8
         const flagW = Math.round(Math.min(26, Math.max(12, 10 * k)));
@@ -1483,14 +1486,15 @@ async function initMap() {
 
         // vcl-island: usar só texto SVG, não label HTML
         if (div.classList.contains('vcl-island')) { div.style.display = 'none'; return; }
-        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        const tier = div.dataset.tier || 'small';
+        const labelK = LABEL_K[tier] || LABEL_K.small;
+        if (k < labelK) { div.style.display = 'none'; return; }
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
           div.style.display = 'none'; return;
         }
 
-        const tier = div.dataset.tier || 'small';
-        const base = tier === 'large' ? 9 : tier === 'medium' ? 7 : 5.5;
-        const fs = Math.min(base * 1.6, Math.max(base * 0.8, base * Math.pow(k / 2.8, 0.5)));
+        const base = tier === 'large' ? 8.5 : tier === 'medium' ? 6.5 : 5;
+        const fs = Math.min(base * 1.3, Math.max(base * 0.8, base * Math.pow(k / labelK, 0.5)));
         div.style.fontSize = fs + 'px';
         div.style.padding = k < 4 ? '2px 4px 2px 2px' : '2px 5px 2px 3px';
         div.style.borderRadius = k < 4 ? '3px' : '5px';
@@ -1514,7 +1518,7 @@ async function initMap() {
         if (!sp || isNaN(sp[0])) return;
         const [sx, sy] = toCSS(sp);
 
-        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        if (!SHOW_FLAG_ONLY || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
         if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
           flagEl.style.display = 'none'; return;
         }
@@ -1536,7 +1540,7 @@ async function initMap() {
         const [sx, sy] = toCSS(sp);
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
-        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (k < LABEL_K.small) { div.style.display = 'none'; return; }
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
           div.style.display = 'none'; return;
         }
@@ -1559,7 +1563,7 @@ async function initMap() {
         const sp = projRef(geo);
         if (!sp || isNaN(sp[0])) return;
         const [sx, sy] = toCSS(sp);
-        if (!SHOW_FLAG_ONLY || SHOW_LABEL) { flagEl.style.display = 'none'; return; }
+        if (!SHOW_FLAG_ONLY || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
         if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
         const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
         const flagH = Math.round(flagW * 0.67);
@@ -1578,7 +1582,7 @@ async function initMap() {
         const [sx, sy] = toCSS(sp);
         div.style.left = sx + 'px';
         div.style.top  = sy + 'px';
-        if (!SHOW_LABEL) { div.style.display = 'none'; return; }
+        if (k < LABEL_K.small) { div.style.display = 'none'; return; }
         if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
         div.style.display = 'flex';
         const fs = Math.min(10, Math.max(4.5, 2.2 * Math.pow(k, 0.65)));
@@ -1821,7 +1825,7 @@ function updateLabelsVisibility(k) {
   // Text labels only visible when sufficiently zoomed in
   const showCityText   = k >= 3.5;
   const showIslandText = k >= 5.0;
-  const showCapText    = k >= 2.5;
+  const showCapText    = k >= 4.5;
 
   // Ilhas dos Açores secundárias (exceto S. Miguel) e Lapónia — só zoom ≥ 2.0
   const SECONDARY_PINS = new Set([
@@ -1882,7 +1886,7 @@ function updateLabelsVisibility(k) {
   if (window._cityLabelsG) {
     const showCityText2   = k >= 3.5;
     const showIslandText2 = k >= 5.0;
-    const showCapText2    = k >= 2.5;
+    const showCapText2    = k >= 4.5;
     window._cityLabelsG.selectAll('text').each(function() {
       const sel = d3.select(this);
       const isIsl = sel.attr('data-isisland') === '1';
