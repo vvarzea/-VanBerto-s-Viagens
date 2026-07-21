@@ -855,9 +855,15 @@ async function initMap() {
         } else {
           // País não visitado e sem wishlist: mostrar bandeira + nome ao
           // clicar/tocar (mesmo tooltip usado no hover), sem aparecer sozinho por zoom.
-          const t = evt.changedTouches && evt.changedTouches[0];
-          const pointerEvt = (evt.clientX != null) ? evt : { clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0 };
-          showMapTooltip(pointerEvt, id);
+          // Tocar de novo no mesmo país (com o tooltip já aberto) fecha-o.
+          const tt = document.getElementById('map-tooltip');
+          if (tt && tt.classList.contains('visible') && _ttCountryId === id) {
+            hideMapTooltip();
+          } else {
+            const t = evt.changedTouches && evt.changedTouches[0];
+            const pointerEvt = (evt.clientX != null) ? evt : { clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0 };
+            showMapTooltip(pointerEvt, id);
+          }
         }
       });
 
@@ -1653,6 +1659,12 @@ async function initMap() {
     window._mapZoom = zoom;
 
     // ── Track touch drag distance to distinguish tap vs pan ─────────────────
+    // IMPORTANTE: d3.zoom() regista os seus próprios touchstart/touchmove no
+    // svg e chama internamente stopImmediatePropagation() — isso impedia por
+    // completo que estes listeners abaixo alguma vez corressem (nunca
+    // actualizavam _touchDragged, em nenhum gesto). Ao registá-los em fase de
+    // "capture", correm sempre primeiro, antes do d3.zoom() ter oportunidade
+    // de cortar a propagação.
     let _touchStartX = 0, _touchStartY = 0;
     window._touchDragged = false;
     svg.on('touchstart.dragtrack', function(evt) {
@@ -1666,14 +1678,14 @@ async function initMap() {
         // o clique do país onde esse dedo pousou.
         window._touchDragged = true;
       }
-    }, { passive: true });
+    }, { capture: true, passive: true });
     svg.on('touchmove.dragtrack', function(evt) {
       if (evt.touches.length === 1) {
         const dx = evt.touches[0].clientX - _touchStartX;
         const dy = evt.touches[0].clientY - _touchStartY;
         if (Math.sqrt(dx*dx + dy*dy) > 6) window._touchDragged = true;
       }
-    }, { passive: true });
+    }, { capture: true, passive: true });
 
     // ── Helper: zoom centred on a screen point ───────────────────────────────
     function _zoomAtPoint(mx, my, factor) {
@@ -1966,6 +1978,7 @@ if (typeof WORLD_CAPITALS !== 'undefined') {
 }
 
 let _ttHideTimer = null;
+let _ttCountryId = null; // id do país cujo tooltip está aberto (para toggle: tocar de novo fecha)
 
 function showMapTooltip(evt, id) {
   const tt = document.getElementById('map-tooltip');
@@ -2043,12 +2056,14 @@ function showMapTooltip(evt, id) {
 
   // Show
   if (_ttHideTimer) { clearTimeout(_ttHideTimer); _ttHideTimer = null; }
+  _ttCountryId = id;
   tt.classList.add('visible');
 }
 
 function hideMapTooltip() {
   const tt = document.getElementById('map-tooltip');
   if (!tt) return;
+  _ttCountryId = null;
   tt.classList.remove('visible');
 }
 
