@@ -1166,7 +1166,9 @@ async function initMap() {
       // Mónaco e Vaticano já têm o nome mostrado pelo chip do país exatamente no mesmo ponto
       // (o "pin de cidade" e a "capital" são o mesmo sítio) — suprimir o label duplicado aqui.
       const REDUNDANT_WITH_COUNTRY_CHIP = new Set(['Mónaco', 'Cidade do Vaticano']);
-      const labelToShow = REDUNDANT_WITH_COUNTRY_CHIP.has(displayName) ? '' : displayName;
+      // Ilha ainda não visitada: mostrar só o território colorido, sem nome (como o pin, já suprimido acima)
+      const labelToShow = REDUNDANT_WITH_COUNTRY_CHIP.has(displayName) ? ''
+        : ((isIsland && !isVisitedIsland) ? '' : displayName);
       cg.attr('data-label', labelToShow)
         .attr('data-iscap', isCap ? '1' : '0')
         .attr('data-isisland', isIsland ? '1' : '0');
@@ -1447,11 +1449,11 @@ async function initMap() {
         return toCSS(sp);
       }
 
-      // Zoom thresholds
-      const SHOW_FLAG_ONLY = k >= 1.4;   // só bandeira, sem texto
-      // Nome do país: países grandes aparecem mais cedo (têm espaço à volta),
-      // pequenos/apertados (Benelux, Balcãs...) só mais tarde, quando já há espaço entre eles
-      const LABEL_K = { large: 1.8, medium: 2.8, small: 4.2 };
+      // Zoom thresholds — revelação gradual por tamanho do país (como o Google Maps):
+      // primeiro só o território colorido, depois bandeira, depois nome — sempre
+      // países grandes primeiro, pequenos/apertados só bem mais tarde.
+      const FLAG_K  = { large: 1.3, medium: 1.9, small: 2.8 };
+      const LABEL_K = { large: 2.0, medium: 3.2, small: 4.8 };
 
       // ── Bandeiras flutuantes (só bandeira, zoom intermédio) ─────────────────
       overlay.querySelectorAll('.vcl-flag:not(.vcl-flag-uk)').forEach(flagEl => {
@@ -1468,10 +1470,11 @@ async function initMap() {
         }
 
         const labelK = LABEL_K[entry.tier] || LABEL_K.small;
-        if (!SHOW_FLAG_ONLY || k >= labelK) { flagEl.style.display = 'none'; return; }
+        const flagK  = FLAG_K[entry.tier] || FLAG_K.small;
+        if (k < flagK || k >= labelK) { flagEl.style.display = 'none'; return; }
 
-        // Size scales with zoom: 14px at k=1.4 → 22px at k=2.8
-        const flagW = Math.round(Math.min(26, Math.max(12, 10 * k)));
+        // Size scales with zoom, mas mais discreta: 11px a 18px (era 14–26px)
+        const flagW = Math.round(Math.min(18, Math.max(11, 8 * k)));
         const flagH = Math.round(flagW * 0.67);
         flagEl.style.left   = sx + 'px';
         flagEl.style.top    = sy + 'px';
@@ -1524,7 +1527,7 @@ async function initMap() {
         if (!sp || isNaN(sp[0])) return;
         const [sx, sy] = toCSS(sp);
 
-        if (!SHOW_FLAG_ONLY || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
+        if (k < FLAG_K.small || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
         if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
           flagEl.style.display = 'none'; return;
         }
@@ -1569,7 +1572,7 @@ async function initMap() {
         const sp = projRef(geo);
         if (!sp || isNaN(sp[0])) return;
         const [sx, sy] = toCSS(sp);
-        if (!SHOW_FLAG_ONLY || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
+        if (k < FLAG_K.small || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
         if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
         const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
         const flagH = Math.round(flagW * 0.67);
