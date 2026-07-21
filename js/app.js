@@ -464,6 +464,7 @@ let _mapScrollY = 0; // guardar posição de scroll quando saímos do mapa
 function getFlagSrc(code, size) {
   if (code === 'azores') return 'images/bandeiras_ilhas_portuguesas/flag_azores.webp';
   if (code === 'madeira') return 'images/bandeiras_ilhas_portuguesas/flag_madeira.webp';
+  if (code === 'laponia') return 'images/bandeiras_regionais/flag_laponia.webp';
   return `https://flagcdn.com/w${size || 40}/${code}.png`;
 }
 
@@ -669,6 +670,15 @@ const NUM_TO_CODE = {
   860:'uz',862:'ve',704:'vn',887:'ye',894:'zm',716:'zw',132:'cv',462:'mv',
   492:'mc',336:'va',352:'is',
   728:'ss',
+  // Adicionados: faltavam nesta tabela, por isso não mostravam bandeira ao
+  // tocar no país "por explorar" (ex.: Letónia, Bielorrússia)
+  428:'lv',112:'by',51:'am',795:'tm',438:'li',674:'sm',480:'mu',690:'sc',
+  678:'st',242:'fj',882:'ws',776:'to',548:'vu',90:'sb',296:'ki',585:'pw',
+  584:'mh',583:'fm',520:'nr',184:'ck',570:'nu',28:'ag',670:'vc',662:'lc',
+  659:'kn',533:'aw',531:'cw',534:'sx',275:'ps',732:'eh',248:'ax',234:'fo',
+  446:'mo',344:'hk',60:'bm',500:'ms',16:'as',574:'nf',612:'pn',654:'sh',
+  876:'wf',666:'pm',663:'mf',652:'bl',260:'tf',86:'io',239:'gs',334:'hm',
+  10:'aq',
 };
 
 // ─── Posições de capitais por ID (para zoom em países não-visitados) ──────────
@@ -4355,7 +4365,7 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'laponia', name: 'Lap\u00F3nia', country: 'Finl\u00E2ndia', flagCode: 'fi', countryId: 246,
+    id: 'laponia', name: 'Lap\u00F3nia', country: 'Finl\u00E2ndia', flagCode: 'laponia', countryId: 246,
     sub: 'Finl\u00E2ndia \u00B7 Natal 2021',
     photoFolder: 'images/Laponia/Laponia',
     sections: [
