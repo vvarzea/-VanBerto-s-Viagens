@@ -374,7 +374,7 @@ const PRIORITY_PINS = new Set([
 const SMALL_TERRITORY_PINS = {
   'Santiago': 132, 'Santo Antão': 132, 'São Vicente': 132, 'São Nicolau': 132,
   'Sal': 132, 'Boa Vista': 132, 'Maio': 132, 'Fogo': 132, 'Brava': 132,
-  'Malé': 462
+  'Malé': 462, 'Cidade do Vaticano': 336
 };
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
@@ -1341,12 +1341,12 @@ async function initMap() {
 
       // Also add UK sub-nation labels
       const UK_LABELS = [
-        { name:'Inglaterra', code:'gb-eng', svgGeo:[-1.5,52.5] },
-        { name:'Esc\u00F3cia',    code:'gb-sct', svgGeo:[-4.0,57.0] },
-        { name:'Pa\u00EDs de Gales', code:'gb-wls', svgGeo:[-3.8,52.2] },
-        { name:'Irlanda do Norte', code:'gb-nir', svgGeo:[-6.5,54.7] },
+        { name:'Inglaterra', code:'gb-eng', svgGeo:[-1.5,52.5], visited:true },
+        { name:'Esc\u00F3cia',    code:'gb-sct', svgGeo:[-4.0,57.0], visited:true },
+        { name:'Pa\u00EDs de Gales', code:'gb-wls', svgGeo:[-3.8,52.2], visited:false },
+        { name:'Irlanda do Norte', code:'gb-nir', svgGeo:[-6.5,54.7], visited:true },
       ];
-      UK_LABELS.forEach(({ name, code, svgGeo }) => {
+      UK_LABELS.forEach(({ name, code, svgGeo, visited }) => {
         const svgPos = projRef ? projRef(svgGeo) : null;
         if (!svgPos) return;
 
@@ -1360,9 +1360,9 @@ async function initMap() {
           overlay.appendChild(flagEl);
         }
 
-        // Label UK
+        // Label UK — País de Gales ainda não visitado usa o estilo "por explorar" (azul-acinzentado)
         const div = document.createElement('div');
-        div.className = 'vcl vcl-uk';
+        div.className = 'vcl vcl-uk' + (visited ? '' : ' vcl-all');
         div.dataset.geo = JSON.stringify(svgGeo);
         if (code) {
           const flagImg = document.createElement('img');
@@ -2298,7 +2298,14 @@ function updateStats() {
 
   // Destinations: total guides excluding future trips (Belgrado, Macedónia do Norte, Pristina — a partir de 25 ago 2026)
   const FUTURE_GUIDES = new Set(['belgrado', 'macedonia', 'pristina']);
-  const numDestinos = GUIDES_DATA.filter(g => today >= cutoff || !FUTURE_GUIDES.has(g.id)).length;
+  // Colmar, Estrasburgo, Freiburg, Basileia — viagem de Dezembro 2026
+  const cutoffDez = new Date('2026-12-01');
+  const FUTURE_GUIDES_DEZ = new Set(['colmar', 'estrasburgo', 'freiburg', 'basileia']);
+  const numDestinos = GUIDES_DATA.filter(g => {
+    if (FUTURE_GUIDES.has(g.id)) return today >= cutoff;
+    if (FUTURE_GUIDES_DEZ.has(g.id)) return today >= cutoffDez;
+    return true;
+  }).length;
 
   // Update DOM
   const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
@@ -2753,9 +2760,13 @@ const VISITED_PINS_LIST = [
 ];
 
 const SOON_PINS_LIST = [
-  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente', code:'xk' },
+  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente. Prizren \u2014 a antiga capital cultural, com a Ponte de Pedra, a Mesquita de Sinan Pasha e vistas sobre os Montes Sar', code:'xk' },
   { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'Agosto 2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado', code:'mk' },
   { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'Agosto 2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel', code:'rs' },
+  { name:'Colmar \uD83C\uDDEB\uD83C\uDDF7', year:'Dezembro 2026', note:'Fran\u00E7a \u2014 a capital alsaciana das casas de contos de fadas e dos canais floridos', code:'fr' },
+  { name:'Estrasburgo \uD83C\uDDEB\uD83C\uDDF7', year:'Dezembro 2026', note:'Fran\u00E7a \u2014 a Grande \u00CEle Patrim\u00F3nio Mundial e a majestosa Catedral g\u00F3tica', code:'fr' },
+  { name:'Freiburg \uD83C\uDDE9\uD83C\uDDEA', year:'Dezembro 2026', note:'Alemanha \u2014 porta da Floresta Negra, casario medieval e os famosos B\u00E4chle pelas ruas', code:'de' },
+  { name:'Basileia \uD83C\uDDE8\uD83C\uDDED', year:'Dezembro 2026', note:'Su\u00ED\u00E7a \u2014 arte de renome, o Reno a atravessar a cidade e o encontro de tr\u00EAs fronteiras', code:'ch' },
 ];
 
 function renderSoonList() {
@@ -5261,14 +5272,106 @@ const GUIDES_DATA = [
     id: 'belgrado', name: 'Belgrado', country: 'S\u00E9rvia', flagCode: 'rs', countryId: 688,
     sub: 'S\u00E9rvia \u00B7 Ver\u00E3o 2026',
     sections: [
-      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
-      { title: '\uD83C\uDFE8 Hotel', items: [] },
-      { title: '\uD83C\uDF74 Restaurantes', items: [] },
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        'Republic Square (pra\u00E7a central)',
+        'Kneza Mihaila (via famosa sem carros)',
+        'Kalemegdan (forte + jardim + outros locais)',
+        'Skadarlija boemska \u010Detvrt',
+        'Templo de S\u00E3o Sava',
+      ] },
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel Amsterdam',
+      ] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        '\u0411\u0435\u0433\u0435 \u0441\u0435\u043D\u0434\u0432\u0438\u0447\u0438',
+        'Two Guys Smash Burger Zeleni Venac',
+        'Sushi XO Obilicev Venac',
+        'Burrito Madre',
+        'Restoran Mihailo',
+      ] },
     ]
   },
   {
     id: 'macedonia', name: 'Maced\u00F3nia do Norte', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
     sub: 'Maced\u00F3nia do Norte \u00B7 Ver\u00E3o 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        '<strong>Esc\u00F3pia</strong>',
+        'Matka canyon',
+        'Macedonia Square + Alexander the Great Statue',
+        'Ponte de Pedra',
+        'Old Bazaar \u2014 Skopje Old Town',
+        'Ponte da Arte',
+        'Fortaleza de Kale / Skopje Fortress',
+        '<strong>Ohrid</strong>',
+        "Samuel's Fortress",
+        'Ancient Macedonian Theatre of Lychnidos',
+        'Old Town of Ohrid',
+        'Church of Saints Clement of Ohrid \u0026 Panteleimon',
+        'Church of Saint Jovan the Theologian at Kaneo',
+        'Ohrid Boardwalk (passadi\u00E7o)',
+        'Potpesh Beach e Kaneo Beach',
+        'St. Clement of Ohrid City Square',
+        'Old Bazaar Street',
+        'Chinar Tree (\u00E1rvore com cerca de 1100 anos)',
+        'The Bay of Bones Museum',
+        'Mosteiro de S\u00E3o Naum',
+      ] },
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel DoubleTree by Hilton Skopje',
+      ] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        '<strong>Esc\u00F3pia</strong>',
+        'Pelister',
+        'Matto Napoletano',
+        'Restaurant Plaza de Toros',
+        'Restaurant Skopski Merak',
+        'Mestence',
+        'Nesto Zdravo (\u041D\u0435\u0448\u0442\u043E \u0417\u0434\u0440\u0430\u0432\u043E)',
+        'Fast Food 7 - Aerodrom',
+        'Meze',
+        'Premium Smash Burger',
+        '<strong>Ohrid</strong>',
+        'Di Angolo Pizzeria',
+        'Castello by Cosa Nostra',
+        'Prova Pizzeria',
+        'Pizza Via Sacra',
+        'Pier 82 Cafe \u0026 Restaurant',
+      ] },
+    ]
+  },
+  {
+    id: 'pristina', name: 'Kosovo', country: 'Kosovo', flagCode: 'xk', countryId: 383,
+    sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
+        '<strong>Pristina</strong>',
+        'The National Library of Kosovo "Pjet\u00EBr Bogdani"',
+        'Mother Teresa Blvd',
+        'Newborn Monument + Memorial HEROINES',
+        '<strong>Prizren</strong>',
+        'Old Stone Bridge',
+        'Shat\u00EBrvan Square',
+        'Sinan Pasha Mosque',
+        'Prizren Fortress',
+      ] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        '<strong>Pristina</strong>',
+        'Basilico',
+        'Shaban Grill House',
+        'Smash Burger Co.',
+        '<strong>Prizren</strong>',
+        'Napoletana Nostra',
+        'Hani i Vjeter',
+        'Fish House',
+        'Yes\'Please food\u0026drink',
+        'Gazza',
+      ] },
+    ]
+  },
+  {
+    id: 'colmar', name: 'Colmar', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
+    sub: 'Fran\u00E7a \u00B7 Dezembro 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
@@ -5276,8 +5379,26 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'pristina', name: 'Pristina', country: 'Kosovo', flagCode: 'xk', countryId: 383,
-    sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
+    id: 'estrasburgo', name: 'Estrasburgo', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
+    sub: 'Fran\u00E7a \u00B7 Dezembro 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
+      { title: '\uD83C\uDFE8 Hotel', items: [] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [] },
+    ]
+  },
+  {
+    id: 'freiburg', name: 'Freiburg', country: 'Alemanha', flagCode: 'de', countryId: 276,
+    sub: 'Alemanha \u00B7 Dezembro 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
+      { title: '\uD83C\uDFE8 Hotel', items: [] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [] },
+    ]
+  },
+  {
+    id: 'basileia', name: 'Basileia', country: 'Su\u00ED\u00E7a', flagCode: 'ch', countryId: 756,
+    sub: 'Su\u00ED\u00E7a \u00B7 Dezembro 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
@@ -5297,7 +5418,7 @@ function renderGuides(filter) {
   const grid = document.getElementById('guides-grid');
   if (!grid) return;
   const q = (filter || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const SOON_IDS = new Set(['belgrado', 'macedonia', 'pristina']);
+  const SOON_IDS = new Set(['belgrado', 'macedonia', 'pristina', 'colmar', 'estrasburgo', 'freiburg', 'basileia']);
   const cardHtml = g => {
     const flagHtml = g.flagCodes && g.flagCodes.length > 1
       ? g.flagCodes.map(c => `<img class="guide-card-flag" src="${getFlagSrc(c, 40)}" alt="${g.country}" onerror="this.style.display='none'" style="display:inline-block;">`).join('<span style="margin:0 3px;color:#bbb;font-size:14px;">|</span>')
@@ -5440,7 +5561,12 @@ async function openGuideModal(guideId) {
       ${guide.sections.map(s => `
         <div class="guide-all-section">
           <div class="guide-all-section-title">${s.title}</div>
-          ${s.items.map(item => `<div class="guide-item"><span class="guide-item-num">\u2022</span><span>${item}</span></div>`).join('')}
+          ${s.items.map(item => {
+            const isHeader = /^<strong>.*<\/strong>$/.test(item.trim());
+            return isHeader
+              ? `<div class="guide-item" style="margin-top:6px;"><span>${item}</span></div>`
+              : `<div class="guide-item"><span class="guide-item-num">\u2022</span><span>${item}</span></div>`;
+          }).join('')}
         </div>
       `).join('')}
     `;
