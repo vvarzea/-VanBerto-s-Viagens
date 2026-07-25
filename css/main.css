@@ -546,7 +546,8 @@
     padding-top: 16px; padding-bottom: 4px;
   }
   .sh-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
-  #s-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.1; flex: 1; font-weight: 700; }
+  #s-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.1; flex: 1; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .s-name-flag { width: 30px; height: 21px; object-fit: cover; border-radius: 4px; box-shadow: 0 0 0 1px rgba(0,0,0,0.1); flex-shrink: 0; }
   #s-close {
     font-size: 20px; color: #ccc; cursor: pointer; padding: 2px 4px;
     flex-shrink: 0; line-height: 1;
