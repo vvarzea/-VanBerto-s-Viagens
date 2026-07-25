@@ -2377,7 +2377,7 @@ function updateStats() {
 
   // Destinations: total guides excluding future trips (Belgrado, Macedónia do Norte, Pristina — a partir de 25 ago 2026)
   const FUTURE_GUIDES = new Set(['belgrado', 'macedonia', 'pristina']);
-  // Colmar, Estrasburgo, Freiburg, Basileia — viagem de Dezembro 2026
+  // Colmar, Estrasburgo, Freiburg, Basileia — viagem de Natal 2026
   const cutoffDez = new Date('2026-12-01');
   const FUTURE_GUIDES_DEZ = new Set(['colmar', 'estrasburgo', 'freiburg', 'basileia']);
   const numDestinos = GUIDES_DATA.filter(g => {
@@ -2842,10 +2842,10 @@ const SOON_PINS_LIST = [
   { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente. Prizren \u2014 a antiga capital cultural, com a Ponte de Pedra, a Mesquita de Sinan Pasha e vistas sobre os Montes Sar', code:'xk' },
   { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'Agosto 2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado', code:'mk' },
   { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'Agosto 2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel', code:'rs' },
-  { name:'Colmar \uD83C\uDDEB\uD83C\uDDF7', year:'Dezembro 2026', note:'Fran\u00E7a \u2014 a capital alsaciana das casas de contos de fadas e dos canais floridos', code:'fr' },
-  { name:'Estrasburgo \uD83C\uDDEB\uD83C\uDDF7', year:'Dezembro 2026', note:'Fran\u00E7a \u2014 a Grande \u00CEle Patrim\u00F3nio Mundial e a majestosa Catedral g\u00F3tica', code:'fr' },
-  { name:'Freiburg \uD83C\uDDE9\uD83C\uDDEA', year:'Dezembro 2026', note:'Alemanha \u2014 porta da Floresta Negra, casario medieval e os famosos B\u00E4chle pelas ruas', code:'de' },
-  { name:'Basileia \uD83C\uDDE8\uD83C\uDDED', year:'Dezembro 2026', note:'Su\u00ED\u00E7a \u2014 arte de renome, o Reno a atravessar a cidade e o encontro de tr\u00EAs fronteiras', code:'ch' },
+  { name:'Colmar \uD83C\uDDEB\uD83C\uDDF7', year:'Natal 2026', note:'Fran\u00E7a \u2014 a capital alsaciana das casas de contos de fadas e dos canais floridos', code:'fr' },
+  { name:'Estrasburgo \uD83C\uDDEB\uD83C\uDDF7', year:'Natal 2026', note:'Fran\u00E7a \u2014 a Grande \u00CEle Patrim\u00F3nio Mundial e a majestosa Catedral g\u00F3tica', code:'fr' },
+  { name:'Freiburg \uD83C\uDDE9\uD83C\uDDEA', year:'Natal 2026', note:'Alemanha \u2014 porta da Floresta Negra, casario medieval e os famosos B\u00E4chle pelas ruas', code:'de' },
+  { name:'Basileia \uD83C\uDDE8\uD83C\uDDED', year:'Natal 2026', note:'Su\u00ED\u00E7a \u2014 arte de renome, o Reno a atravessar a cidade e o encontro de tr\u00EAs fronteiras', code:'ch' },
 ];
 
 function renderSoonList() {
@@ -5451,7 +5451,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'colmar', name: 'Colmar', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
-    sub: 'Fran\u00E7a \u00B7 Dezembro 2026',
+    sub: 'Fran\u00E7a \u00B7 Natal 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
@@ -5460,7 +5460,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'estrasburgo', name: 'Estrasburgo', country: 'Fran\u00E7a', flagCode: 'fr', countryId: 250,
-    sub: 'Fran\u00E7a \u00B7 Dezembro 2026',
+    sub: 'Fran\u00E7a \u00B7 Natal 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
@@ -5469,7 +5469,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'freiburg', name: 'Freiburg', country: 'Alemanha', flagCode: 'de', countryId: 276,
-    sub: 'Alemanha \u00B7 Dezembro 2026',
+    sub: 'Alemanha \u00B7 Natal 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
@@ -5478,7 +5478,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'basileia', name: 'Basileia', country: 'Su\u00ED\u00E7a', flagCode: 'ch', countryId: 756,
-    sub: 'Su\u00ED\u00E7a \u00B7 Dezembro 2026',
+    sub: 'Su\u00ED\u00E7a \u00B7 Natal 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [] },
       { title: '\uD83C\uDFE8 Hotel', items: [] },
