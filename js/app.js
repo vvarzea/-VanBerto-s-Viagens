@@ -2383,7 +2383,7 @@ function updateStats() {
   const numAnos = TRAVEL_YEARS.size;
 
   // Destinations: total guides excluding future trips (Belgrado, Macedónia do Norte, Pristina — a partir de 25 ago 2026)
-  const FUTURE_GUIDES = new Set(['belgrado', 'macedonia', 'pristina']);
+  const FUTURE_GUIDES = new Set(['belgrado', 'pristina']);
   // Colmar, Estrasburgo, Freiburg, Basileia — viagem de Natal 2026
   const cutoffDez = new Date('2026-12-01');
   const FUTURE_GUIDES_DEZ = new Set(['colmar', 'estrasburgo', 'freiburg', 'basileia']);
@@ -2829,6 +2829,8 @@ const VISITED_PINS_LIST = [
   { name:'Irlanda do Norte \uD83C\uDDEC\uD83C\uDDE7', year:'2025', note:'Belfast \u2014 o Titanic Quarter e a hist\u00F3ria do navio mais famoso do mundo. Giant\'s Causeway \u2014 as colunas de basalto hexagonais no Atl\u00E2ntico, um lugar de outro mundo', code:'gb-nir' },
   { name:'Isl\u00E2ndia \uD83C\uDDEE\uD83C\uDDF8', year:'2018', note:'Vulc\u00F5es, cascatas e aurora boreal', code:'is' },
   { name:'It\u00E1lia \uD83C\uDDEE\uD83C\uDDF9', year:'2016/19', note:'Roma (2016) \u2014 Coliseu, arte e pizza. Veneza (2019) \u2014 g\u00F4ndolas, canais e a magia de uma cidade flutuante', code:'it' },
+  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente. Prizren \u2014 a antiga capital cultural, com a Ponte de Pedra, a Mesquita de Sinan Pasha e vistas sobre os Montes Sar', code:'xk' },
+  { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado', code:'mk' },
   { name:'Maldivas \uD83C\uDDF2\uD83C\uDDFB', year:'2024', note:'Para\u00EDso na Terra \u2014 Water Villas sobre a \u00E1gua turquesa, snorkel com tubar\u00F5es-baleia, p\u00F4res-do-sol cor de laranja e o sil\u00EAncio absoluto do \u00CDndico', code:'mv' },
   { name:'Marrocos \uD83C\uDDF2\uD83C\uDDE6', year:'2023', note:'Marraquexe \u2014 a medina labirintica e a Pra\u00E7a Jemaa el-Fna ao anoitecer. Deserto de Agafay \u2014 noite sob as estrelas no sil\u00EAncio do deserto', code:'ma' },
   { name:'M\u00F3naco \uD83C\uDDF2\uD83C\uDDE8', year:'2026', note:'O principado mais glamoroso \u2014 o circuito de F1 a p\u00E9, o Casino de Monte Carlo e iates no Porto H\u00E9rcules', code:'mc' },
@@ -2837,6 +2839,7 @@ const VISITED_PINS_LIST = [
   { name:'Pol\u00F3nia \uD83C\uDDF5\uD83C\uDDF1', year:'2023', note:'Vars\u00F3via \u2014 cidade reconstru\u00EDda das cinzas. Crac\u00F3via \u2014 a Pra\u00E7a do Mercado medieval e o Castelo de Wawel', code:'pl' },
   { name:'Qatar \uD83C\uDDF6\uD83C\uDDE6', year:'2024', note:'Doha \u2014 modernidade \u00E1rabe e surpreendente', code:'qa' },
   { name:'Rep. Checa \uD83C\uDDE8\uD83C\uDDFF', year:'2017', note:'Praga \u2014 a cidade das cem torres', code:'cz' },
+  { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel', code:'rs' },
   { name:'Su\u00E9cia \uD83C\uDDF8\uD83C\uDDEA', year:'2019', note:'Estocolmo e o charme escandinavo', code:'se' },
   { name:'Su\u00ED\u00E7a \uD83C\uDDE8\uD83C\uDDED', year:'2017', note:'Alpes, chocolate, rel\u00F3gios e precis\u00E3o su\u00ED\u00E7a', code:'ch' },
   { name:'Tail\u00E2ndia \uD83C\uDDF9\uD83C\uDDED', year:'2024', note:'Bangkok \u2014 templos dourados e caos delicioso. Phuket \u2014 parasailing na Patong Beach, a ic\u00F3nica Ilha de James Bond e Ilhas Phi Phi com a Maya Bay', code:'th' },
@@ -2846,9 +2849,6 @@ const VISITED_PINS_LIST = [
 ];
 
 const SOON_PINS_LIST = [
-  { name:'Kosovo \uD83C\uDDFD\uD83C\uDDF0', year:'Agosto 2026', note:'Pristina \u2014 um dos pa\u00EDses mais jovens do mundo, energ\u00E9tico e surpreendente. Prizren \u2014 a antiga capital cultural, com a Ponte de Pedra, a Mesquita de Sinan Pasha e vistas sobre os Montes Sar', code:'xk' },
-  { name:'Maced\u00F3nia do Norte \uD83C\uDDF2\uD83C\uDDF0', year:'Agosto 2026', note:'Esc\u00F3pia \u2014 a capital com o Lago Ohrid e patrim\u00F3nio medieval inesperado', code:'mk' },
-  { name:'S\u00E9rvia \uD83C\uDDF7\uD83C\uDDF8', year:'Agosto 2026', note:'Belgrado \u2014 a cidade que n\u00E3o dorme, fortaleza de Kalemegdan, o Templo de S\u00E3o Sava e uma energia balc\u00E3 inconfund\u00EDvel', code:'rs' },
   { name:'Colmar \uD83C\uDDEB\uD83C\uDDF7', year:'Natal 2026', note:'Fran\u00E7a \u2014 a capital alsaciana das casas de contos de fadas e dos canais floridos', code:'fr' },
   { name:'Estrasburgo \uD83C\uDDEB\uD83C\uDDF7', year:'Natal 2026', note:'Fran\u00E7a \u2014 a Grande \u00CEle Patrim\u00F3nio Mundial e a majestosa Catedral g\u00F3tica', code:'fr' },
   { name:'Freiburg \uD83C\uDDE9\uD83C\uDDEA', year:'Natal 2026', note:'Alemanha \u2014 porta da Floresta Negra, casario medieval e os famosos B\u00E4chle pelas ruas', code:'de' },
@@ -5379,18 +5379,38 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'macedonia', name: 'Maced\u00F3nia do Norte', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
+    id: 'escopia', name: 'Esc\u00F3pia', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
     sub: 'Maced\u00F3nia do Norte \u00B7 Ver\u00E3o 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        '<strong>Esc\u00F3pia</strong>',
         'Matka canyon',
         'Macedonia Square + Alexander the Great Statue',
         'Ponte de Pedra',
         'Old Bazaar \u2014 Skopje Old Town',
         'Ponte da Arte',
         'Fortaleza de Kale / Skopje Fortress',
-        '<strong>Ohrid</strong>',
+      ] },
+      { title: '\uD83C\uDFE8 Hotel', items: [
+        'Hotel DoubleTree by Hilton Skopje',
+      ] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Pelister',
+        'Matto Napoletano',
+        'Restaurant Plaza de Toros',
+        'Restaurant Skopski Merak',
+        'Mestence',
+        'Nesto Zdravo (\u041D\u0435\u0448\u0442\u043E \u0417\u0434\u0440\u0430\u0432\u043E)',
+        'Fast Food 7 - Aerodrom',
+        'Meze',
+        'Premium Smash Burger',
+      ] },
+    ]
+  },
+  {
+    id: 'ocrida', name: 'Ocrida', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
+    sub: 'Maced\u00F3nia do Norte \u00B7 Ver\u00E3o 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         "Samuel's Fortress",
         'Ancient Macedonian Theatre of Lychnidos',
         'Old Town of Ohrid',
@@ -5404,21 +5424,7 @@ const GUIDES_DATA = [
         'The Bay of Bones Museum',
         'Mosteiro de S\u00E3o Naum',
       ] },
-      { title: '\uD83C\uDFE8 Hotel', items: [
-        'Hotel DoubleTree by Hilton Skopje',
-      ] },
       { title: '\uD83C\uDF74 Restaurantes', items: [
-        '<strong>Esc\u00F3pia</strong>',
-        'Pelister',
-        'Matto Napoletano',
-        'Restaurant Plaza de Toros',
-        'Restaurant Skopski Merak',
-        'Mestence',
-        'Nesto Zdravo (\u041D\u0435\u0448\u0442\u043E \u0417\u0434\u0440\u0430\u0432\u043E)',
-        'Fast Food 7 - Aerodrom',
-        'Meze',
-        'Premium Smash Burger',
-        '<strong>Ohrid</strong>',
         'Di Angolo Pizzeria',
         'Castello by Cosa Nostra',
         'Prova Pizzeria',
@@ -5428,26 +5434,32 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'pristina', name: 'Kosovo', country: 'Kosovo', flagCode: 'xk', countryId: 383,
+    id: 'pristina', name: 'Pristina', country: 'Kosovo', flagCode: 'xk', countryId: 383,
     sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
-        '<strong>Pristina</strong>',
         'The National Library of Kosovo "Pjet\u00EBr Bogdani"',
         'Mother Teresa Blvd',
         'Newborn Monument + Memorial HEROINES',
-        '<strong>Prizren</strong>',
+      ] },
+      { title: '\uD83C\uDF74 Restaurantes', items: [
+        'Basilico',
+        'Shaban Grill House',
+        'Smash Burger Co.',
+      ] },
+    ]
+  },
+  {
+    id: 'prizren', name: 'Prizren', country: 'Kosovo', flagCode: 'xk', countryId: 383,
+    sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
+    sections: [
+      { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Old Stone Bridge',
         'Shat\u00EBrvan Square',
         'Sinan Pasha Mosque',
         'Prizren Fortress',
       ] },
       { title: '\uD83C\uDF74 Restaurantes', items: [
-        '<strong>Pristina</strong>',
-        'Basilico',
-        'Shaban Grill House',
-        'Smash Burger Co.',
-        '<strong>Prizren</strong>',
         'Napoletana Nostra',
         'Hani i Vjeter',
         'Fish House',
@@ -5505,7 +5517,7 @@ function renderGuides(filter) {
   const grid = document.getElementById('guides-grid');
   if (!grid) return;
   const q = (filter || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const SOON_IDS = new Set(['belgrado', 'macedonia', 'pristina', 'colmar', 'estrasburgo', 'freiburg', 'basileia']);
+  const SOON_IDS = new Set(['colmar', 'estrasburgo', 'freiburg', 'basileia']);
   const cardHtml = g => {
     const flagHtml = g.flagCodes && g.flagCodes.length > 1
       ? g.flagCodes.map(c => `<img class="guide-card-flag" src="${getFlagSrc(c, 160)}" alt="${g.country}" onerror="this.style.display='none'" style="display:inline-block;">`).join('<span style="margin:0 3px;color:#bbb;font-size:14px;">|</span>')
