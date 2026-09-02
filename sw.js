@@ -1,7 +1,7 @@
 // VanBerto's — Service Worker
 // Sempre que alterares ficheiros essenciais (index.html, css, js), sobe este número
 // para forçar todos os telemóveis a atualizar a cache guardada.
-const CACHE_VERSION = 'vanbertos-v3';
+const CACHE_VERSION = 'vanbertos-v5';
 
 // Ficheiros essenciais para a app abrir mesmo sem internet.
 // Usa exatamente os mesmos caminhos que o index.html usa.
@@ -9,7 +9,7 @@ const CORE_ASSETS = [
   './',
   'index.html',
   'css/main.css',
-  'js/app.js?v=20260901b',
+  'js/app.js?v=20260901d',
   'manifest.json',
   'images/logo_passaporte.png',
   'images/icons/icon-192.png',

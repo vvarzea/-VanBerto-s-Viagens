@@ -5358,6 +5358,7 @@ const GUIDES_DATA = [
   {
     id: 'belgrado', name: 'Belgrado', country: 'S\u00E9rvia', flagCode: 'rs', countryId: 688,
     sub: 'S\u00E9rvia \u00B7 Ver\u00E3o 2026',
+    photoFolder: 'images/Belgrado/Belgrado',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Republic Square (pra\u00E7a central)',
@@ -5436,6 +5437,7 @@ const GUIDES_DATA = [
   {
     id: 'pristina', name: 'Pristina', country: 'Kosovo', flagCode: 'xk', countryId: 383,
     sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
+    photoFolder: 'images/Pristina/Pristina',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'The National Library of Kosovo "Pjet\u00EBr Bogdani"',
@@ -5452,6 +5454,7 @@ const GUIDES_DATA = [
   {
     id: 'prizren', name: 'Prizren', country: 'Kosovo', flagCode: 'xk', countryId: 383,
     sub: 'Kosovo \u00B7 Ver\u00E3o 2026',
+    photoFolder: 'images/Prizren/Prizren',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Old Stone Bridge',
