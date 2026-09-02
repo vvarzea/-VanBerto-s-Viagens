@@ -5382,6 +5382,7 @@ const GUIDES_DATA = [
   {
     id: 'escopia', name: 'Esc\u00F3pia', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
     sub: 'Maced\u00F3nia do Norte \u00B7 Ver\u00E3o 2026',
+    photoFolder: 'images/Escopia/Escopia',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         'Matka canyon',
@@ -5410,6 +5411,7 @@ const GUIDES_DATA = [
   {
     id: 'ocrida', name: 'Ocrida', country: 'Maced\u00F3nia do Norte', flagCode: 'mk', countryId: 807,
     sub: 'Maced\u00F3nia do Norte \u00B7 Ver\u00E3o 2026',
+    photoFolder: 'images/Ocrida/Ocrida',
     sections: [
       { title: '\uD83D\uDDFA\uFE0F Locais visitados', items: [
         "Samuel's Fortress",
