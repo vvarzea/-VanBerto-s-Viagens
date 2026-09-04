@@ -788,8 +788,8 @@ async function initMap() {
 
     // ── 🏠 Nossas Casas — pins especiais, layer própria (nunca é limpa) ─────
     const HOMES = [
-      { lat: 38.65, lng: -27.22, name: 'Angra do Hero\u00EDsmo', sub: 'Ilha Terceira \u00B7 A\u00E7ores' },
-      { lat: 39.36, lng: -9.33,  name: 'Baleal / Peniche',       sub: 'Leiria \u00B7 Portugal Continental' },
+      { lat: 38.656344, lng: -27.216990, name: 'Angra do Hero\u00EDsmo', sub: 'Ilha Terceira \u00B7 A\u00E7ores' },
+      { lat: 39.3564637, lng: -9.3550686,  name: 'Baleal / Peniche',       sub: 'Leiria \u00B7 Portugal Continental' },
     ];
     HOMES.forEach(h => {
       L.marker([h.lat, h.lng], { icon: homeIcon() })
@@ -843,15 +843,23 @@ async function initMap() {
 function classicPinIcon() {
   return L.divIcon({
     className: 'vb-pin-icon',
-    html: '<svg class="vb-pin" viewBox="0 0 24 24" width="27" height="27"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#d92b2b" fill-rule="evenodd"/></svg>',
-    iconSize: [27, 27],
-    iconAnchor: [13.5, 25],
-    popupAnchor: [0, -24],
+    html: '<svg class="vb-pin" viewBox="0 0 24 24" width="20.25" height="20.25"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#d92b2b" fill-rule="evenodd"/></svg>',
+    iconSize: [20.25, 20.25],
+    iconAnchor: [10.1, 18.75],
+    popupAnchor: [0, -18],
   });
 }
 function visitedIcon() { return classicPinIcon(); }
 function wishIcon()    { return classicPinIcon(); }
-function homeIcon()    { return classicPinIcon(); }
+function homeIcon() {
+  return L.divIcon({
+    className: 'vb-pin-icon',
+    html: '<div class="vb-home-pin">\uD83C\uDFE0</div>',
+    iconSize: [22.5, 22.5],
+    iconAnchor: [11.25, 20.25],
+    popupAnchor: [0, -19.5],
+  });
+}
 
 
 function getCountryName(numericId) {
@@ -1783,7 +1791,6 @@ const SEARCH_DATA = [
   {name:'Abu Dhabi', year:'Emirados \u00C1rabes \u00B7 2024 Natal', id:784, lat:24.47, lng:54.37, type:'city', code:'ae'},
   {name:'Adis Abeba', year:'Eti\u00F3pia \u00B7 2025 Ver\u00E3o', id:231, lat:9.03, lng:38.74, type:'city', code:'et'},
   {name:'Paris', year:'Fran\u00E7a \u00B7 2015 Ver\u00E3o', id:250, lat:48.86, lng:2.35, type:'city', code:'fr'},
-  {name:'Disneyland Paris', year:'Fran\u00E7a \u00B7 2015 Ver\u00E3o', id:250, lat:48.87, lng:2.78, type:'city', code:'fr'},
   {name:'Marselha', year:'Fran\u00E7a \u00B7 2026 P\u00E1scoa', id:250, lat:43.3, lng:5.37, type:'city', code:'fr'},
   {name:'Nice', year:'Fran\u00E7a \u00B7 2026 P\u00E1scoa', id:250, lat:43.71, lng:7.27, type:'city', code:'fr'},
   {name:'Hels\u00EDnquia', year:'Finl\u00E2ndia \u00B7 2018 Ver\u00E3o \u00B7 2021 Natal', id:246, lat:60.17, lng:24.94, type:'city', code:'fi'},
@@ -1808,14 +1815,11 @@ const SEARCH_DATA = [
   {name:'Malm\u00F6', year:'Su\u00E9cia \u00B7 2022 Natal', id:752, lat:55.6, lng:13.0, type:'city', code:'se'},
   {name:'Banguecoque', year:'Tail\u00E2ndia \u00B7 2024 Natal', id:764, lat:13.75, lng:100.52, type:'city', code:'th'},
   {name:'Phuket', year:'Tail\u00E2ndia \u00B7 2024 Natal', id:764, lat:7.88, lng:98.39, type:'city', code:'th'},
-  {name:'Phi Phi', year:'Tail\u00E2ndia \u00B7 2024 Natal', id:764, lat:7.74, lng:98.77, type:'city', code:'th'},
   {name:'Istambul', year:'Turquia \u00B7 2022 Ver\u00E3o', id:792, lat:40.99, lng:29.05, type:'city', code:'tr'},
   {name:'Capad\u00F3cia', year:'Turquia \u00B7 2022 Ver\u00E3o', id:792, lat:38.66, lng:34.83, type:'city', code:'tr'},
   {name:'Zanzibar', year:'Tanz\u00E2nia \u00B7 2025 Ver\u00E3o', id:834, lat:-6.16, lng:39.2, type:'city', code:'tz'},
   {name:'Funchal', year:'Madeira \u00B7 2023', id:620, lat:32.65, lng:-16.91, type:'city', code:'pt'},
-  {name:'Ponta Delgada', year:'S\u00E3o Miguel \u00B7 A\u00E7ores', id:620, lat:37.74, lng:-25.67, type:'city', code:'pt'},
   {name:'S\u00E3o Miguel', year:'A\u00E7ores \u00B7 2013 \u00B7 2014 \u00B7 2015 \u00B7 2024', id:620, lat:37.77, lng:-25.5, type:'city', code:'pt'},
-  {name:'Terceira', year:'A\u00E7ores \u00B7 2007 Ver\u00E3o', id:620, lat:38.65, lng:-27.22, type:'city', code:'pt'},
   {name:'Faial', year:'A\u00E7ores \u00B7 2023', id:620, lat:38.53, lng:-28.7, type:'city', code:'pt'},
   {name:'Pico', year:'A\u00E7ores \u00B7 2017', id:620, lat:38.47, lng:-28.33, type:'city', code:'pt'},
   {name:'Flores', year:'A\u00E7ores \u00B7 2017', id:620, lat:39.45, lng:-31.11, type:'city', code:'pt'},
