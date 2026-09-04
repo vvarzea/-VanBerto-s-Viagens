@@ -1,7 +1,7 @@
 // VanBerto's — Service Worker
 // Sempre que alterares ficheiros essenciais (index.html, css, js), sobe este número
 // para forçar todos os telemóveis a atualizar a cache guardada.
-const CACHE_VERSION = 'vanbertos-v6';
+const CACHE_VERSION = 'vanbertos-v8';
 
 // Ficheiros essenciais para a app abrir mesmo sem internet.
 // Usa exatamente os mesmos caminhos que o index.html usa.
@@ -9,14 +9,16 @@ const CORE_ASSETS = [
   './',
   'index.html',
   'css/main.css',
-  'js/app.js?v=20260901e',
+  'js/app.js?v=20260901g',
   'manifest.json',
   'images/logo_passaporte.png',
   'images/icons/icon-192.png',
   'images/icons/icon-512.png',
   'images/icons/apple-touch-icon.png',
   'images/icons/favicon-32x32.png',
-  'images/icons/favicon-16x16.png'
+  'images/icons/favicon-16x16.png',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 ];
 
 // Instalação: guarda logo o essencial em cache.

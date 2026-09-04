@@ -381,14 +381,10 @@ const SMALL_TERRITORY_PINS = {
 let pins = [];
 let currentMode = 'view'; // view | pin-visited | pin-wish
 let pendingCoords = null;
-let svgRef = null;
-let gRef = null;
-let labelsG = null;
-let citiesG = null;
-let allLabelsG = null;
-let projRef = null;
-let pathRef = null;
-let currentZoomK = 1;
+let leafletMap = null;
+let markersLayer = null;
+let homesLayer = null;
+let mapInitialBounds = null;
 let wishCountriesNumeric = new Set();
 let soonCountriesNumeric = new Set(); // países marcados como "a visitar em breve" no mapa
 
@@ -489,6 +485,8 @@ function switchTab(name) {
     document.body.classList.add('tab-mapa-active');
     // Restaurar scroll do mapa
     requestAnimationFrame(() => window.scrollTo(0, _mapScrollY));
+    // O Leaflet precisa de recalcular o tamanho quando o separador volta a ficar visível
+    if (leafletMap) requestAnimationFrame(() => leafletMap.invalidateSize());
   } else {
     document.body.classList.remove('tab-mapa-active');
     // Outros separadores começam sempre no topo
@@ -704,14 +702,15 @@ function toggleMapToolbar() {
 }
 
 function setMode(mode) {
+  const tipMini = document.getElementById('mode-tip-mini');
   if (currentMode === mode) {
     currentMode = 'view';
     document.getElementById('btn-pin-visited').classList.remove('active');
     document.getElementById('btn-pin-wish').classList.remove('active');
     const btnSoon = document.getElementById('btn-pin-soon');
     if (btnSoon) btnSoon.classList.remove('active');
-    document.getElementById('mode-tip').textContent = 'Toca num pa\u00EDs';
-    document.getElementById('mode-tip-mini').textContent = '\uD83D\uDCCD \u2B50 Pins';
+    document.getElementById('mode-tip').textContent = 'Toca no mapa';
+    if (tipMini) tipMini.textContent = '\uD83D\uDCCD \u2B50 Pins';
     return;
   }
   currentMode = mode;
@@ -727,1437 +726,133 @@ function setMode(mode) {
   if (chevron) chevron.classList.add('open');
 
   if (mode === 'pin-visited') {
-    document.getElementById('mode-tip').textContent = '\uD83D\uDCCD Toca num pa\u00EDs para marcar';
-    document.getElementById('mode-tip-mini').textContent = '\uD83D\uDCCD Ativo';
+    document.getElementById('mode-tip').textContent = '\uD83D\uDCCD Toca no mapa para marcar';
+    if (tipMini) tipMini.textContent = '\uD83D\uDCCD Ativo';
   } else if (mode === 'pin-soon') {
-    document.getElementById('mode-tip').textContent = '\uD83D\uDDD3\uFE0F Toca num pa\u00EDs a visitar em breve';
-    document.getElementById('mode-tip-mini').textContent = '\uD83D\uDDD3\uFE0F Ativo';
+    document.getElementById('mode-tip').textContent = '\uD83D\uDDD3\uFE0F Toca no mapa a visitar em breve';
+    if (tipMini) tipMini.textContent = '\uD83D\uDDD3\uFE0F Ativo';
   } else {
-    document.getElementById('mode-tip').textContent = '\u2B50 Toca num pa\u00EDs que queres visitar';
-    document.getElementById('mode-tip-mini').textContent = '\u2B50 Ativo';
+    document.getElementById('mode-tip').textContent = '\u2B50 Toca no mapa onde queres ir';
+    if (tipMini) tipMini.textContent = '\u2B50 Ativo';
   }
 }
 
-// ─── MAP ─────────────────────────────────────────────────────────────────────
+// ─── MAP (Leaflet + OpenStreetMap) ───────────────────────────────────────────
 async function initMap() {
   try {
-    // Ensure map-wrap has layout before measuring
     const wrap = document.getElementById('map-wrap');
     wrap.style.minHeight = '220px';
 
-    const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
     const el = document.getElementById('map-loading');
     if (el) el.remove();
 
     const W = wrap.offsetWidth || wrap.clientWidth || 360;
-    // On mobile (narrow screens) use more vertical space; on desktop keep 62%
     const isMobile = W < 600;
-    const H = Math.round(W * (isMobile ? 0.82 : 0.62));
+    const desktopH = Math.round(W * 0.8);
+    // Nunca deixar o mapa ficar mais alto do que a zona visível do browser —
+    // senão a parte de baixo (Portugal, Grécia, etc.) fica escondida sem
+    // fazeres scroll da página. ~260px de margem para o cabeçalho/estatísticas
+    // acima do mapa, com um mínimo de 320px para não ficar espremido.
+    const maxVisibleH = Math.max(320, Math.round((window.innerHeight || 800) - 260));
+    const H = isMobile ? Math.round(W * 0.98) : Math.min(desktopH, maxVisibleH);
     wrap.style.height = H + 'px';
 
-    // No mobile o mapa fica maior e centrado na vertical (antes sobrava muito oceano vazio por baixo)
-    const scaleMult = isMobile ? 1.6 : 1;
-    const translateY = isMobile ? H / 2 : H * 0.36;
-    const proj = d3.geoNaturalEarth1().scale((W / 6.28) * scaleMult).translate([W / 2, translateY]);
-    const path = d3.geoPath().projection(proj);
-    projRef = proj; pathRef = path;
+    // O mundo (em píxeis) tem largura 256 * 2^zoom. Calculamos o zoom mínimo
+    // que garante que essa largura é sempre >= largura do contentor — assim
+    // o mapa nunca duplica o mundo (zoom pequeno de mais) nem deixa faixas
+    // em branco nas bordas, e o arrastar horizontal continua infinito como
+    // no Google Maps.
+    const dynamicMinZoom = Math.max(1, Math.log2(W / 256));
 
-    const svg = d3.select('#map-wrap').append('svg')
-      .attr('width', W).attr('height', H)
-      .attr('viewBox', `0 0 ${W} ${H}`);
-    svgRef = svg;
+    leafletMap = L.map(wrap, {
+      zoomControl: false,
+      worldCopyJump: true,
+      minZoom: dynamicMinZoom,
+      maxZoom: 18,
+      zoomSnap: 0.25,
+      zoomDelta: 1,
+      // Limite vertical (como no Google Maps): não deixa arrastar para lá do
+      // Árctico/Antártida. A longitude fica sem limite (-Infinity/Infinity)
+      // para não estragar o arrastar horizontal contínuo feito acima.
+      maxBounds: [[-85.06, -Infinity], [85.06, Infinity]],
+      maxBoundsViscosity: 1.0,
+    }).setView([25, 15], dynamicMinZoom);
 
-    svg.append('path').datum({type:'Sphere'}).attr('d', path).attr('fill', '#a8cfe8');
-    svg.append('path').datum(d3.geoGraticule()()).attr('class','graticule-line').attr('d', path);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+    }).addTo(leafletMap);
 
-    const g = svg.append('g');
-    gRef = g;
+    markersLayer = L.layerGroup().addTo(leafletMap);
+    homesLayer = L.layerGroup().addTo(leafletMap);
 
-    // Countries
-    // O Vaticano (336) tem duas representações nos dados do mapa base: um "buraco"
-    // dentro do polígono de Itália (para a Itália não ficar colorida por cima dele) e
-    // um micro-polígono próprio, com menos de 0.5 km². A tentativa anterior só excluiu
-    // o micro-polígono, o que deixou o buraco vazio à vista (daí a manchinha junto a
-    // Roma). A correção certa: tapar esse buraco com a mesma cor de Itália (o Vaticano
-    // é pequeno demais para fazer diferença visual a qualquer zoom razoável) e manter a
-    // exclusão do micro-polígono. O Vaticano continua representado pelo chip com
-    // bandeira e pelo pin.
-    const worldFeatures = topojson.feature(world, world.objects.countries).features;
-    const italyFeature = worldFeatures.find(f => +f.id === 380);
-    if (italyFeature && italyFeature.geometry && italyFeature.geometry.type === 'MultiPolygon') {
-      italyFeature.geometry.coordinates = italyFeature.geometry.coordinates.map(poly => {
-        if (poly.length <= 1) return poly;
-        return poly.filter((ring, idx) => {
-          if (idx === 0) return true; // anel exterior, manter sempre
-          let sx = 0, sy = 0;
-          ring.forEach(p => { sx += p[0]; sy += p[1]; });
-          const cx = sx / ring.length, cy = sy / ring.length;
-          const isVaticanHole = Math.abs(cx - 12.435) < 0.05 && Math.abs(cy - 41.901) < 0.05;
-          return !isVaticanHole; // descarta só o buraco do Vaticano; o de São Marino fica intacto
-        });
-      });
-    }
-    g.selectAll('.cpath')
-      .data(worldFeatures.filter(d => +d.id !== 336))
-      .join('path')
-      .attr('class', d => {
-        const id = +d.id;
-        if (VISITED[id]) return 'cpath vis';
-        if (wishCountriesNumeric.has(id)) return 'cpath wish';
-        return 'cpath no';
-      })
-      .attr('d', path)
-      .attr('data-id', d => d.id)
-      .on('click touchend', function(evt, d) {
-        // Ignore touchend if the finger dragged (pan gesture).
-        // preventDefault aqui evita que o telemóvel dispare, ~300ms depois,
-        // um "click" fantasma sobre o país onde o dedo largou o ecrã.
-        if (evt.type === 'touchend' && window._touchDragged) { evt.preventDefault(); return; }
-        evt.stopPropagation(); evt.preventDefault();
-        const id = +d.id;
-        const centroid = path.centroid(d);
-        const coords = proj.invert(centroid);
-
-        if (currentMode === 'pin-visited') {
-          openPinForm(coords[1], coords[0], 'pin-visited', id);
-          return;
-        }
-        if (currentMode === 'pin-soon') {
-          soonCountriesNumeric.add(id);
-          saveSoonCountries();
-          d3.select(this).attr('class', 'cpath soon');
-          showNotif('\uD83D\uDDD3\uFE0F Adicionado a visitar em breve!');
-          renderSoonList();
-          renderGuides();
-          return;
-        }
-        if (currentMode === 'pin-wish') {
-          if (VISITED[id]) { showNotif('J\u00E1 visitaste este pa\u00EDs! \uD83C\uDF1F'); return; }
-          wishCountriesNumeric.add(id);
-          saveWishCountries(); // async, fire-and-forget is fine
-          d3.select(this).attr('class', 'cpath wish');
-          showNotif('\u2B50 Adicionado \u00E0 wishlist!');
-          renderSoonList();
-          renderWishList();
-          renderWishChips();
-          return;
-        }
-        // view mode
-        const info = VISITED[id];
-        // Se está marcado como "em breve" e não é um dos 3 Balcãs fixos, permitir remover
-        const FIXED_SOON = new Set([688, 807, 383]);
-        if (d3.select(this).attr('class') === 'cpath soon' && !FIXED_SOON.has(id)) {
-          soonCountriesNumeric.delete(id);
-          saveSoonCountries();
-          d3.select(this).attr('class', 'cpath no');
-          showNotif('\uD83D\uDDD3\uFE0F Removido de a visitar em breve');
-          renderSoonList();
-          renderGuides();
-          return;
-        }
-        if (info) {
-          if (id === 826) {
-            openUKSheet();
-          } else {
-            openSheet(info, id);
-          }
-        } else if (wishCountriesNumeric.has(id)) {
-          const name = WORLD_NAMES[id] || getCountryName(id);
-          openSheetWish({ name: name || `Pa\u00EDs ${id}`, id });
-        } else {
-          // País não visitado e sem wishlist: mostrar bandeira + nome ao
-          // clicar/tocar (mesmo tooltip usado no hover), sem aparecer sozinho por zoom.
-          // Tocar de novo no mesmo país (com o tooltip já aberto) fecha-o.
-          const tt = document.getElementById('map-tooltip');
-          if (tt && tt.classList.contains('visible') && _ttCountryId === id) {
-            hideMapTooltip();
-          } else {
-            const t = evt.changedTouches && evt.changedTouches[0];
-            const pointerEvt = (evt.clientX != null) ? evt : { clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0 };
-            showMapTooltip(pointerEvt, id);
-          }
-        }
-      });
-
-    g.append('path')
-      .datum(topojson.mesh(world, world.objects.countries, (a,b) => a !== b))
-      .attr('class','border-line').attr('d', path);
-
-    // Apply colors based on VISITED + user pins loaded from storage
-    updateMapColors();
-
-    // ── Tooltip: hover on any country path ───────────────────────────────────
-    g.selectAll('.cpath')
-      .on('mousemove.tt', function(evt, d) {
-        if (window._touchDragged) return;
-        showMapTooltip(evt, +d.id);
-      })
-      .on('mouseleave.tt', hideMapTooltip);
-
-    // ── Country labels — stored for HTML overlay (SVG labels had z-order issues) ─
-    labelsG = g.append('g').attr('class','labels-layer'); // keep as empty placeholder
-    window._visitedLabelData = [];
-
-    const visitedFeatures = topojson.feature(world, world.objects.countries).features
-      .filter(d => VISITED[+d.id]);
-
-    // Large/medium visited countries for proportional label sizing
-    const VISITED_LARGE  = new Set([124, 840, 250, 764, 792]);
-    const VISITED_MEDIUM = new Set([276, 724, 380, 300, 246, 372, 352, 504, 578, 616, 528, 203, 208, 40, 756, 752, 834, 231, 132, 826, 56, 348, 688, 807, 620, 784]);
-
-    visitedFeatures.forEach(d => {
-      const id = +d.id;
-      const geo = COUNTRY_LABEL_POS[id] || null;
-      const svgPos = geo ? proj(geo) : path.centroid(d);
-      if (!svgPos || isNaN(svgPos[0]) || isNaN(svgPos[1])) return;
-      const info = VISITED[id];
-      const name = WORLD_NAMES[id] || info.name
-        .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
-        .replace(/[\uD83C][\uDFF4]/g, '')
-        .replace(/[\uFE0F]/g, '')
-        .trim();
-      const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
-      // Store geo coords for dynamic reprojection at any zoom level
-      const geoPos = geo ? geo : Array.from(proj.invert(svgPos));
-      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name, tier });
-    });
-
-    // Kosovo, Macedónia e Sérvia têm posições incorrectas em alguns topojson
-    // (o topojson inclui Kosovo dentro da Sérvia, deslocando o centróide)
-    window._visitedLabelData = window._visitedLabelData.filter(d => d.id !== 383 && d.id !== 807 && d.id !== 688);
-
-    // Micro-state fallbacks — store geo coords for accurate dynamic reprojection
-    const MICRO_STATES = [
-      { id:492, geo:[7.42,43.73], name:'M\u00F3naco' },
-      { id:336, geo:[12.10,42.00], name:'Vaticano' },
-      { id:462, geo:[73.51,4.17], name:'Maldivas' },
-      { id:634, geo:[51.5,25.35], name:'Qatar' },
-      { id:383, geo:[20.92,42.60], name:'Kosovo' },
-      { id:807, geo:[21.72,41.60], name:'Maced\u00F3nia do Norte' },
-      { id:688, geo:[21.00,44.00], name:'S\u00E9rvia' },
-    ];
-    MICRO_STATES.forEach(({id, geo: geoPos, name}) => {
-      if (!VISITED[id]) return;
-      if (window._visitedLabelData.some(d => d.id === id)) return;
-      const svgPos = proj(geoPos);
-      if (!svgPos || isNaN(svgPos[0])) return;
-      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name });
-    });
-
-    // ── Passagem final: garantir que TODOS os países do VISITED têm entrada ──
-    Object.keys(VISITED).forEach(idStr => {
-      const id = +idStr;
-      if (window._visitedLabelData.some(d => d.id === id)) return;
-      const geoPos = COUNTRY_LABEL_POS[id] || WORLD_CAP_POS[id] || null;
-      if (!geoPos) return;
-      const svgPos = proj(geoPos);
-      if (!svgPos || isNaN(svgPos[0])) return;
-      const info = VISITED[id];
-      const name = WORLD_NAMES[id] || info.name
-        .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
-        .replace(/[\uD83C][\uDFF4]/g, '')
-        .replace(/[\uFE0F]/g, '')
-        .trim();
-      const tier = VISITED_LARGE.has(id) ? 'large' : VISITED_MEDIUM.has(id) ? 'medium' : 'small';
-      window._visitedLabelData.push({ id, svgPos, geo: geoPos, name, tier });
-    });
-    allLabelsG = g.append('g').attr('class','all-labels-layer');
-
-    // Store non-visited country label data for HTML overlay (same system as visited)
-    window._allCountryLabelData = [];
-    topojson.feature(world, world.objects.countries).features
-      .filter(d => !VISITED[+d.id])
-      .forEach(d => {
-        const id = +d.id;
-        const name = WORLD_NAMES[id];
-        if (!name) return;
-        const geoOverride = COUNTRY_LABEL_POS[id] || null;
-        const pos = geoOverride ? proj(geoOverride) : path.centroid(d);
-        if (!pos || isNaN(pos[0]) || isNaN(pos[1])) return;
-        const geoPos = geoOverride ? geoOverride : Array.from(proj.invert(pos));
-        const tier = LARGE_COUNTRIES.has(id) ? 'large' : MEDIUM_COUNTRIES.has(id) ? 'medium' : 'small';
-        const code = NUM_TO_CODE[id] || '';
-        window._allCountryLabelData.push({ id, svgPos: pos, geo: geoPos, name, tier, code });
-      });
-    // Add Guiana Francesa (not in topojson as own feature)
-    (() => {
-      const fgGeo = [-53.2, 3.9];
-      const fgPos = proj(fgGeo);
-      if (fgPos && !isNaN(fgPos[0])) {
-        window._allCountryLabelData.push({ id:'fg', svgPos:fgPos, geo:fgGeo, name:'Guiana Francesa', tier:'small', code:'fr' });
-      }
-    })();
-
-    // ── Kosovo: polygon overlay (not present as separate feature in countries-50m) ──
-    // Border polygon in [lng, lat] order — fonte: dataset dedicado de fronteiras do Kosovo
-    // (a versão anterior, mais grosseira, não chegava à fronteira real a oeste/sudoeste,
-    // deixando uma faixa de território da Sérvia por identificar entre o Kosovo e o Montenegro/Albânia)
-    const kosovoCoords = [
-      [20.76216,42.05186],[20.71731,41.84711],[20.59023,41.85541],[20.52295,42.21787],
-      [20.28374,42.32025],[20.0707,42.58863],[20.25758,42.81275],[20.49679,42.88469],
-      [20.63508,43.21671],[20.81448,43.27205],[20.95651,43.13094],[21.143395,43.068685],
-      [21.27421,42.90959],[21.43866,42.86255],[21.63302,42.67717],[21.77505,42.6827],
-      [21.66292,42.43922],[21.54332,42.32025],[21.576636,42.245224],[21.3527,42.2068],
-      [20.76216,42.05186]
-    ];
-    const kosovoFeature = {
-      type:'Feature', geometry:{ type:'Polygon', coordinates:[kosovoCoords] }
-    };
-    // Insert before .labels-layer
-    const kosovoGroup = g.insert('g', '.labels-layer').attr('class','kosovo-overlay');
-    kosovoGroup.append('path')
-      .datum(kosovoFeature).attr('d', path)
-      .attr('fill', VISITED[383] ? 'var(--gold)' : '#c8dbe8')
-      .attr('stroke', 'rgba(255,255,255,0.8)')
-      .attr('stroke-width', 0.35)
-      .attr('class', 'cpath' + (VISITED[383] ? ' vis' : ' no'))
-      .attr('data-id', '383')
-      .style('cursor', VISITED[383] ? 'pointer' : 'crosshair')
-      .on('click touchend', function(evt, d) {
-        if (evt.type === 'touchend' && window._touchDragged) { evt.preventDefault(); return; }
-        evt.stopPropagation(); evt.preventDefault();
-        const id = 383;
-        const info = VISITED[id];
-        if (currentMode === 'pin-visited') {
-          const centroid = path.centroid(kosovoFeature);
-          const coords = proj.invert(centroid);
-          openPinForm(coords[1], coords[0], 'pin-visited', id);
-        } else if (info) {
-          openSheet(info, id);
-        }
-      })
-      .on('mousemove.tt', function(evt) { showMapTooltip(evt, 383); })
-      .on('mouseleave.tt', hideMapTooltip);
-    window._kosovoGroup = kosovoGroup;
-
-    // Reaplicar cores agora que o Kosovo já existe no DOM — a 1ª chamada a updateMapColors()
-    // (mais acima) corre antes deste polígono ser criado, por isso nunca o apanhava e ele
-    // ficava sempre "visitado" (dourado) em vez de "a visitar em breve" (rosa), como a Sérvia.
-    updateMapColors();
-
-    // ── País de Gales: polygon overlay ────────────────────────────────────────
-    // O Reino Unido é um único polígono no mapa base (id 826) — como Inglaterra,
-    // Escócia e Irlanda do Norte já foram visitadas, todo o território do RU
-    // (incluindo Gales, que ainda não foi visitado) ficava sempre dourado.
-    // Sobrepomos aqui o contorno de Gales (fronteira simplificada, id sintético
-    // 9001 — não existe código ISO 3166 próprio) para o pintar como "por
-    // explorar", tal como qualquer país ainda não visitado.
-    const walesCoords = [[-3.36332,53.35202],[-3.30895,53.35552],[-3.10839,53.24011],[-2.92051,53.1822],[-2.99512,53.15417],[-2.88094,53.1214],[-2.90178,53.09172],[-2.83594,52.99713],[-2.72689,52.98332],[-2.7284,52.9252],[-2.79878,52.89573],[-2.84107,52.94251],[-2.92897,52.9386],[-2.97518,52.96889],[-3.14735,52.89016],[-3.12772,52.86708],[-3.16306,52.8475],[-3.15853,52.79351],[-3.08664,52.79557],[-2.96099,52.71643],[-3.02049,52.72508],[-3.051,52.64739],[-3.08362,52.6412],[-3.05976,52.63069],[-3.1395,52.58515],[-3.11141,52.54125],[-3.13316,52.52744],[-3.01445,52.57546],[-3.00388,52.51982],[-3.23555,52.44253],[-3.06066,52.34814],[-2.95464,52.34917],[-3.01264,52.2793],[-2.94951,52.26941],[-3.07305,52.23582],[-3.12228,52.16348],[-3.07275,52.15565],[-3.14131,52.12989],[-3.10507,52.1167],[-3.12591,52.07836],[-2.97186,51.90504],[-2.87792,51.93389],[-2.73898,51.83662],[-2.65047,51.82611],[-2.68793,51.73089],[-2.65742,51.67422],[-2.68702,51.66412],[-2.6692,51.60909],[-2.90511,51.53242],[-2.98153,51.545],[-2.96129,51.552],[-2.99149,51.60847],[-2.8891,51.64804],[-2.99331,51.6095],[-2.96944,51.55654],[-3.00448,51.56581],[-3.00448,51.53036],[-3.10627,51.49203],[-3.14162,51.51223],[-3.12138,51.49059],[-3.15642,51.45184],[-3.22649,51.48214],[-3.16457,51.44236],[-3.16971,51.40629],[-3.40531,51.38136],[-3.55905,51.40135],[-3.64182,51.46338],[-3.61977,51.47678],[-3.72096,51.47966],[-3.81731,51.57426],[-3.79073,51.59281],[-3.85084,51.61445],[-3.78831,51.67277],[-3.84873,51.61919],[-3.99401,51.59879],[-3.98223,51.56437],[-4.10366,51.57776],[-4.20636,51.53716],[-4.30815,51.56293],[-4.30815,51.61095],[-4.24593,51.64742],[-4.24563,51.61795],[-4.20787,51.61919],[-4.21482,51.64124],[-4.17313,51.6161],[-4.04869,51.65567],[-4.08131,51.66206],[-4.04959,51.71214],[-4.08523,51.66164],[-4.14746,51.65464],[-4.21089,51.68514],[-4.29788,51.66845],[-4.36886,51.71234],[-4.38004,51.73213],[-4.30332,51.72327],[-4.32507,51.73192],[-4.29546,51.74181],[-4.37158,51.74284],[-4.36615,51.78736],[-4.32325,51.80261],[-4.31419,51.85228],[-4.25257,51.86258],[-4.31721,51.85084],[-4.32627,51.80158],[-4.4039,51.75727],[-4.44891,51.77026],[-4.45314,51.80199],[-4.52261,51.81003],[-4.4184,51.74408],[-4.66095,51.73172],[-4.6978,51.71111],[-4.68028,51.6975],[-4.7117,51.65155],[-4.86091,51.64722],[-4.92615,51.59611],[-5.05936,51.62063],[-5.0651,51.6635],[-5.12551,51.68164],[-4.93642,51.67174],[-4.9769,51.68823],[-4.88961,51.69338],[-4.9186,51.69853],[-4.88417,51.71667],[-4.83614,51.69462],[-4.86121,51.71976],[-4.82436,51.72862],[-4.88417,51.71935],[-4.89414,51.75418],[-4.80926,51.79705],[-4.93945,51.76696],[-4.96693,51.80117],[-4.89988,51.76263],[-4.8881,51.72491],[-4.92072,51.70492],[-5.08504,51.70616],[-5.09319,51.74058],[-5.11585,51.71028],[-5.17142,51.73275],[-5.14968,51.70224],[-5.17505,51.68019],[-5.25328,51.73316],[-5.10769,51.77417],[-5.10739,51.82425],[-5.18924,51.87371],[-5.3152,51.85949],[-5.31007,51.90586],[-5.08534,51.96852],[-5.07477,52.03076],[-4.9917,52.02602],[-4.96905,51.9949],[-4.91015,52.03488],[-4.81439,52.0186],[-4.8452,52.0425],[-4.73163,52.11793],[-4.63679,52.06043],[-4.68119,52.08558],[-4.68572,52.13009],[-4.51868,52.13504],[-4.37762,52.21583],[-4.20757,52.26364],[-4.09188,52.40688],[-4.06741,52.40275],[-4.09188,52.41388],[-4.05624,52.53218],[-4.03932,52.4889],[-4.03902,52.52682],[-3.98556,52.51755],[-3.99703,52.53486],[-3.89222,52.5769],[-4.06379,52.54125],[-4.12662,52.6074],[-4.07164,52.60576],[-4.12843,52.61111],[-4.04959,52.7154],[-3.90098,52.75579],[-4.05231,52.71643],[-4.15018,52.80752],[-4.10789,52.82648],[-4.14776,52.89614],[-3.98888,52.94746],[-4.10275,52.90892],[-4.12722,52.92891],[-4.40692,52.89181],[-4.4767,52.8576],[-4.506,52.82504],[-4.48636,52.79474],[-4.52805,52.77784],[-4.60326,52.82504],[-4.75731,52.78815],[-4.72619,52.85348],[-4.35467,53.03257],[-4.33836,53.12223],[-4.31933,53.09275],[-4.31178,53.12717],[-4.12782,53.23578],[-3.8451,53.29658],[-3.80976,53.26628],[-3.84117,53.19188],[-3.81278,53.15293],[-3.83362,53.20095],[-3.79768,53.27329],[-3.8744,53.3411],[-3.70767,53.2939],[-3.50861,53.31678],[-3.45605,53.27762],[-3.50922,53.31327],[-3.36332,53.35202]];
-    const angleseyCoords = [[-4.15863,53.22939],[-4.29879,53.1486],[-4.34017,53.1486],[-4.3308,53.16571],[-4.35497,53.13438],[-4.32839,53.12676],[-4.41478,53.13438],[-4.41961,53.16386],[-4.38729,53.16942],[-4.38638,53.19106],[-4.31268,53.2296],[-4.44287,53.15499],[-4.46008,53.19477],[-4.48636,53.17725],[-4.50418,53.18714],[-4.49754,53.20734],[-4.52382,53.2263],[-4.51264,53.23846],[-4.5359,53.23702],[-4.58846,53.28133],[-4.52986,53.30956],[-4.56369,53.29967],[-4.58302,53.32564],[-4.55523,53.37386],[-4.57547,53.40231],[-4.45012,53.41302],[-4.42565,53.43013],[-4.28761,53.41714],[-4.26949,53.39056],[-4.29546,53.36438],[-4.28006,53.37613],[-4.23022,53.35779],[-4.20394,53.29225],[-4.11906,53.31925],[-4.04023,53.31059],[-4.08735,53.26319],[-4.15863,53.22939]];
-    const walesFeature = {
-      type:'Feature', id:9001,
-      geometry:{ type:'MultiPolygon', coordinates:[[walesCoords],[angleseyCoords]] }
-    };
-    const walesGroup = g.insert('g', '.labels-layer').attr('class','wales-overlay');
-    walesGroup.append('path')
-      .datum(walesFeature).attr('d', path)
-      .attr('class', 'cpath no')
-      .attr('data-id', '9001')
-      .style('cursor', 'crosshair')
-      .on('click touchend', function(evt, d) {
-        if (evt.type === 'touchend' && window._touchDragged) { evt.preventDefault(); return; }
-        evt.stopPropagation(); evt.preventDefault();
-        const id = 9001;
-        const centroid = path.centroid(walesFeature);
-        const coords = proj.invert(centroid);
-
-        if (currentMode === 'pin-visited') {
-          openPinForm(coords[1], coords[0], 'pin-visited', id);
-          return;
-        }
-        if (currentMode === 'pin-soon') {
-          soonCountriesNumeric.add(id);
-          saveSoonCountries();
-          d3.select(this).attr('class', 'cpath soon');
-          showNotif('\uD83D\uDDD3\uFE0F Adicionado a visitar em breve!');
-          renderSoonList();
-          renderGuides();
-          return;
-        }
-        if (currentMode === 'pin-wish') {
-          wishCountriesNumeric.add(id);
-          saveWishCountries();
-          d3.select(this).attr('class', 'cpath wish');
-          showNotif('\u2B50 Adicionado \u00E0 wishlist!');
-          renderSoonList();
-          renderWishList();
-          renderWishChips();
-          return;
-        }
-        // view mode
-        if (d3.select(this).attr('class') === 'cpath soon') {
-          soonCountriesNumeric.delete(id);
-          saveSoonCountries();
-          d3.select(this).attr('class', 'cpath no');
-          showNotif('\uD83D\uDDD3\uFE0F Removido de a visitar em breve');
-          renderSoonList();
-          renderGuides();
-          return;
-        }
-        if (wishCountriesNumeric.has(id)) {
-          openSheetWish({ name: 'Pa\u00EDs de Gales', id });
-        } else {
-          const tt = document.getElementById('map-tooltip');
-          if (tt && tt.classList.contains('visible') && _ttCountryId === id) {
-            hideMapTooltip();
-          } else {
-            const t = evt.changedTouches && evt.changedTouches[0];
-            const pointerEvt = (evt.clientX != null) ? evt : { clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0 };
-            showMapTooltip(pointerEvt, id);
-          }
-        }
-      })
-      .on('mousemove.tt', function(evt) { showMapTooltip(evt, 9001); })
-      .on('mouseleave.tt', hideMapTooltip);
-    window._walesGroup = walesGroup;
-    updateMapColors();
-
-    // ── French Guiana: accurate border polygon (not a rectangle) ─────────────
-    const fgCoords = [
-      [-54.6,5.95],[-54.0,5.9],[-53.5,5.8],[-52.9,5.65],
-      [-52.3,5.4],[-51.8,5.0],[-51.6,4.5],[-51.65,4.0],
-      [-51.8,3.5],[-52.0,2.9],[-52.3,2.3],[-52.7,2.1],
-      [-53.5,2.0],[-54.1,2.1],[-54.45,2.7],[-54.5,3.5],
-      [-54.5,4.5],[-54.55,5.2],[-54.6,5.95]
-    ];
-    const fgFeature = {
-      type:'Feature', geometry:{ type:'Polygon', coordinates:[fgCoords] }
-    };
-    // Insert before .labels-layer so it sits on top of country fills but under labels
-    const fgGroup = g.insert('g', '.labels-layer').attr('class','fg-overlay');
-    fgGroup.append('path')
-      .datum(fgFeature).attr('d', path)
-      .attr('fill', 'hsl(210,35%,82%)')
-      .attr('stroke', 'white')
-      .attr('stroke-width', 0.6)
-      .attr('pointer-events', 'none');
-
-    // Guiana Francesa label is handled via _allCountryLabelData HTML overlay
-
-    // ── Corvo, Graciosa e Porto Santo: ilhas pequenas demais para o dataset de países ──
-    // do mapa base (countries-50m) — o pin e o nome já existem, faltava só o "terreno".
-    // Preenchimento manual com o contorno real de cada ilha, na cor de "visitado" (douradO),
-    // igual ao resto de Portugal.
-    const SMALL_ISLAND_OVERLAYS = [
-      { name: 'Corvo', coords: [[-31.116911169111688,39.727714481510134],[-31.080910809108076,39.72264874970048],[-31.080910809108076,39.69394293611248],[-31.098910989109896,39.6635485452546],[-31.131311313113116,39.65848281344495],[-31.131311313113116,39.66523712252447],[-31.149311493114936,39.69563151338237],[-31.152911529115272,39.70069724519202],[-31.149311493114936,39.710828708811306],[-31.14211142111421,39.72096017243061],[-31.127711277112752,39.727714481510134],[-31.116911169111688,39.727714481510134]] },
-      { name: 'Graciosa', coords: [[-27.98487984879847,39.015134873619644],[-28.00288002880029,39.015134873619644],[-28.024480244802447,39.01851202815941],[-28.046080460804603,39.02526633723893],[-28.06048060480603,39.03708637812811],[-28.071280712807123,39.05228357355706],[-28.071280712807123,39.067480768986],[-28.05328053280533,39.097875159843895],[-28.046080460804603,39.10294089165353],[-28.03528035280351,39.10462946892342],[-28.024480244802447,39.10294089165353],[-28.013680136801355,39.097875159843895],[-28.006480064800655,39.10462946892342],[-27.9920799207992,39.08774369622459],[-27.95967959679595,39.06579219171611],[-27.94167941679416,39.05228357355706],[-27.93447934479343,39.035397800858235],[-27.948879488794887,39.023577759969044],[-27.96687966879668,39.01682345088952],[-27.98487984879847,39.015134873619644]] },
-      { name: 'Porto Santo', coords: [[-16.33876338763386,33.057834265473474],[-16.353163531635317,33.04432564731441],[-16.36396363963638,33.03419418369512],[-16.378363783637838,33.03250560642523],[-16.399963999639994,33.03925991550477],[-16.399963999639994,33.0460142245843],[-16.3891638916389,33.047702801854186],[-16.378363783637838,33.05107995639395],[-16.374763747637473,33.057834265473474],[-16.360363603636017,33.08991723360124],[-16.342363423634225,33.105114429030195],[-16.317163171631705,33.110180160839846],[-16.29556295562955,33.10173727449043],[-16.28836288362882,33.10849158356996],[-16.28836288362882,33.07978576998195],[-16.284762847628457,33.067965729092776],[-16.273962739627393,33.05952284274336],[-16.309963099630977,33.06627715182289],[-16.324363243632433,33.06627715182289],[-16.33876338763386,33.057834265473474]] },
-    ];
-    const smallIslandsGroup = g.insert('g', '.labels-layer').attr('class','small-island-overlays');
-    SMALL_ISLAND_OVERLAYS.forEach(({ coords }) => {
-      const feature = { type:'Feature', geometry:{ type:'Polygon', coordinates:[coords] } };
-      smallIslandsGroup.append('path')
-        .datum(feature).attr('d', path)
-        .attr('fill', 'var(--gold)')
-        .attr('stroke', 'rgba(255,255,255,0.8)')
-        .attr('stroke-width', 0.35)
-        .attr('pointer-events', 'none');
-    });
-
-    // ── World Capitals layer (subtle dots + names) ────────────────────────────
-    let capsG = g.append('g').attr('class','caps-layer');
-    const visitedCapNames = new Set(
-      (window._placesLoaded || PLACES).map(([,,name]) => name.replace(/\s*\uD83C\uDFDD\uFE0F/,'').trim())
-    );
-    WORLD_CAPITALS.forEach(([id, capName, lat, lng]) => {
-      // Skip if visited countries already have a teardrop pin for this capital
-      if (VISITED[id] && visitedCapNames.has(capName)) return;
-      const pos = proj([lng, lat]);
-      if (!pos || isNaN(pos[0])) return;
-      const cg = capsG.append('g')
-        .attr('class','cap-dot')
-        .attr('data-x', pos[0]).attr('data-y', pos[1])
-        .attr('transform', `translate(${pos[0]},${pos[1]})`);
-      cg.append('text')
-        .attr('y', -2.5)
-        .style('font-family', "'Outfit',sans-serif")
-        .style('font-size', '4px')
-        .style('font-weight', '600')
-        .style('fill', VISITED[id] ? '#3a1000' : 'rgba(50,30,0,0.75)')
-        .style('stroke', 'rgba(255,255,255,0.9)')
-        .style('stroke-width', '1.8px')
-        .style('stroke-linejoin', 'round')
-        .style('paint-order', 'stroke')
-        .style('text-anchor', 'middle')
-        .style('pointer-events', 'none')
-        .text(capName);
-    });
-    window._capsG = capsG;
-    capsG.lower();
-
-
-    // ── City / place pin layer ────────────────────────────────────────────────
-    citiesG = g.append('g').attr('class','cities-layer');
-    PLACES.forEach(([lng, lat, name, isCap, isIsland, isVisitedIsland]) => {
-      const pos = proj([lng, lat]);
-      if (!pos || isNaN(pos[0])) return;
-      const displayName = name.replace('\uD83C\uDFDD\uFE0F', '').trim();
-      const isPriorityPin = PRIORITY_PINS.has(name);
-      const baseR = isIsland ? 3.8 : ((isCap || isPriorityPin) ? 3.8 : 2.8);
-      const isLaponia = isIsland && name.includes('Lap\u00F3nia');
-      const fillColor = '#8B2500';
-      const haloFill = isLaponia ? 'rgba(107,63,160,0.15)' : 'rgba(14,127,168,0.15)';
-      const haloStroke = isLaponia ? 'rgba(107,63,160,0.45)' : 'rgba(14,127,168,0.45)';
-      const dropShadow = isLaponia ? 'drop-shadow(0 1px 4px rgba(107,63,160,0.6))' : 'drop-shadow(0 1px 4px rgba(14,127,168,0.6))';
-      // For islands: show pin only if visited (6th field); always show name label
-      const showPin = !isIsland || !!isVisitedIsland;
-      const cg = citiesG.append('g')
-        .attr('class', `city-pin${isCap ? ' capital' : ''}${isIsland ? ' island' : ''}`)
-        .attr('transform', `translate(${pos[0]},${pos[1]})`)
-        .attr('data-x', pos[0])
-        .attr('data-y', pos[1])
-        .attr('data-baser', baseR)
-        .attr('data-always', isIsland ? '1' : '0')
-        .attr('data-showpin', showPin ? '1' : '0')
-        .style('filter', (isIsland && showPin) ? dropShadow : null)
-        .on('click', (evt) => {
-          evt.stopPropagation();
-          // Cabo Verde / Maldivas: território minúsculo, quase impossível de clicar no mapa —
-          // clicar no pin abre a ficha do país diretamente (só em modo de visualização normal)
-          if (currentMode !== 'view') return;
-          const countryId = SMALL_TERRITORY_PINS[displayName];
-          const info = countryId && VISITED[countryId];
-          if (info) openSheet(info, countryId);
-        });
-
-      // Halo ring — only for visited islands
-      if (isIsland && showPin) {
-        cg.append('circle')
-          .attr('class', 'island-halo')
-          .attr('cx', 0)
-          .attr('cy', -baseR * 2.5)
-          .attr('r', baseR * 1.1)
-          .attr('fill', haloFill)
-          .attr('stroke', haloStroke)
-          .attr('stroke-width', 0.5);
-      }
-
-      // Pin body (teardrop) — only for visited islands
-      cg.append('path')
-        .attr('class', 'pin-body')
-        .attr('d', makeTeardrop(baseR))
-        .attr('fill', fillColor)
-        .attr('stroke', 'white')
-        .attr('stroke-width', isIsland ? 1.2 : 0.8)
-        .style('display', showPin ? null : 'none');
-
-      // Inner white dot on head — only for visited islands
-      cg.append('circle')
-        .attr('class', 'pin-dot')
-        .attr('cx', 0)
-        .attr('cy', -baseR * 2.5)
-        .attr('r', baseR * 0.38)
-        .attr('fill', 'white')
-        .attr('opacity', 0.9)
-        .style('display', showPin ? null : 'none');
-
-      // Store display name on the group; label is rendered as a sibling (not inside scaled group)
-      // Mónaco e Vaticano já têm o nome mostrado pelo chip do país exatamente no mesmo ponto
-      // (o "pin de cidade" e a "capital" são o mesmo sítio) — suprimir o label duplicado aqui.
-      const REDUNDANT_WITH_COUNTRY_CHIP = new Set(['Mónaco', 'Cidade do Vaticano']);
-      // Ilha ainda não visitada: mostrar só o território colorido, sem nome (como o pin, já suprimido acima)
-      const labelToShow = REDUNDANT_WITH_COUNTRY_CHIP.has(displayName) ? ''
-        : ((isIsland && !isVisitedIsland) ? '' : displayName);
-      cg.attr('data-label', labelToShow)
-        .attr('data-iscap', isCap ? '1' : '0')
-        .attr('data-isisland', isIsland ? '1' : '0');
-    });
-
-    // ── City labels layer — sibling to pin groups, NOT inside scaled groups ──
-    window._cityLabelsG = g.append('g').attr('class', 'city-labels-layer');
-    citiesG.selectAll('.city-pin').each(function() {
-      const d = d3.select(this);
-      const lbl = d.attr('data-label');
-      if (!lbl) return;
-      const isCap = d.attr('data-iscap') === '1';
-      const isIsl = d.attr('data-isisland') === '1';
-      window._cityLabelsG.append('text')
-        .attr('class', `city-label${isCap ? ' capital-lbl' : ''}${isIsl ? ' island-lbl' : ''}`)
-        .attr('data-pinx', d.attr('data-x'))
-        .attr('data-piny', d.attr('data-y'))
-        .attr('data-baser', d.attr('data-baser'))
-        .attr('data-iscap', d.attr('data-iscap'))
-        .attr('data-isisland', d.attr('data-isisland'))
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'text-after-edge')
-        .style('display', 'none')
-        .text(lbl);
-    });
-    // window._cityLabelsG already set above
-
-    // ── 🏠 Nossas Casas — pins especiais ─────────────────────────────────────
+    // ── 🏠 Nossas Casas — pins especiais, layer própria (nunca é limpa) ─────
     const HOMES = [
-      { lng: -27.22, lat: 38.65, name: 'Angra do Hero\u00EDsmo\n\uD83C\uDFE0 Nossa Casa', sub: 'Ilha Terceira \u00B7 A\u00E7ores' },
-      { lng: -9.33,  lat: 39.36, name: 'Baleal / Peniche\n\uD83C\uDFE0 Nossa Casa',  sub: 'Leiria \u00B7 Portugal Continental' },
+      { lat: 38.65, lng: -27.22, name: 'Angra do Hero\u00EDsmo', sub: 'Ilha Terceira \u00B7 A\u00E7ores' },
+      { lat: 39.36, lng: -9.33,  name: 'Baleal / Peniche',       sub: 'Leiria \u00B7 Portugal Continental' },
     ];
-    const homesG = g.append('g').attr('class','homes-layer');
-    HOMES.forEach(({ lng, lat, name, sub }) => {
-      const pos = proj([lng, lat]);
-      if (!pos || isNaN(pos[0])) return;
-      const R = 5.5;
-      const hg = homesG.append('g')
-        .attr('class','home-pin')
-        .attr('transform', `translate(${pos[0]},${pos[1]})`)
-        .attr('data-x', pos[0]).attr('data-y', pos[1])
-        .attr('data-always','1')
-        .style('cursor','pointer')
-        .on('click', (evt) => {
-          evt.stopPropagation();
-          const modal = document.getElementById('home-modal');
-          document.getElementById('home-modal-title').textContent = name.replace('\n\uD83C\uDFE0 Nossa Casa','');
-          document.getElementById('home-modal-sub').textContent = sub;
-          modal.style.display = 'flex';
-        });
-      // Pulsing halo
-      hg.append('circle')
-        .attr('cx',0).attr('cy', -R*2.5).attr('r', R*1.9)
-        .attr('fill','rgba(192,57,43,0.12)')
-        .attr('stroke','rgba(192,57,43,0.35)')
-        .attr('stroke-width',0.8)
-        .attr('pointer-events','none');
-      // Pin body — red teardrop
-      hg.append('path')
-        .attr('d', makeTeardrop(R))
-        .attr('fill','#c0392b')
-        .attr('stroke','white')
-        .attr('stroke-width',1.2);
-      // House emoji inside pin head
-      hg.append('text')
-        .attr('x',0).attr('y', -(R*2.5 - R*0.38))
-        .attr('text-anchor','middle')
-        .attr('dominant-baseline','middle')
-        .style('font-size', R*1.1 + 'px')
-        .style('pointer-events','none')
-        .text('\uD83C\uDFE0');
-      // Label — pequeno e escondido, aparece com zoom
-      const displayName = name.split('\n')[0];
-      hg.append('text')
-        .attr('class','city-label home-lbl')
-        .attr('x',0)
-        .attr('y', -(R*2.5 + R + 2.5))
-        .style('fill','#7a0000')
-        .style('stroke','rgba(255,255,255,0.98)')
-        .style('stroke-width','4px')
-        .style('font-size','7px')
-        .style('display','none')
-        .text(displayName);
-    });
-    window._homesG = homesG;
-
-    // ── Açores region label — shown at low zoom on the ocean ──────────────────
-    const azoresRegionG = g.append('g').attr('class','azores-region-label');
-    window._azoresRegionG = azoresRegionG;
-    const azoresLabelPos = proj([-29.5, 38.2]);
-    if (azoresLabelPos && !isNaN(azoresLabelPos[0])) {
-      azoresRegionG.append('text')
-        .attr('x', azoresLabelPos[0])
-        .attr('y', azoresLabelPos[1])
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle')
-        .style('font-family', "'Outfit', sans-serif")
-        .style('font-size', '6px')
-        .style('font-weight', '700')
-        .style('fill', 'rgba(0,60,100,0.70)')
-        .style('letter-spacing', '2px')
-        .style('text-transform', 'uppercase')
-        .style('paint-order', 'stroke')
-        .style('stroke', 'rgba(168,207,232,0.9)')
-        .style('stroke-width', '2.5px')
-        .style('pointer-events', 'none')
-        .text('A\u00C7ORES');
-    }
-    (function initVisitedLabelOverlay() {
-      const existing = document.getElementById('visited-label-overlay');
-      if (existing) existing.remove();
-      const mapWrap = document.getElementById('map-wrap');
-      const overlay = document.createElement('div');
-      overlay.id = 'visited-label-overlay';
-      mapWrap.style.position = 'relative';
-      mapWrap.appendChild(overlay);
-      window._vclOverlay = overlay;
-
-      // Build divs for each visited country label — bandeira standalone + label com bandeira+nome
-      (window._visitedLabelData || []).forEach(({ id, name, tier }) => {
-        const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
-
-        // Para micro-estados com pin de cidade proeminente, a bandeira flutuante
-        // seria redundante — o pin já marca o local. Só criar label, não flag standalone.
-        const isMicroState = [492, 336, 462, 634].includes(id);
-        if (code && !isMicroState) {
-          const flagEl = document.createElement('img');
-          flagEl.className = 'vcl-flag';
-          flagEl.dataset.id = id;
-          flagEl.src = `https://flagcdn.com/w160/${code}.png`;
-          flagEl.alt = name;
-          overlay.appendChild(flagEl);
-        }
-
-        // 2. Label com bandeira inline + nome (zoom alto)
-        const div = document.createElement('div');
-        div.className = 'vcl';
-        div.dataset.id = id;
-        div.dataset.tier = tier || 'small';
-        if (code) {
-          const flagImg = document.createElement('img');
-          flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w160/${code}.png`;
-          flagImg.alt = '';
-          div.appendChild(flagImg);
-        }
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        div.appendChild(nameSpan);
-        // Click no label abre o sheet (essencial para micro-estados sem path SVG)
-        div.addEventListener('click', function(evt) {
-          evt.stopPropagation();
-          if (id === 826) { openUKSheet(); return; }
-          const info = VISITED[id];
-          if (info) openSheet(info, id);
-        });
-        div.style.cursor = 'pointer';
-        overlay.appendChild(div);
-      });
-
-      // Also add UK sub-nation labels
-      const UK_LABELS = [
-        { name:'Inglaterra', code:'gb-eng', svgGeo:[-1.5,52.5], visited:true },
-        { name:'Esc\u00F3cia',    code:'gb-sct', svgGeo:[-4.0,57.0], visited:true },
-        { name:'Pa\u00EDs de Gales', code:'gb-wls', svgGeo:[-3.8,52.2], visited:false },
-        { name:'Irlanda do Norte', code:'gb-nir', svgGeo:[-6.5,54.7], visited:true },
-      ];
-      UK_LABELS.forEach(({ name, code, svgGeo, visited }) => {
-        const svgPos = projRef ? projRef(svgGeo) : null;
-        if (!svgPos) return;
-
-        // Bandeira flutuante UK
-        if (code) {
-          const flagEl = document.createElement('img');
-          flagEl.className = 'vcl-flag vcl-flag-uk';
-          flagEl.dataset.geo = JSON.stringify(svgGeo);
-          flagEl.src = `https://flagcdn.com/w160/${code}.png`;
-          flagEl.alt = name;
-          overlay.appendChild(flagEl);
-        }
-
-        // Label UK — País de Gales ainda não visitado usa o estilo "por explorar" (azul-acinzentado)
-        const div = document.createElement('div');
-        div.className = 'vcl vcl-uk' + (visited ? '' : ' vcl-all');
-        div.dataset.geo = JSON.stringify(svgGeo);
-        if (code) {
-          const flagImg = document.createElement('img');
-          flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w160/${code}.png`;
-          flagImg.alt = '';
-          div.appendChild(flagImg);
-        }
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        div.appendChild(nameSpan);
-        div.style.display = 'none';
-        overlay.appendChild(div);
-      });
-
-      // ── Ilhas Portuguesas e Cabo Verde são cobertas pelos SVG labels do PLACES ──
-      // (vcl-island overlay usado apenas para ilhas de referência não presentes no PLACES)
-    })();
-
-    // ── HTML overlay for ALL countries (flag + name, same system as visited) ──
-    (function initAllCountryLabelOverlay() {
-      const overlay = window._vclOverlay;
-      if (!overlay) return;
-      (window._allCountryLabelData || []).forEach(({ id, name, tier, code }) => {
-        // Small flag-only marker for intermediate zoom
-        if (code) {
-          const flagEl = document.createElement('img');
-          flagEl.className = 'vcl-flag vcl-flag-all';
-          flagEl.dataset.allId = id;
-          flagEl.src = `https://flagcdn.com/w160/${code}.png`;
-          flagEl.alt = name;
-          overlay.appendChild(flagEl);
-        }
-        // Flag + name label for high zoom
-        const div = document.createElement('div');
-        div.className = 'vcl vcl-all';
-        div.dataset.allId = id;
-        div.dataset.tier = tier || 'small';
-        if (code) {
-          const flagImg = document.createElement('img');
-          flagImg.className = 'vcl-flag-inline';
-          flagImg.src = `https://flagcdn.com/w160/${code}.png`;
-          flagImg.alt = '';
-          div.appendChild(flagImg);
-        }
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        div.appendChild(nameSpan);
-        div.style.display = 'none';
-        overlay.appendChild(div);
-      });
-    })();
-
-    // Cache DOM references for all-country label overlay (perf: avoid repeated querySelectorAll)
-    window._allFlagEls  = Array.from(document.querySelectorAll('#visited-label-overlay .vcl-flag-all'));
-    window._allLabelEls = Array.from(document.querySelectorAll('#visited-label-overlay .vcl-all'));
-
-    window._updateVCL = function(transform) {
-      const overlay = window._vclOverlay;
-      if (!overlay || !projRef) return;
-      const { k, x, y } = transform;
-
-      const svgEl  = document.querySelector('#map-wrap svg');
-      const wrapEl = document.getElementById('map-wrap');
-      if (!svgEl || !wrapEl) return;
-
-      const sr = svgEl.getBoundingClientRect();
-      const wr = wrapEl.getBoundingClientRect();
-      const offX = sr.left - wr.left;
-      const offY = sr.top  - wr.top;
-
-      // SVG has width:100% CSS but width=W attribute with viewBox="0 0 W H"
-      // So there's a scaling factor between SVG internal coords and CSS pixels
-      const svgAttrW = svgEl.viewBox.baseVal.width  || svgEl.getAttribute('width')  || sr.width;
-      const svgAttrH = svgEl.viewBox.baseVal.height || svgEl.getAttribute('height') || sr.height;
-      const scX = sr.width  / svgAttrW;
-      const scY = sr.height / svgAttrH;
-
-      // Convert SVG-internal coordinates to CSS pixels relative to the overlay.
-      // D3 zoom transform (k, x, y) is in SVG-internal space, then viewBox scales to CSS.
-      // CSS_x = (svgPx * k + x) * scX + offX
-      function toCSS(svgPos) {
-        return [
-          (svgPos[0] * k + x) * scX + offX,
-          (svgPos[1] * k + y) * scY + offY
-        ];
-      }
-
-      // Reproject geo coords through the live projection to get accurate SVG position
-      // This ensures labels stay centred on their country at any zoom level
-      function geotoCSS(geoPos) {
-        const sp = projRef(geoPos);
-        if (!sp || isNaN(sp[0])) return null;
-        return toCSS(sp);
-      }
-
-      // Zoom thresholds — revelação gradual por tamanho do país (como o Google Maps):
-      // primeiro só o território colorido, depois bandeira, depois nome — sempre
-      // países grandes primeiro, pequenos/apertados só bem mais tarde.
-      const FLAG_K  = { large: 1.3, medium: 1.9, small: 2.8 };
-      const LABEL_K = { large: 2.0, medium: 3.2, small: 4.8 };
-
-      // ── Bandeiras flutuantes (só bandeira, zoom intermédio) ─────────────────
-      overlay.querySelectorAll('.vcl-flag:not(.vcl-flag-uk)').forEach(flagEl => {
-        const id = flagEl.dataset.id;
-        const entry = (window._visitedLabelData || []).find(d => String(d.id) === String(id));
-        if (!entry) { flagEl.style.display = 'none'; return; }
-        const cssPos = entry.geo ? geotoCSS(entry.geo) : toCSS(entry.svgPos);
-        if (!cssPos) { flagEl.style.display = 'none'; return; }
-        const [sx, sy] = cssPos;
-
-        // Hide when out of viewport
-        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
-          flagEl.style.display = 'none'; return;
-        }
-
-        const labelK = LABEL_K[entry.tier] || LABEL_K.small;
-        const flagK  = FLAG_K[entry.tier] || FLAG_K.small;
-        if (k < flagK || k >= labelK) { flagEl.style.display = 'none'; return; }
-
-        // Size scales with zoom, mas mais discreta: 11px a 18px (era 14–26px)
-        const flagW = Math.round(Math.min(18, Math.max(11, 8 * k)));
-        const flagH = Math.round(flagW * 0.67);
-        flagEl.style.left   = sx + 'px';
-        flagEl.style.top    = sy + 'px';
-        flagEl.style.width  = flagW + 'px';
-        flagEl.style.height = flagH + 'px';
-        flagEl.style.display = 'block';
-      });
-
-      // ── Labels (bandeira inline + nome, zoom alto) ───────────────────────────
-      (window._visitedLabelData || []).forEach(({ id, svgPos, geo: geoPos }) => {
-        const div = overlay.querySelector(`.vcl:not(.vcl-uk)[data-id="${id}"]`);
-        if (!div) return;
-        const cssPos = geoPos ? geotoCSS(geoPos) : toCSS(svgPos);
-        if (!cssPos) { div.style.display = 'none'; return; }
-        const [sx, sy] = cssPos;
-        div.style.left = sx + 'px';
-        div.style.top  = sy + 'px';
-
-        // vcl-island: usar só texto SVG, não label HTML
-        if (div.classList.contains('vcl-island')) { div.style.display = 'none'; return; }
-        const tier = div.dataset.tier || 'small';
-        const labelK = LABEL_K[tier] || LABEL_K.small;
-        if (k < labelK) { div.style.display = 'none'; return; }
-        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
-          div.style.display = 'none'; return;
-        }
-
-        const base = tier === 'large' ? 8.5 : tier === 'medium' ? 6.5 : 5;
-        const fs = Math.min(base * 1.3, Math.max(base * 0.8, base * Math.pow(k / labelK, 0.5)));
-        div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '2px 4px 2px 2px' : '2px 5px 2px 3px';
-        div.style.borderRadius = k < 4 ? '3px' : '5px';
-        div.style.display = 'flex';
-
-        // Scale the inline flag proportionally
-        const flagImg = div.querySelector('.vcl-flag-inline');
-        if (flagImg) {
-          const flagW = Math.round(Math.min(20, Math.max(10, fs * 1.5)));
-          const flagH = Math.round(flagW * 0.67);
-          flagImg.style.width  = flagW + 'px';
-          flagImg.style.height = flagH + 'px';
-        }
-      });
-
-      // ── UK flags flutuantes ─────────────────────────────────────────────────
-      overlay.querySelectorAll('.vcl-flag.vcl-flag-uk').forEach(flagEl => {
-        const geo = JSON.parse(flagEl.dataset.geo || 'null');
-        if (!geo) return;
-        const sp = projRef(geo);
-        if (!sp || isNaN(sp[0])) return;
-        const [sx, sy] = toCSS(sp);
-
-        if (k < FLAG_K.small || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
-        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) {
-          flagEl.style.display = 'none'; return;
-        }
-        const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
-        const flagH = Math.round(flagW * 0.67);
-        flagEl.style.left   = sx + 'px';
-        flagEl.style.top    = sy + 'px';
-        flagEl.style.width  = flagW + 'px';
-        flagEl.style.height = flagH + 'px';
-        flagEl.style.display = 'block';
-      });
-
-      // ── UK sub-nation labels ─────────────────────────────────────────────────
-      overlay.querySelectorAll('.vcl.vcl-uk').forEach(div => {
-        const geo = JSON.parse(div.dataset.geo || 'null');
-        if (!geo) return;
-        const sp = projRef(geo);
-        if (!sp || isNaN(sp[0])) return;
-        const [sx, sy] = toCSS(sp);
-        div.style.left = sx + 'px';
-        div.style.top  = sy + 'px';
-        if (k < LABEL_K.small) { div.style.display = 'none'; return; }
-        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) {
-          div.style.display = 'none'; return;
-        }
-        div.style.display = 'flex';
-        const fs = Math.min(12, Math.max(5, 2.8 * Math.pow(k, 0.65)));
-        div.style.fontSize = fs + 'px';
-        div.style.padding = k < 4 ? '1px 4px 1px 2px' : '2px 5px 2px 3px';
-        const flagImg = div.querySelector('.vcl-flag-inline');
-        if (flagImg) {
-          const flagW = Math.round(Math.min(18, Math.max(9, fs * 1.5)));
-          flagImg.style.width  = flagW + 'px';
-          flagImg.style.height = Math.round(flagW * 0.67) + 'px';
-        }
-      });
-
-      // ── Ilhas Portuguesas — bandeiras flutuantes e labels ───────────────────────
-      overlay.querySelectorAll('.vcl-flag.vcl-flag-island').forEach(flagEl => {
-        const geo = JSON.parse(flagEl.dataset.geo || 'null');
-        if (!geo) return;
-        const sp = projRef(geo);
-        if (!sp || isNaN(sp[0])) return;
-        const [sx, sy] = toCSS(sp);
-        if (k < FLAG_K.small || k >= LABEL_K.small) { flagEl.style.display = 'none'; return; }
-        if (sx < -30 || sy < -30 || sx > wr.width + 30 || sy > wr.height + 30) { flagEl.style.display = 'none'; return; }
-        const flagW = Math.round(Math.min(22, Math.max(11, 9 * k)));
-        const flagH = Math.round(flagW * 0.67);
-        flagEl.style.left   = sx + 'px';
-        flagEl.style.top    = sy + 'px';
-        flagEl.style.width  = flagW + 'px';
-        flagEl.style.height = flagH + 'px';
-        flagEl.style.display = 'block';
-      });
-
-      overlay.querySelectorAll('.vcl.vcl-island').forEach(div => {
-        const geo = JSON.parse(div.dataset.geo || 'null');
-        if (!geo) { div.style.display = 'none'; return; }
-        const sp = projRef(geo);
-        if (!sp || isNaN(sp[0])) { div.style.display = 'none'; return; }
-        const [sx, sy] = toCSS(sp);
-        div.style.left = sx + 'px';
-        div.style.top  = sy + 'px';
-        if (k < LABEL_K.small) { div.style.display = 'none'; return; }
-        if (sx < -40 || sy < -40 || sx > wr.width + 40 || sy > wr.height + 40) { div.style.display = 'none'; return; }
-        div.style.display = 'flex';
-        const fs = Math.min(10, Math.max(4.5, 2.2 * Math.pow(k, 0.65)));
-        div.style.fontSize = fs + 'px';
-        div.style.padding = '1px 4px 1px 4px';
-        div.style.borderRadius = '3px';
-      });
-
-      // ── Países NÃO visitados: já não aparecem automaticamente por zoom. ──────
-      // O nome/bandeira só é mostrado ao clicar/tocar no país (ver showMapTooltip
-      // no handler de click do .cpath). Os elementos .vcl-flag-all / .vcl-all
-      // ficam sempre ocultos (display:none por CSS) — mantemos os dados em
-      // window._allCountryLabelData caso venham a ser úteis noutra funcionalidade.
-    };
-
-    // ── Zoom with smooth momentum on wheel ──────────────────────────────────
-    let _wheelTarget = 1, _wheelCx = null, _wheelCy = null, _wheelRaf = null;
-    function _momentumStep(svgEl, zoomBeh) {
-      const cur = d3.zoomTransform(svgEl);
-      const ratio = _wheelTarget / cur.k;
-      if (Math.abs(ratio - 1) < 0.0008) { _wheelRaf = null; return; }
-      const newK = cur.k * Math.pow(ratio, 0.16);
-      const cx = _wheelCx != null ? _wheelCx : (svgEl.clientWidth  || 360) / 2;
-      const cy = _wheelCy != null ? _wheelCy : (svgEl.clientHeight || 200) / 2;
-      const tx = cx - newK * (cx - cur.x) / cur.k;
-      const ty = cy - newK * (cy - cur.y) / cur.k;
-      d3.select(svgEl).call(zoomBeh.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
-      _wheelRaf = requestAnimationFrame(() => _momentumStep(svgEl, zoomBeh));
-    }
-
-    const zoom = d3.zoom()
-      .scaleExtent([1, 30])
-      .filter(evt => {
-        if (evt.type === 'wheel') {
-          if (evt.ctrlKey) return false; // deixar Ctrl+scroll para o browser (zoom da página)
-          evt.preventDefault();  // impede scroll da página
-          return true;
-        }
-        // Allow single-finger pan AND two-finger pinch-zoom on mobile
-        if (evt.type === 'touchstart') return true;
-        return !evt.button;
-      })
-      .wheelDelta(evt => {
-        const svgEl = document.querySelector('#map-wrap svg');
-        if (!svgEl) return 0;
-        const cur = d3.zoomTransform(svgEl);
-        const raw = evt.deltaMode === 1 ? evt.deltaY * 33 : evt.deltaMode === 2 ? evt.deltaY * 800 : evt.deltaY;
-        const factor = Math.pow(0.997, raw);
-        _wheelTarget = Math.min(30, Math.max(1, (_wheelTarget || cur.k) * factor));
-        const rect = svgEl.getBoundingClientRect();
-        _wheelCx = evt.clientX - rect.left;
-        _wheelCy = evt.clientY - rect.top;
-        if (!_wheelRaf) _wheelRaf = requestAnimationFrame(() => _momentumStep(svgEl, zoom));
-        return 0;
-      })
-      .on('zoom', ({transform}) => {
-        g.attr('transform', transform);
-        currentZoomK = transform.k;
-        _wheelTarget = transform.k;
-        updateLabelsVisibility(transform.k);
-        if (window._updateVCL) window._updateVCL(transform);
-        const zl = document.getElementById('zoom-level-indicator');
-        if (zl) zl.textContent = (transform.k < 10 ? transform.k.toFixed(1) : Math.round(transform.k)) + '\u00D7';
-        const sl = document.getElementById('zoom-slider');
-        if (sl) sl.value = Math.log2(transform.k);
-      });
-    svg.call(zoom);
-    window._mapZoom = zoom;
-
-    // ── Track touch drag distance to distinguish tap vs pan ─────────────────
-    // IMPORTANTE: d3.zoom() regista os seus próprios touchstart/touchmove no
-    // svg e chama internamente stopImmediatePropagation() — isso impedia por
-    // completo que estes listeners abaixo alguma vez corressem (nunca
-    // actualizavam _touchDragged, em nenhum gesto). Ao registá-los em fase de
-    // "capture", correm sempre primeiro, antes do d3.zoom() ter oportunidade
-    // de cortar a propagação.
-    let _touchStartX = 0, _touchStartY = 0;
-    window._touchDragged = false;
-    svg.on('touchstart.dragtrack', function(evt) {
-      if (evt.touches.length === 1) {
-        _touchStartX = evt.touches[0].clientX;
-        _touchStartY = evt.touches[0].clientY;
-        window._touchDragged = false;
-      } else if (evt.touches.length > 1) {
-        // 2º dedo a tocar = gesto de pinça (zoom), nunca um toque simples —
-        // marcar já como "arrastado" para o touchend de cada dedo não disparar
-        // o clique do país onde esse dedo pousou.
-        window._touchDragged = true;
-      }
-    }, { capture: true, passive: true });
-    svg.on('touchmove.dragtrack', function(evt) {
-      if (evt.touches.length === 1) {
-        const dx = evt.touches[0].clientX - _touchStartX;
-        const dy = evt.touches[0].clientY - _touchStartY;
-        if (Math.sqrt(dx*dx + dy*dy) > 6) window._touchDragged = true;
-      }
-    }, { capture: true, passive: true });
-
-    // ── Helper: zoom centred on a screen point ───────────────────────────────
-    function _zoomAtPoint(mx, my, factor) {
-      const svgEl = document.querySelector('#map-wrap svg');
-      const cur = d3.zoomTransform(svgEl);
-      const newK = Math.min(30, Math.max(1, cur.k * factor));
-      const tx = mx - newK * (mx - cur.x) / cur.k;
-      const ty = my - newK * (my - cur.y) / cur.k;
-      _wheelTarget = newK;
-      d3.select(svgEl).transition().duration(280).ease(d3.easeCubicOut)
-        .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
-    }
-    window._zoomAtPoint = _zoomAtPoint;
-
-    // ── Double-tap (mobile): zoom 2.5× at touch point ───────────────────────
-    let _lastTap = 0;
-    svg.on('touchend.doubletap', function(evt) {
-      const now = Date.now();
-      const gap = now - _lastTap;
-      if (gap < 280 && gap > 0 && evt.changedTouches.length === 1) {
-        evt.preventDefault();
-        const t = evt.changedTouches[0];
-        const rect = this.getBoundingClientRect();
-        _zoomAtPoint(t.clientX - rect.left, t.clientY - rect.top, 2.5);
-      }
-      _lastTap = now;
+    HOMES.forEach(h => {
+      L.marker([h.lat, h.lng], { icon: homeIcon() })
+        .addTo(homesLayer)
+        .bindPopup(`<div class="map-popup"><strong>\uD83C\uDFE0 ${h.name}</strong><div class="map-popup-sub">${h.sub}</div></div>`);
     });
 
-    // ── Double-click (desktop): zoom 2.5×; Shift+dblclick: zoom out ─────────
-    svg.on('dblclick.zoom', null);
-    svg.on('dblclick', function(evt) {
-      if (evt.target.tagName === 'svg' || evt.target.classList.contains('cpath')) {
-        const [mx, my] = d3.pointer(evt);
-        _zoomAtPoint(mx, my, evt.shiftKey ? 1 / 2.5 : 2.5);
-      }
-    });
-
-    // Click on ocean to close / place pin
-    svg.on('click', (evt) => {
-      if (evt.target.tagName === 'svg' || (evt.target.tagName === 'path' && !evt.target.classList.contains('cpath'))) {
-        hideMapTooltip();
-        if (currentMode === 'pin-visited' || currentMode === 'pin-wish') {
-          const [mx, my] = d3.pointer(evt);
-          const coords = proj.invert([mx, my]);
-          if (currentMode === 'pin-visited') {
-            openPinForm(coords[1], coords[0], 'pin-visited');
-          }
-        }
+    // ── Clique no mapa (fora de qualquer pin) para adicionar um pin novo ────
+    leafletMap.on('click', (e) => {
+      if (currentMode === 'pin-visited' || currentMode === 'pin-wish') {
+        openPinForm(e.latlng.lat, e.latlng.lng, currentMode, null);
       }
     });
 
     renderMapPins();
 
-    // ── UK internal borders (England/Scotland/Wales/N.Ireland divisions) ───────
-    let ukBordersG = null, ukSubLabelsG = null;
-    if (VISITED[826]) {
-      ukBordersG = g.append('g').attr('class','uk-borders');
-      UK_INTERNAL_BORDERS.features.forEach(f => {
-        ukBordersG.append('path')
-          .datum(f)
-          .attr('d', path)
-          .attr('fill', 'none')
-          .attr('stroke', 'rgba(255,255,255,0.7)')
-          .attr('stroke-width', 0.7)
-          .attr('stroke-dasharray', '2.5,2')
-          .attr('pointer-events', 'none');
-      });
+    // Ponto de partida do mapa: Europa/Atlântico (Portugal, Açores, Madeira,
+    // Cabo Verde e Marrocos incluídos). Não usamos TODOS os pins no arranque —
+    // isso incluiria o Canadá, a Tailândia, etc. e a vista abriria zoomed out
+    // demais. Ajusta estes limites se um dia quiseres alargar/estreitar a
+    // vista inicial.
+    const EUROPE_BOUNDS = { latMin: 10, latMax: 72, lngMin: -32, lngMax: 45 };
+    const allPts = [
+      ...HOMES.map(h => [h.lat, h.lng]),
+      ...SEARCH_DATA.filter(d => d.type === 'city' && d.lat != null && d.lng != null).map(d => [d.lat, d.lng]),
+    ];
+    mapInitialBounds = allPts.length ? L.latLngBounds(allPts) : null;
 
-      ukSubLabelsG = g.append('g').attr('class','uk-sublabels');
-      UK_SUB_LABELS.forEach(([lng, lat, name]) => {
-        const pos = proj([lng, lat]);
-        if (!pos || isNaN(pos[0])) return;
-        ukSubLabelsG.append('text')
-          .attr('x', pos[0]).attr('y', pos[1])
-          .attr('data-lng', lng).attr('data-lat', lat)
-          .style('font-family', "'Outfit', sans-serif")
-          .style('font-size', '5px')
-          .style('font-weight', '700')
-          .style('fill', 'rgba(255,255,255,0.88)')
-          .style('stroke', 'rgba(30,10,0,0.6)')
-          .style('stroke-width', '2px')
-          .style('stroke-linejoin', 'round')
-          .style('paint-order', 'stroke')
-          .style('text-anchor', 'middle')
-          .style('dominant-baseline', 'middle')
-          .style('pointer-events', 'none')
-          .text(name);
-      });
+    const startPts = allPts.filter(([lat, lng]) =>
+      lat >= EUROPE_BOUNDS.latMin && lat <= EUROPE_BOUNDS.latMax &&
+      lng >= EUROPE_BOUNDS.lngMin && lng <= EUROPE_BOUNDS.lngMax
+    );
+    if (startPts.length) {
+      leafletMap.fitBounds(L.latLngBounds(startPts), { padding: [24, 24] });
+    } else if (mapInitialBounds) {
+      leafletMap.fitBounds(mapInitialBounds, { padding: [24, 24] });
     }
-
-    // Store references for updateLabelsVisibility
-    window._ukBordersG = ukBordersG;
-    window._ukSubLabelsG = ukSubLabelsG;
-
-    // ── Raise visited-country labels to TOP of z-order (above cities + all-labels) ──
-    labelsG.raise();
-    updateLabelsVisibility(1);
-    // Defer VCL initial positions until after DOM renders fully
-    requestAnimationFrame(() => {
-      if (window._updateVCL) window._updateVCL({k:1,x:0,y:0});
-    });
-
-  } catch(err) {
+    // Um pouco mais de zoom do que o "encaixe perfeito" do fitBounds —
+    // fica um enquadramento mais próximo, com menos oceano à volta.
+    if (startPts.length || mapInitialBounds) {
+      leafletMap.setZoom(leafletMap.getZoom() + 0.5);
+    }
+  } catch (err) {
     const el = document.getElementById('map-loading');
     if (el) el.textContent = '\u26A0\uFE0F Erro ao carregar o mapa. Verifica a liga\u00E7\u00E3o.';
     console.error(err);
   }
 }
 
-function pinPath(r) {
-  // Teardrop SVG path centered at (0,0), tip pointing down at (0, r*2.2)
-  // r = radius of the head circle
-  const tipY = r * 2.2;
-  return `M 0,${-tipY} C ${-r*1.1},${-tipY} ${-r},${-tipY+r*0.3} ${-r},${-tipY+r*1.0} A ${r},${r} 0 1,0 ${r},${-tipY+r*1.0} C ${r},${-tipY+r*0.3} ${r*1.1},${-tipY} 0,${-tipY}`;
-}
-
-// Better: use a clean teardrop path defined from scratch
-function makeTeardrop(r) {
-  // Pin shape: circle on top, pointed bottom. Tip at (0,0), body going UP.
-  // Using a simple path that looks like a map marker
-  const h = r * 2.5; // total height of pin above tip
-  const cx = 0, cy = -h; // center of circle head
-  return `M 0 0 C ${-r*0.6} ${-h*0.3} ${-r} ${-h*0.55} ${-r} ${cy} A ${r} ${r} 0 1 1 ${r} ${cy} C ${r} ${-h*0.55} ${r*0.6} ${-h*0.3} 0 0 Z`;
-}
-
-function updateLabelsVisibility(k) {
-  if (!labelsG || !citiesG) return;
-
-  // ── All-country labels now handled by HTML overlay (_updateAllCountryLabels) ──
-  // (SVG text labels replaced by HTML flag+name divs for consistency with visited labels)
-
-  // ── World capitals: show at zoom ≥ 2.5 to reduce clutter ────────────────
-  const capsLayer = window._capsG;
-  if (capsLayer) {
-    const showCaps = k >= 2.5;
-    capsLayer.selectAll('.cap-dot').each(function() {
-      const sel = d3.select(this);
-      sel.style('display', showCaps ? null : 'none');
-      if (!showCaps) return;
-      const px = +sel.attr('data-x');
-      const py = +sel.attr('data-y');
-      sel.attr('transform', `translate(${px},${py}) scale(${1/k})`);
-    });
-  }
-
-  // ── City pins: inverse scale for constant screen size ───────────────────────
-  const showAllCities = k >= 2.0;
-  const showIslandFull = k >= 1.0;
-  // Text labels only visible when sufficiently zoomed in
-  const showCityText   = k >= 3.5;
-  const showIslandText = k >= 5.0;
-  const showCapText    = k >= 4.5;
-
-  // Ilhas dos Açores secundárias (exceto S. Miguel) e Lapónia — só zoom ≥ 2.0
-  const SECONDARY_PINS = new Set([
-    'Terceira','Faial','Pico','Flores','Graciosa','Santa Maria','Corvo','São Jorge',
-    'Lapónia'
-  ]);
-  // PRIORITY_PINS (Toronto, Nova Iorque, Belfast, Londres, Edimburgo, Istambul, Zurique) é partilhada — definida junto ao PLACES
-
-  citiesG.selectAll('.city-pin').each(function() {
-    const isCap = this.classList.contains('capital');
-    const isIsland = this.classList.contains('island');
-    const sel = d3.select(this);
-    // Remove qualquer emoji (e não só 🏝️) do fim do nome antes de comparar, para apanhar casos como 'Lapónia 🦌'
-    const label = (sel.attr('data-label') || '').replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]+\s*$/u,'').trim();
-    const isSecondary = SECONDARY_PINS.has(label);
-    const isPriority = PRIORITY_PINS.has(label);
-    const visible = isSecondary ? k >= 2.0 : (isIsland || isCap || isPriority || showAllCities);
-    sel.style('display', visible ? null : 'none');
-    if (!visible) return;
-
-    const px = +sel.attr('data-x');
-    const py = +sel.attr('data-y');
-
-    // Pin size: read from data-baser set during initial render (consistent with pin shape)
-    const baseR = +sel.attr('data-baser') || (isIsland ? 3.8 : (isCap ? 3.8 : 2.8));
-
-    const showPin = sel.attr('data-showpin') !== '0';
-    if (isIsland && !showIslandFull) {
-      sel.attr('transform', `translate(${px},${py})`);
-      // Only show halo dot for visited islands at low zoom
-      if (showPin) {
-        sel.select('circle.island-halo')
-          .style('display', null)
-          .attr('fill', '#0e7fa8').attr('stroke', 'rgba(255,255,255,0.9)')
-          .attr('stroke-width', 0.5).attr('r', 1.8).attr('cy', 0);
-      } else {
-        sel.select('circle.island-halo').style('display', 'none');
-      }
-      sel.select('path.pin-body').style('display', 'none');
-      sel.select('circle.pin-dot').attr('r', 0);
-      sel.select('text').style('display', 'none');
-    } else {
-      sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
-      if (isIsland) {
-        // Only show halo for visited islands
-        sel.select('circle.island-halo')
-          .style('display', showPin ? null : 'none')
-          .attr('stroke-width', 0.5).attr('r', baseR * 1.1).attr('cy', -baseR * 2.5);
-      }
-      sel.select('path.pin-body').style('display', showPin ? null : 'none').attr('d', makeTeardrop(baseR));
-      sel.select('circle.pin-dot').style('display', showPin ? null : 'none')
-        .attr('r', showPin ? baseR * 0.38 : 0).attr('cy', -baseR * 2.5);
-
-    }
+// ─── ÍCONES DOS PINS (Leaflet divIcon — alfinete clássico com furo, vermelho) ──
+function classicPinIcon() {
+  return L.divIcon({
+    className: 'vb-pin-icon',
+    html: '<svg class="vb-pin" viewBox="0 0 24 24" width="27" height="27"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#d92b2b" fill-rule="evenodd"/></svg>',
+    iconSize: [27, 27],
+    iconAnchor: [13.5, 25],
+    popupAnchor: [0, -24],
   });
-
-  // ── Position city labels (separate layer, not inside scaled groups) ────────
-  if (window._cityLabelsG) {
-    const showCityText2   = k >= 3.5;
-    const showIslandText2 = k >= 5.0;
-    const showCapText2    = k >= 4.5;
-    window._cityLabelsG.selectAll('text').each(function() {
-      const sel = d3.select(this);
-      const isIsl = sel.attr('data-isisland') === '1';
-      const isCp  = sel.attr('data-iscap')    === '1';
-      const show  = isIsl ? showIslandText2 : (isCp ? showCapText2 : showCityText2);
-      sel.style('display', show ? null : 'none');
-      if (!show) return;
-      const pinX = +sel.attr('data-pinx');
-      const pinY = +sel.attr('data-piny');
-      const br   = +sel.attr('data-baser') || 3.8;
-      // pin tip is at (pinX, pinY); pin head centre is at pinY - br*2.5 (in SVG coords)
-      // after scale(1/k) the pin head is at screen y = (pinY - br*2.5/k)*k ≈ pinY*k - br*2.5
-      // But we're in SVG map coords (no extra scale), so label sits at:
-      // label in unscaled SVG coords → divide all px values by k
-      const fontSize = (isIsl ? 11 : (isCp ? 12 : 10)) / k;
-      const strokeW  = (isIsl ? 4 : 4.5) / k;
-      const labelY   = pinY - (br * 2.5 + br + 2) / k;
-      sel.attr('x', pinX)
-         .attr('y', labelY)
-         .style('font-size',   fontSize + 'px')
-         .style('stroke-width', strokeW + 'px');
-    });
-  }
-
-
-  // ── Home pins: sempre visíveis, label aparece ao zoom ≥ 3 ───────────────────
-  if (window._homesG) {
-    const showHomeText = k >= 3.0;
-    window._homesG.selectAll('.home-pin').each(function() {
-      const sel = d3.select(this);
-      const px = +sel.attr('data-x');
-      const py = +sel.attr('data-y');
-      sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
-      sel.select('text.home-lbl').style('display', showHomeText ? null : 'none');
-    });
-  }
-
-  if (gRef) {
-    gRef.selectAll('.map-pin').each(function() {
-      const sel = d3.select(this);
-      const px = +sel.attr('data-x');
-      const py = +sel.attr('data-y');
-      if (!isNaN(px) && !isNaN(py)) {
-        sel.attr('transform', `translate(${px},${py}) scale(${1 / k})`);
-      }
-    });
-  }
-
-  // ── UK sub-nation SVG labels — hidden (replaced by vcl-uk HTML overlay) ──────
-  const ukSubG = window._ukSubLabelsG;
-  if (ukSubG) ukSubG.style('display', 'none');
-
-  // ── UK internal borders: scale stroke-width inversely ─────────────────────
-  const ukBrdG = window._ukBordersG;
-  if (ukBrdG) {
-    ukBrdG.selectAll('path')
-      .attr('stroke-width', 0.7 / k)
-      .attr('stroke-dasharray', `${2.5 / k},${2 / k}`);
-  }
-
-  // ── Açores region label: visible at low zoom (< 3), hidden when zoomed in ──
-  const azRG = window._azoresRegionG;
-  if (azRG) {
-    azRG.style('display', k < 3 ? null : 'none');
-    azRG.select('text')
-      .style('font-size', (6 / k) + 'px')
-      .style('letter-spacing', (2 / k) + 'px')
-      .style('stroke-width', (2.5 / k) + 'px');
-  }
 }
+function visitedIcon() { return classicPinIcon(); }
+function wishIcon()    { return classicPinIcon(); }
+function homeIcon()    { return classicPinIcon(); }
 
-// ─── MAP TOOLTIP ─────────────────────────────────────────────────────────────
-// Build capital name lookup from WORLD_CAPITALS: [id, name, lat, lng]
-const CAPITAL_NAMES = {};
-if (typeof WORLD_CAPITALS !== 'undefined') {
-  WORLD_CAPITALS.forEach(([id, name]) => { CAPITAL_NAMES[id] = name; });
-}
-
-let _ttHideTimer = null;
-let _ttCountryId = null; // id do país cujo tooltip está aberto (para toggle: tocar de novo fecha)
-
-function showMapTooltip(evt, id) {
-  const tt = document.getElementById('map-tooltip');
-  if (!tt) return;
-
-  // Don't show tooltip if a sheet/modal is open
-  if (document.getElementById('sheet')?.classList.contains('open')) return;
-
-  const isVisited = !!VISITED[id];
-  const isWish    = typeof wishCountriesNumeric !== 'undefined' && wishCountriesNumeric.has(id);
-
-  // Country name (clean, no flag emoji)
-  const rawName = (isVisited ? VISITED[id]?.name : null)
-    || (typeof WORLD_NAMES !== 'undefined' ? WORLD_NAMES[id] : null)
-    || (typeof getCountryName === 'function' ? getCountryName(id)?.replace(/[\uD83C][\uDDE0-\uDDFF]{2}/g,'').trim() : null)
-    || null;
-  // Se não há nome reconhecido (território sem dados), não mostra tooltip
-  if (!rawName) return;
-  const name = (rawName || '')
-    .replace(/[\uD83C][\uDDE0-\uDDFF]{2}/g, '')
-    .replace(/[\uD83C][\uDFF4]/g, '')
-    .replace(/[\uFE0F]/g, '')
-    .trim();
-
-  const capital = CAPITAL_NAMES[id] || '';
-  const code    = (typeof FLAG_CODES !== 'undefined' ? FLAG_CODES[id] : null)
-               || (typeof NUM_TO_CODE !== 'undefined' ? NUM_TO_CODE[id] : null)
-               || '';
-  const year    = isVisited ? (VISITED[id]?.year || '') : '';
-
-  // Fill content
-  const flagImg = document.getElementById('tt-flag-img');
-  if (code) {
-    flagImg.src = `https://flagcdn.com/w160/${code}.png`;
-    flagImg.style.display = 'block';
-  } else {
-    flagImg.style.display = 'none';
-  }
-  document.getElementById('tt-name').textContent = name;
-  document.getElementById('tt-capital').textContent = capital ? `🏛 ${capital}` : '';
-
-  const badgeWrap = document.getElementById('tt-badge-wrap');
-  const ttCutoff = new Date('2026-08-25');
-  const ttToday = new Date();
-  const SOON_TT = new Set([688, 807, 383]);
-  const isSoon = SOON_TT.has(id) && ttToday < ttCutoff;
-  if (isSoon) {
-    badgeWrap.innerHTML = `<span class="tt-badge" style="background:#fde8f2;color:#e0457b;border:1px solid #e0457b;">🗓️ a visitar em breve</span>`;
-  } else if (isVisited) {
-    badgeWrap.innerHTML = `<span class="tt-badge visited">✓ visitado${year ? `<span class="tt-year">${year}</span>` : ''}</span>`;
-  } else if (isWish) {
-    badgeWrap.innerHTML = `<span class="tt-badge wish">⭐ wishlist</span>`;
-  } else {
-    badgeWrap.innerHTML = `<span class="tt-badge explore">🌍 por explorar</span>`;
-  }
-
-  // Position tooltip above cursor, clamped to viewport
-  const margin = 12;
-  const wrap   = document.getElementById('map-wrap');
-  const wr     = wrap ? wrap.getBoundingClientRect() : { left:0, top:0, width: window.innerWidth, height: window.innerHeight };
-  const ttW    = tt.offsetWidth  || 200;
-  const ttH    = tt.offsetHeight || 90;
-
-  let left = evt.clientX - wr.left - ttW / 2;
-  let top  = evt.clientY - wr.top  - ttH - 16;
-
-  // Clamp horizontally
-  left = Math.max(margin, Math.min(left, wr.width - ttW - margin));
-  // If not enough room above, show below cursor
-  if (top < margin) top = evt.clientY - wr.top + 20;
-
-  tt.style.left = left + 'px';
-  tt.style.top  = top  + 'px';
-  tt.style.position = 'absolute';
-
-  // Show
-  if (_ttHideTimer) { clearTimeout(_ttHideTimer); _ttHideTimer = null; }
-  _ttCountryId = id;
-  tt.classList.add('visible');
-}
-
-function hideMapTooltip() {
-  const tt = document.getElementById('map-tooltip');
-  if (!tt) return;
-  _ttCountryId = null;
-  tt.classList.remove('visible');
-}
 
 function getCountryName(numericId) {
   // Rough lookup table for wishlist display
@@ -2271,7 +966,6 @@ function openPinFormFromSheet(numericId) {
 async function removeWishCountry(id) {
   wishCountriesNumeric.delete(id);
   await saveWishCountries();
-  d3.selectAll('.cpath').filter(d => +d.id === id).attr('class', 'cpath no');
   closeAll();
   showNotif('Removido da wishlist');
   renderWishList();
@@ -2289,44 +983,15 @@ let currentPinType = 'pin-visited';
 
 // ─── UPDATE MAP COUNTRY COLORS ────────────────────────────────────────────────
 function updateMapColors() {
-  // Build set of numeric IDs from user visited pins
-  const userVisitedIds = new Set();
-  pins.filter(p => p.type === 'pin-visited').forEach(p => {
-    // Match by countryId if available
-    if (p.countryId) { userVisitedIds.add(+p.countryId); return; }
-    // Otherwise match by name against WORLD_NAMES
-    const nameNorm = (p.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-    Object.entries(WORLD_NAMES).forEach(([id, wname]) => {
-      const wnorm = wname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      if (wnorm === nameNorm || nameNorm.includes(wnorm) || wnorm.includes(nameNorm)) {
-        userVisitedIds.add(+id);
-      }
-    });
-  });
-
+  // O mapa passou a ser Leaflet (pins reais, sem países coloridos) — esta
+  // função mantém apenas a visibilidade da legenda/botão "A visitar em breve"
+  // consoante a data.
   const mapCutoff = new Date('2026-08-25');
   const mapToday = new Date();
-  const SOON_IDS = new Set([688, 807, 383]);
-
-  // Mostrar/esconder legenda e botão "A visitar em breve"
   const legendSoon = document.getElementById('legend-soon');
   if (legendSoon) legendSoon.style.display = mapToday < mapCutoff ? '' : 'none';
   const btnSoon = document.getElementById('btn-pin-soon');
   if (btnSoon) btnSoon.style.display = mapToday < mapCutoff ? '' : 'none';
-
-  d3.selectAll('.cpath').each(function() {
-    const id = +this.getAttribute('data-id');
-    if (!id) return;
-    if (SOON_IDS.has(id) && mapToday < mapCutoff) {
-      this.setAttribute('class', 'cpath soon');
-    } else if (VISITED[id] || userVisitedIds.has(id)) {
-      this.setAttribute('class', 'cpath vis');
-    } else if (wishCountriesNumeric.has(id)) {
-      this.setAttribute('class', 'cpath wish');
-    } else {
-      this.setAttribute('class', 'cpath no');
-    }
-  });
 }
 
 
@@ -2638,120 +1303,38 @@ function submitPin() {
 // Chamado depois de guardar um pin visitado — injeta a bandeira no overlay
 // sem precisar de recarregar o mapa inteiro.
 function addFlagToMap(pin) {
-  if (!projRef || !window._vclOverlay) return;
-  const id = +pin.countryId;
-  if (!id) return;
-
-  // Já existe no overlay? Não duplicar
-  if (window._vclOverlay.querySelector(`.vcl[data-id="${id}"]`)) return;
-
-  // Calcular posição SVG: usar COUNTRY_LABEL_POS se existir, senão WORLD_CAP_POS
-  let geoPos = COUNTRY_LABEL_POS[id] || null;
-  if (!geoPos && WORLD_CAP_POS[id]) geoPos = WORLD_CAP_POS[id];
-  if (!geoPos) return;
-
-  const svgPos = projRef(geoPos);
-  if (!svgPos || isNaN(svgPos[0])) return;
-
-  const code = FLAG_CODES[id] || NUM_TO_CODE[id] || '';
-  const name = WORLD_NAMES[id] || pin.name
-    .replace(/[\uD83C][\uDDE0-\uDDFF]/g, '')
-    .replace(/[\uD83C][\uDFF4]/g, '')
-    .replace(/[\uFE0F]/g, '')
-    .trim();
-  const tier = 'small';
-
-  // Guardar nos dados para _updateVCL posicionar correctamente
-  window._visitedLabelData = window._visitedLabelData || [];
-  window._visitedLabelData.push({ id, svgPos, name, tier });
-
-  // Bandeira flutuante (zoom baixo)
-  if (code) {
-    const flagEl = document.createElement('img');
-    flagEl.className = 'vcl-flag';
-    flagEl.dataset.id = id;
-    flagEl.src = `https://flagcdn.com/w160/${code}.png`;
-    flagEl.alt = name;
-    window._vclOverlay.appendChild(flagEl);
-  }
-
-  // Label bandeira + nome (zoom alto)
-  const div = document.createElement('div');
-  div.className = 'vcl';
-  div.dataset.id = id;
-  div.dataset.tier = tier;
-  if (code) {
-    const flagImg = document.createElement('img');
-    flagImg.className = 'vcl-flag-inline';
-    flagImg.src = `https://flagcdn.com/w160/${code}.png`;
-    flagImg.alt = '';
-    div.appendChild(flagImg);
-  }
-  const nameSpan = document.createElement('span');
-  nameSpan.textContent = name;
-  div.appendChild(nameSpan);
-  // Click no label abre o sheet
-  div.addEventListener('click', function(evt) {
-    evt.stopPropagation();
-    if (id === 826) { openUKSheet(); return; }
-    const info = VISITED[id];
-    if (info) openSheet(info, id);
-  });
-  div.style.cursor = 'pointer';
-  window._vclOverlay.appendChild(div);
-
-  // Forçar reposicionamento imediato com o zoom atual
-  if (window._updateVCL) {
-    const svgEl = document.querySelector('#map-wrap svg');
-    if (svgEl) window._updateVCL(d3.zoomTransform(svgEl));
-  }
+  // O mapa agora é Leaflet — os pins aparecem via renderMapPins(), que já é
+  // chamada depois de guardar um pin, por isso não é preciso injetar nada
+  // manualmente aqui.
 }
 function renderMapPins() {
-  if (!gRef || !projRef) return;
-  gRef.selectAll('.map-pin').remove();
-  const pinsWithCoords = pins.filter(p => p.lat != null && p.lng != null);
-  pinsWithCoords.forEach(pin => {
-    const [x, y] = projRef([pin.lng, pin.lat]);
-    if (isNaN(x) || isNaN(y)) return;
-    const col = pin.type === 'pin-visited' ? '#1a6bb5' : '#2d7a4f';
-    const r = 4.5;
-    const pg = gRef.append('g')
-      .attr('class', 'map-pin')
-      .attr('transform', `translate(${x},${y}) scale(${1/currentZoomK})`)
-      .attr('data-x', x)
-      .attr('data-y', y)
-      .style('filter', 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))')
-      .on('click', (evt) => {
-        evt.stopPropagation();
-        openPinDetail(pin);
-      });
+  if (!leafletMap || !markersLayer) return;
+  markersLayer.clearLayers();
 
-    // Teardrop pin body
-    pg.append('path')
-      .attr('d', makeTeardrop(r))
-      .attr('fill', col)
-      .attr('stroke', 'white')
-      .attr('stroke-width', 1);
+  // Cidades já visitadas (histórico fixo, com lat/lng) — só de consulta
+  SEARCH_DATA.filter(d => d.type === 'city' && d.lat != null && d.lng != null).forEach(c => {
+    L.marker([c.lat, c.lng], { icon: visitedIcon() })
+      .addTo(markersLayer)
+      .bindPopup(`<div class="map-popup"><strong>\uD83D\uDCCD ${c.name}</strong>${c.year ? `<div class="map-popup-sub">${c.year}</div>` : ''}</div>`);
+  });
 
-    // Inner dot
-    pg.append('circle')
-      .attr('cx', 0).attr('cy', -r * 2.5)
-      .attr('r', r * 0.38)
-      .attr('fill', 'white').attr('opacity', 0.9);
-
-    // Label above pin
-    pg.append('text')
-      .attr('x', 0).attr('y', -(r * 2.5 + r + 2))
-      .attr('text-anchor', 'middle')
-      .attr('font-size', '6px')
-      .attr('font-family', 'Outfit, sans-serif')
-      .attr('font-weight', '600')
-      .attr('fill', col)
-      .attr('paint-order', 'stroke')
-      .attr('stroke', 'rgba(255,255,255,0.95)')
-      .attr('stroke-width', '2.5px')
-      .attr('stroke-linejoin', 'round')
-      .text(pin.name.length > 16 ? pin.name.slice(0,14)+'\u2026' : pin.name);
+  // Pins adicionados à mão (editáveis)
+  pins.filter(p => p.lat != null && p.lng != null).forEach(pin => {
+    const icon = pin.type === 'pin-wish' ? wishIcon() : visitedIcon();
+    const sub = pin.type === 'pin-visited' ? (pin.year || '') : '\u2B50 Wishlist';
+    L.marker([pin.lat, pin.lng], { icon })
+      .addTo(markersLayer)
+      .bindPopup(`
+        <div class="map-popup">
+          <strong>${pin.emoji || ''} ${pin.name}</strong>
+          <div class="map-popup-sub">${sub}</div>
+          ${pin.note ? `<div class="map-popup-note">${pin.note}</div>` : ''}
+          <div class="map-popup-actions">
+            <button onclick="editPin('${pin.id}')">\u270F\uFE0F Editar</button>
+            <button onclick="deletePin('${pin.id}')">\uD83D\uDDD1\uFE0F Apagar</button>
+          </div>
+        </div>
+      `);
   });
 }
 
@@ -3242,109 +1825,48 @@ const SEARCH_DATA = [
   {name:'Corvo', year:'A\u00E7ores \u00B7 2023 Carnaval', id:620, lat:39.67, lng:-31.13, type:'city', code:'pt'},
   {name:'S\u00E3o Jorge', year:'A\u00E7ores \u00B7 2014', id:620, lat:38.65, lng:-28.07, type:'city', code:'pt'},
   {name:'Santiago (Cabo Verde)', year:'Cabo Verde \u00B7 2024 P\u00E1scoa', id:132, lat:14.93, lng:-23.51, type:'city', code:'cv'},
+  {name:'Glasgow', year:'Esc\u00F3cia \u00B7 2024 Natal', id:826, lat:55.86, lng:-4.25, type:'city', code:'gb-sct'},
+  {name:'M\u00F3naco', year:'M\u00F3naco \u00B7 2026 P\u00E1scoa', id:492, lat:43.73, lng:7.42, type:'city', code:'mc'},
+  {name:'Ocrida', year:'Maced\u00F3nia do Norte \u00B7 2026 Ver\u00E3o', id:807, lat:41.12, lng:20.80, type:'city', code:'mk'},
+  {name:'Prizren', year:'Kosovo \u00B7 2026 Ver\u00E3o', id:383, lat:42.21, lng:20.74, type:'city', code:'xk'},
+  {name:'Colmar', year:'Fran\u00E7a \u00B7 2026 Natal', id:250, lat:48.08, lng:7.36, type:'city', code:'fr'},
+  {name:'Estrasburgo', year:'Fran\u00E7a \u00B7 2026 Natal', id:250, lat:48.58, lng:7.75, type:'city', code:'fr'},
+  {name:'Freiburg', year:'Alemanha \u00B7 2026 Natal', id:276, lat:47.99, lng:7.85, type:'city', code:'de'},
+  {name:'Basileia', year:'Su\u00ED\u00E7a \u00B7 2026 Natal', id:756, lat:47.56, lng:7.59, type:'city', code:'ch'},
 ];
 
-// ─── ZOOM CONTROLS ───────────────────────────────────────────────────────────
-function _zoomCentre(factor) {
-  if (!window._mapZoom) return;
-  const svgEl = document.querySelector('#map-wrap svg');
-  const W = (svgEl.clientWidth  || 360) / 2;
-  const H = (svgEl.clientHeight || 200) / 2;
-  if (window._zoomAtPoint) window._zoomAtPoint(W, H, factor);
-}
-function mapZoomIn()  { _zoomCentre(2.2); }
-function mapZoomOut() { _zoomCentre(1 / 2.2); }
-function mapZoomReset() {
-  if (!window._mapZoom) return;
-  d3.select('#map-wrap svg').transition().duration(380).ease(d3.easeCubicInOut)
-    .call(window._mapZoom.transform, d3.zoomIdentity);
-}
-function mapZoomSlider(val) {
-  if (!window._mapZoom) return;
-  const svgEl = document.querySelector('#map-wrap svg');
-  const cur = d3.zoomTransform(svgEl);
-  const newK = Math.pow(2, parseFloat(val));
-  const W = (svgEl.clientWidth  || 360) / 2;
-  const H = (svgEl.clientHeight || 200) / 2;
-  const tx = W - newK * (W - cur.x) / cur.k;
-  const ty = H - newK * (H - cur.y) / cur.k;
-  d3.select(svgEl).call(window._mapZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(newK));
-}
-
-// Long-press on zoom buttons for continuous zoom
-(function() {
-  let _interval = null;
-  function _start(factor) {
-    _zoomCentre(factor);
-    _interval = setInterval(() => _zoomCentre(factor), 160);
-  }
-  function _stop() { clearInterval(_interval); _interval = null; }
-  function _attach(id, factor) {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-    btn.addEventListener('mousedown',  () => _start(factor));
-    btn.addEventListener('touchstart', (e) => { e.preventDefault(); _start(factor); }, { passive: false });
-    ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => btn.addEventListener(ev, _stop));
-    // Prevent single-click firing twice (already handled by mousedown)
-    btn.onclick = e => e.preventDefault();
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    _attach('zbtn-in',  2.2);
-    _attach('zbtn-out', 1 / 2.2);
-  });
-})();
+// (Zoom feito apenas por gestos nativos — pinch no telemóvel, scroll no rato.
+// A barra de zoom personalizada foi removida.)
 
 // ─── ZOOM TO COUNTRY ─────────────────────────────────────────────────────────
 function zoomToCountry(numericId, lat, lng) {
-  if (!svgRef || !projRef || !gRef || !window._mapZoom) return;
+  if (!leafletMap) return;
   numericId = +numericId; // garantir número para lookups em objetos
 
-  const svgEl = document.querySelector('#map-wrap svg');
-  if (!svgEl) return;
-  const rect = svgEl.getBoundingClientRect();
-  const W = rect.width  || 360;
-  const H = rect.height || 220;
-
   // Determine target point
-  let targetPos;
-  if (lat != null && lng != null) {
-    targetPos = projRef([lng, lat]);
-  } else if (COUNTRY_LABEL_POS[numericId]) {
-    targetPos = projRef(COUNTRY_LABEL_POS[numericId]);
-  } else if (WORLD_CAP_POS[numericId]) {
-    targetPos = projRef(WORLD_CAP_POS[numericId]);
+  let targetLat = lat, targetLng = lng;
+  if (targetLat == null || targetLng == null) {
+    const pos = COUNTRY_LABEL_POS[numericId] || WORLD_CAP_POS[numericId];
+    if (pos) { targetLng = pos[0]; targetLat = pos[1]; }
   }
-  if (!targetPos || isNaN(targetPos[0])) return;
+  if (targetLat == null || targetLng == null) return;
 
-  // Pick zoom scale based on country/city size
+  // Pick zoom level based on country/city size
   const LARGE_SCALE  = new Set([124,840,643,036,076,356,156]); // Canada, USA, Russia, Australia, Brazil, India, China
-  const MEDIUM_SCALE = new Set([276,724,250,380,752,578,246,616,504,764,792,834,231,372,352]); // Germany, Spain, France etc.
   const MICRO_SCALE  = new Set([492,336,462,634]);              // Monaco, Vatican, Maldives, Qatar
 
-  let scale;
+  let zoom;
   if (lat != null && lng != null) {
-    // City/specific point — zoom in closely
-    scale = 9;
+    zoom = 11; // ponto/cidade específica — aproximar bastante
   } else if (LARGE_SCALE.has(numericId)) {
-    scale = 2.5;
+    zoom = 3.5;
   } else if (MICRO_SCALE.has(numericId)) {
-    scale = 12;
-  } else if (MEDIUM_SCALE.has(numericId)) {
-    scale = 4;
+    zoom = 12;
   } else {
-    scale = 5;
+    zoom = 6;
   }
 
-  // Clamp to zoom extent [1, 30]
-  scale = Math.min(30, Math.max(1, scale));
-
-  // Calculate translate so targetPos lands exactly in the center of the viewport
-  const tx = W / 2 - scale * targetPos[0];
-  const ty = H / 2 - scale * targetPos[1];
-
-  d3.select('#map-wrap svg')
-    .transition().duration(750).ease(d3.easeCubicInOut)
-    .call(window._mapZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  leafletMap.flyTo([targetLat, targetLng], zoom, { duration: 1 });
 }
 
 // ─── SEARCH UI ───────────────────────────────────────────────────────────────
@@ -3459,15 +1981,6 @@ function selectSearchResult(item) {
   switchTab('map');
   zoomToCountry(item.id, item.lat || null, item.lng || null);
 
-  // Highlight the country with a pulse effect
-  const paths = d3.selectAll('.cpath').filter(d => +d.id === item.id);
-  if (!paths.empty()) {
-    const originalClass = paths.attr('class');
-    paths.classed('search-highlight', true);
-    // Remove highlight after 2.5s
-    setTimeout(() => paths.classed('search-highlight', false), 2500);
-  }
-
   setTimeout(() => {
     if (item.type !== 'city') {
       const info = VISITED[item.id];
@@ -3568,7 +2081,7 @@ function flagStripClick(numericId, code) {
   // requestAnimationFrame garante que o DOM foi pintado
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      if (!svgRef || !projRef || !window._mapZoom) return;
+      if (!leafletMap) return;
       zoomToCountry(id, null, null);
       // Abrir sheet depois do zoom completar
       setTimeout(() => {

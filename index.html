@@ -16,6 +16,8 @@
 <title>VanBerto's 🌍</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
 
@@ -67,7 +69,6 @@
         <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:var(--gold)"></div>Visitado</div>
         <div class="map-toggle-leg" id="legend-soon" style="display:none"><div class="map-toggle-dot" style="background:#e0457b"></div>A visitar em breve</div>
         <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:var(--green-light)"></div>Quero ir</div>
-        <div class="map-toggle-leg"><div class="map-toggle-dot" style="background:#c8dbe8"></div>Explorar</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
@@ -86,38 +87,13 @@
     <button class="tool-btn wishlist" id="btn-pin-wish" onclick="setMode('pin-wish')">
       ⭐ Quero ir
     </button>
-    <span class="tool-tip" id="mode-tip">Toca num país</span>
+    <span class="tool-tip" id="mode-tip">Toca no mapa</span>
   </div>
 
   <div class="map-outer">
-  <div id="map-wrap" role="application" aria-label="Mapa interativo de viagens — usa os controlos de zoom ou o rato/toque para navegar">
+  <div id="map-wrap" role="application" aria-label="Mapa interativo de viagens — usa pinch ou scroll para aproximar/afastar">
     <div id="map-loading" style="text-align:center;padding:50px 20px;color:#999;font-size:13px" aria-live="polite">
       🌍 A carregar mapa…
-    </div>
-
-    <!-- MAP TOOLTIP -->
-    <div id="map-tooltip">
-      <div class="tt-inner">
-        <div class="tt-header">
-          <img class="tt-flag" id="tt-flag-img" src="" alt="">
-          <div class="tt-name" id="tt-name"></div>
-        </div>
-        <div class="tt-capital" id="tt-capital"></div>
-        <div id="tt-badge-wrap"></div>
-      </div>
-      <div class="tt-arrow"></div>
-    </div>
-  </div>
-
-  <div class="zoom-controls-anchor">
-    <div class="zoom-controls" role="group" aria-label="Controlos de zoom do mapa">
-      <button class="zoom-btn" id="zbtn-in" aria-label="Aproximar (zoom in)" title="Aproximar">+</button>
-      <input type="range" id="zoom-slider" class="zoom-slider"
-             min="0" max="4.906890595" step="0.01" value="0"
-             oninput="mapZoomSlider(this.value)" aria-label="Nível de zoom" title="Nível de zoom">
-      <div class="zoom-level" id="zoom-level-indicator" aria-live="polite" aria-label="Zoom atual">1×</div>
-      <button class="zoom-btn reset" onclick="mapZoomReset()" aria-label="Repor zoom" title="Repor zoom">⊙</button>
-      <button class="zoom-btn" id="zbtn-out" aria-label="Afastar (zoom out)" title="Afastar">−</button>
     </div>
   </div>
   </div>
@@ -354,18 +330,9 @@
   <button class="submit-btn visited" id="pf-submit" onclick="submitPin()">Guardar Pin</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-
-<script>
-// Fallback: if topojson not loaded from first CDN, load via createElement (document.write is deprecated)
-if (typeof topojson === 'undefined') {
-  const s = document.createElement('script');
-  s.src = 'https://unpkg.com/topojson@3/dist/topojson.min.js';
-  document.head.appendChild(s);
-}
-</script>
-<script src="js/app.js?v=20260901e"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="js/app.js?v=20260901g"></script>
 
 <script>
 // Regista o service worker para permitir instalar a app e funcionar offline
