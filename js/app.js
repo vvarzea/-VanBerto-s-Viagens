@@ -778,10 +778,18 @@ async function initMap() {
       maxBoundsViscosity: 1.0,
     }).setView([25, 15], dynamicMinZoom);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
-    }).addTo(leafletMap);
+    // Coloca aqui a tua chave gratuita da RapidAPI (secção "MapTiles API").
+    // Passos: rapidapi.com → procurar "MapTiles API" → Subscribe (plano Basic,
+    // grátis) → copiar a "X-RapidAPI-Key" e colar em baixo, entre aspas.
+    const MAPTILES_API_KEY = '7c961db0b5mshc0d3f27c238ddb4p1a408bjsn42feb935e7df';
+
+    L.tileLayer(
+      `https://maptiles.p.rapidapi.com/en/map/v1/{z}/{x}/{y}.png?rapidapi-key=${MAPTILES_API_KEY}`,
+      {
+        maxZoom: 19,
+        attribution: 'Tiles: <a href="https://rapidapi.com/MapTilesApi/api/maptiles" target="_blank" rel="noopener">MapTiles API</a> | Dados: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      }
+    ).addTo(leafletMap);
 
     markersLayer = L.layerGroup().addTo(leafletMap);
     homesLayer = L.layerGroup().addTo(leafletMap);

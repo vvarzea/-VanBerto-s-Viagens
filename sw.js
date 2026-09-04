@@ -1,7 +1,7 @@
 // VanBerto's — Service Worker
 // Sempre que alterares ficheiros essenciais (index.html, css, js), sobe este número
 // para forçar todos os telemóveis a atualizar a cache guardada.
-const CACHE_VERSION = 'vanbertos-v8';
+const CACHE_VERSION = 'vanbertos-v9';
 
 // Ficheiros essenciais para a app abrir mesmo sem internet.
 // Usa exatamente os mesmos caminhos que o index.html usa.
