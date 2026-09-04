@@ -1788,7 +1788,6 @@ const SEARCH_DATA = [
   {name:'Nice', year:'Fran\u00E7a \u00B7 2026 P\u00E1scoa', id:250, lat:43.71, lng:7.27, type:'city', code:'fr'},
   {name:'Hels\u00EDnquia', year:'Finl\u00E2ndia \u00B7 2018 Ver\u00E3o \u00B7 2021 Natal', id:246, lat:60.17, lng:24.94, type:'city', code:'fi'},
   {name:'Rovaniemi \uD83C\uDF85', year:'Finl\u00E2ndia \u00B7 Lap\u00F3nia \u00B7 2021 Natal', id:246, lat:66.50, lng:25.72, type:'city', code:'fi'},
-  {name:'Lap\u00F3nia \uD83E\uDD8C', year:'Finl\u00E2ndia \u00B7 2021 Natal', id:246, lat:68.5, lng:26.0, type:'city', code:'fi'},
   {name:'Atenas', year:'Gr\u00E9cia \u00B7 Ver\u00E3o 2019 Ver\u00E3o', id:300, lat:37.98, lng:23.72, type:'city', code:'gr'},
   {name:'Budapeste', year:'Hungria \u00B7 2021 Ver\u00E3o', id:348, lat:47.5, lng:19.04, type:'city', code:'hu'},
   {name:'Roma', year:'It\u00E1lia \u00B7 Ver\u00E3o 2016 Ver\u00E3o', id:380, lat:41.9, lng:12.5, type:'city', code:'it'},
@@ -1833,6 +1832,7 @@ const SEARCH_DATA = [
   {name:'Estrasburgo', year:'Fran\u00E7a \u00B7 2026 Natal', id:250, lat:48.58, lng:7.75, type:'city', code:'fr'},
   {name:'Freiburg', year:'Alemanha \u00B7 2026 Natal', id:276, lat:47.99, lng:7.85, type:'city', code:'de'},
   {name:'Basileia', year:'Su\u00ED\u00E7a \u00B7 2026 Natal', id:756, lat:47.56, lng:7.59, type:'city', code:'ch'},
+  {name:'Vaticano', year:'Vaticano \u00B7 2016 Ver\u00E3o', id:336, lat:41.9029, lng:12.4534, type:'city', code:'va'},
 ];
 
 // (Zoom feito apenas por gestos nativos — pinch no telemóvel, scroll no rato.
@@ -2976,8 +2976,8 @@ const GUIDES_DATA = [
     ]
   },
   {
-    id: 'laponia', name: 'Lap\u00F3nia', country: 'Finl\u00E2ndia', flagCode: 'laponia', countryId: 246,
-    sub: 'Finl\u00E2ndia \u00B7 Natal 2021',
+    id: 'laponia', name: 'Rovaniemi', country: 'Finl\u00E2ndia', flagCode: 'laponia', countryId: 246,
+    sub: 'Finl\u00E2ndia \u00B7 Lap\u00F3nia \u00B7 2021 Natal',
     photoFolder: 'images/Laponia/Laponia',
     sections: [
       { title: '🗺️ Locais visitados', items: [
