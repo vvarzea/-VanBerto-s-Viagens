@@ -778,6 +778,11 @@ async function initMap() {
       maxBoundsViscosity: 1.0,
     }).setView([25, 15], dynamicMinZoom);
 
+    // Tira o "Leaflet 🇺🇦" do canto do mapa — é só a assinatura da própria
+    // biblioteca, não é obrigatória. O "© MapTiler © OpenStreetMap
+    // contribuidores" fica, porque esse é exigido pelas licenças de ambos.
+    leafletMap.attributionControl.setPrefix(false);
+
     // Tiles MapTiler — CDN rápido, plano gratuito generoso (100 mil vistas/mês,
     // sem cartão de crédito) e o estilo por defeito mostra sempre o nome em
     // alfabeto latino/inglês (com o nome local por baixo, quando é noutro
