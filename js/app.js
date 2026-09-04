@@ -778,16 +778,20 @@ async function initMap() {
       maxBoundsViscosity: 1.0,
     }).setView([25, 15], dynamicMinZoom);
 
-    // Coloca aqui a tua chave gratuita da RapidAPI (secção "MapTiles API").
-    // Passos: rapidapi.com → procurar "MapTiles API" → Subscribe (plano Basic,
-    // grátis) → copiar a "X-RapidAPI-Key" e colar em baixo, entre aspas.
-    const MAPTILES_API_KEY = '7c961db0b5mshc0d3f27c238ddb4p1a408bjsn42feb935e7df';
+    // Tiles MapTiler — CDN rápido, plano gratuito generoso (100 mil vistas/mês,
+    // sem cartão de crédito) e o estilo por defeito mostra sempre o nome em
+    // alfabeto latino/inglês (com o nome local por baixo, quando é noutro
+    // alfabeto) — ao contrário de tiles OSM "simples", que mostram só o nome
+    // local. Regista-te grátis em https://cloud.maptiler.com/account/keys/ e
+    // cola a tua chave aqui em baixo.
+    const MAPTILER_API_KEY = 'doMYvcoiIVaoMRrwyJff';
 
     L.tileLayer(
-      `https://maptiles.p.rapidapi.com/en/map/v1/{z}/{x}/{y}.png?rapidapi-key=${MAPTILES_API_KEY}`,
+      `https://api.maptiler.com/maps/streets-v4/256/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`,
       {
         maxZoom: 19,
-        attribution: 'Tiles: <a href="https://rapidapi.com/MapTilesApi/api/maptiles" target="_blank" rel="noopener">MapTiles API</a> | Dados: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+        tileSize: 256,
+        attribution: '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contribuidores',
       }
     ).addTo(leafletMap);
 
