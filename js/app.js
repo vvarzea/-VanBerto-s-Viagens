@@ -1846,6 +1846,7 @@ const SEARCH_DATA = [
   {name:'Prizren', year:'Kosovo \u00B7 2026 Ver\u00E3o', id:383, lat:42.21, lng:20.74, type:'city', code:'xk'},
   {name:'Colmar', year:'Fran\u00E7a \u00B7 2026 Natal', id:250, lat:48.08, lng:7.36, type:'city', code:'fr'},
   {name:'Estrasburgo', year:'Fran\u00E7a \u00B7 2026 Natal', id:250, lat:48.58, lng:7.75, type:'city', code:'fr'},
+  {name:'Lagos', year:'Algarve \u00B7 2008', id:620, lat:37.08807080806143, lng:-8.686674105744755, type:'city', code:'pt'},
   {name:'Freiburg', year:'Alemanha \u00B7 2026 Natal', id:276, lat:47.99, lng:7.85, type:'city', code:'de'},
   {name:'Basileia', year:'Su\u00ED\u00E7a \u00B7 2026 Natal', id:756, lat:47.56, lng:7.59, type:'city', code:'ch'},
   {name:'Vaticano', year:'Vaticano \u00B7 2016 Ver\u00E3o', id:336, lat:41.9029, lng:12.4534, type:'city', code:'va'},
