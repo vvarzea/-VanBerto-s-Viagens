@@ -809,6 +809,12 @@ async function initMap() {
         // biblioteca principal (maptilersdk) não estiver acessível, cai para
         // a string, que segundo a documentação também deve funcionar.
         const ptLanguage = (window.maptilersdk && maptilersdk.Language && maptilersdk.Language.PORTUGUESE) || 'pt';
+        // Define também na configuração global, antes de criar o mapa — a
+        // opção "language" da camada, sozinha, não estava a fazer efeito
+        // nesta versão do plugin.
+        if (window.maptilersdk && maptilersdk.config) {
+          maptilersdk.config.primaryLanguage = ptLanguage;
+        }
         const vectorLayer = L.maptiler.maptilerLayer({
           apiKey: MAPTILER_API_KEY,
           language: ptLanguage,
