@@ -1352,6 +1352,7 @@ const GUIDE_NAME_ALIASES = {
   'doha': 'catar',
   'banguecoque': 'bangkok',
   'funchal': 'madeira',
+  'lobios': 'peneda-geres',
 };
 function findGuideForPlace(placeName) {
   const target = normalizeForMatch(placeName);
@@ -1858,6 +1859,7 @@ const SEARCH_DATA = [
   {name:'Barcelona', year:'Espanha \u00B7 2023 P\u00E1scoa', id:724, lat:41.38, lng:2.18, type:'city', code:'es'},
   {name:'Benidorm', year:'Espanha \u00B7 2007 P\u00E1scoa', id:724, lat:38.54, lng:-0.13, type:'city', code:'es'},
   {name:'Parque Nacional da Peneda-Ger\u00EAs', year:'Portugal \u00B7 2011 Ver\u00E3o', id:620, lat:41.72820589930815, lng:-8.162718998376707, type:'city', code:'pt'},
+  {name:'Lobios', year:'Espanha \u00B7 Galiza \u00B7 2011 Ver\u00E3o', id:724, lat:41.901049207577614, lng:-8.08327977294833, type:'city', code:'es'},
   {name:'Edimburgo', year:'Esc\u00F3cia \u00B7 2024 Natal', id:826, lat:55.95, lng:-3.19, type:'city', code:'gb-sct'},
   {name:'Londres', year:'Inglaterra \u00B7 2014 P\u00E1scoa', id:826, lat:51.5, lng:-0.12, type:'city', code:'gb-eng'},
   {name:'Irlanda do Norte', year:'2025 P\u00E1scoa', id:826, lat:54.6, lng:-5.93, type:'city', code:'gb-nir'},
