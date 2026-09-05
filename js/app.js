@@ -804,9 +804,14 @@ async function initMap() {
     let vectorFailed = false;
     try {
       if (window.L && L.maptiler && typeof L.maptiler.maptilerLayer === 'function') {
+        // A MapTiler recomenda usar a constante Language.PORTUGUESE em vez da
+        // string 'pt' — nem sempre dá no mesmo. Se por algum motivo a
+        // biblioteca principal (maptilersdk) não estiver acessível, cai para
+        // a string, que segundo a documentação também deve funcionar.
+        const ptLanguage = (window.maptilersdk && maptilersdk.Language && maptilersdk.Language.PORTUGUESE) || 'pt';
         const vectorLayer = L.maptiler.maptilerLayer({
           apiKey: MAPTILER_API_KEY,
-          language: 'pt',
+          language: ptLanguage,
         });
         vectorLayer.addTo(leafletMap);
         setTimeout(() => {
