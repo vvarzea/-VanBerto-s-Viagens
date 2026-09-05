@@ -783,22 +783,48 @@ async function initMap() {
     // contribuidores" fica, porque esse é exigido pelas licenças de ambos.
     leafletMap.attributionControl.setPrefix(false);
 
-    // Tiles MapTiler — CDN rápido, plano gratuito generoso (100 mil vistas/mês,
-    // sem cartão de crédito) e o estilo por defeito mostra sempre o nome em
-    // alfabeto latino/inglês (com o nome local por baixo, quando é noutro
-    // alfabeto) — ao contrário de tiles OSM "simples", que mostram só o nome
-    // local. Regista-te grátis em https://cloud.maptiler.com/account/keys/ e
-    // cola a tua chave aqui em baixo.
     const MAPTILER_API_KEY = 'doMYvcoiIVaoMRrwyJff';
+    const MAPTILER_ATTRIBUTION = '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contribuidores';
 
-    L.tileLayer(
-      `https://api.maptiler.com/maps/streets-v4/256/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`,
-      {
-        maxZoom: 19,
-        tileSize: 256,
-        attribution: '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contribuidores',
+    // Tiles PNG da MapTiler (rápidos e sempre fiáveis, mas em inglês) — usados
+    // já de início nunca se conseguir usar os vetoriais, e como rede de
+    // segurança se a tentativa de português abaixo falhar.
+    function addRasterMap() {
+      L.tileLayer(
+        `https://api.maptiler.com/maps/streets-v4/256/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`,
+        { maxZoom: 19, tileSize: 256, attribution: MAPTILER_ATTRIBUTION }
+      ).addTo(leafletMap);
+    }
+
+    // Tenta o mapa vetorial (via MapTiler SDK) com rótulos em português —
+    // só os tiles vetoriais, ao contrário dos PNG, permitem escolher o
+    // idioma. Se ao fim de 3s não aparecer o canvas do mapa (biblioteca
+    // falhou a carregar/desenhar), troca automaticamente para o raster em
+    // inglês acima — nunca fica com o mapa em branco.
+    let vectorFailed = false;
+    try {
+      if (window.L && L.maptiler && typeof L.maptiler.maptilerLayer === 'function') {
+        const vectorLayer = L.maptiler.maptilerLayer({
+          apiKey: MAPTILER_API_KEY,
+          language: 'pt',
+        });
+        vectorLayer.addTo(leafletMap);
+        setTimeout(() => {
+          const canvas = wrap.querySelector('canvas.maplibregl-canvas, canvas.mapboxgl-canvas');
+          const ok = canvas && canvas.width > 0 && canvas.height > 0;
+          if (!ok) {
+            vectorFailed = true;
+            try { leafletMap.removeLayer(vectorLayer); } catch (e) {}
+            addRasterMap();
+          }
+        }, 3000);
+      } else {
+        vectorFailed = true;
       }
-    ).addTo(leafletMap);
+    } catch (e) {
+      vectorFailed = true;
+    }
+    if (vectorFailed) addRasterMap();
 
     markersLayer = L.layerGroup().addTo(leafletMap);
     homesLayer = L.layerGroup().addTo(leafletMap);
