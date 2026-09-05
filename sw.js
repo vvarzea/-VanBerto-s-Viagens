@@ -1,7 +1,7 @@
 // VanBerto's — Service Worker
 // Sempre que alterares ficheiros essenciais (index.html, css, js), sobe este número
 // para forçar todos os telemóveis a atualizar a cache guardada.
-const CACHE_VERSION = 'vanbertos-v13';
+const CACHE_VERSION = 'vanbertos-v20';
 
 // Ficheiros essenciais para a app abrir mesmo sem internet.
 // Usa exatamente os mesmos caminhos que o index.html usa.
@@ -21,11 +21,31 @@ const CORE_ASSETS = [
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 ];
 
-// Instalação: guarda logo o essencial em cache.
+// Instalação: guarda logo o essencial em cache. Pede tudo em modo 'cors'
+// explícito — os ficheiros de fora (unpkg.com, cdn.maptiler.com) são
+// carregados no HTML com crossorigin="", ou seja, em modo 'cors'; se aqui
+// os guardássemos em modo 'no-cors' (o que 'cache.addAll' faz por defeito
+// com URLs em string), ficavam guardados como resposta "opaque", e o browser
+// recusa-se a usar uma resposta "opaque" para responder a um pedido 'cors' —
+// foi isto que estava a rebentar o carregamento do leaflet.css.
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(CORE_ASSETS))
+    caches.open(CACHE_VERSION).then((cache) =>
+      Promise.all(
+        CORE_ASSETS.map((url) => {
+          const req = new Request(url, { mode: 'cors' });
+          return fetch(req)
+            .then((res) => {
+              if (res && res.ok) return cache.put(req, res);
+            })
+            .catch(() => {
+              // Um ficheiro a falhar (ex: sem internet neste preciso
+              // momento) não deve impedir a instalação dos restantes.
+            });
+        })
+      )
+    )
   );
 });
 
