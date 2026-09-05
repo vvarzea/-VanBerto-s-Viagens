@@ -366,7 +366,7 @@ const PLACES = [
 // Países visitados sem a capital como pin — mostram 1 pin "representante" já no zoom inicial,
 // do mesmo tamanho visual das capitais (usado tanto no desenho do pin como na visibilidade por zoom)
 const PRIORITY_PINS = new Set([
-  'Toronto','Nova Iorque','Belfast','Londres','Edimburgo','Istambul','Zurique'
+  'Toronto','Nova Iorque','Irlanda do Norte','Londres','Edimburgo','Istambul','Zurique'
 ]);
 
 // Territórios tão pequenos que clicar no país no mapa é quase impossível — clicar no pin
@@ -857,10 +857,10 @@ async function initMap() {
 }
 
 // ─── ÍCONES DOS PINS (Leaflet divIcon — alfinete clássico com furo, vermelho) ──
-function classicPinIcon() {
+function classicPinIcon(color) {
   return L.divIcon({
     className: 'vb-pin-icon',
-    html: '<svg class="vb-pin" viewBox="0 0 24 24" width="20.25" height="20.25"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#d92b2b" fill-rule="evenodd"/></svg>',
+    html: `<svg class="vb-pin" viewBox="0 0 24 24" width="20.25" height="20.25"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="${color || '#d92b2b'}" fill-rule="evenodd"/></svg>`,
     iconSize: [20.25, 20.25],
     iconAnchor: [10.1, 18.75],
     popupAnchor: [0, -18],
@@ -868,6 +868,7 @@ function classicPinIcon() {
 }
 function visitedIcon() { return classicPinIcon(); }
 function wishIcon()    { return classicPinIcon(); }
+function futureTripIcon() { return classicPinIcon('#1a5a8a'); }
 function homeIcon() {
   return L.divIcon({
     className: 'vb-pin-icon',
@@ -1332,26 +1333,83 @@ function addFlagToMap(pin) {
   // chamada depois de guardar um pin, por isso não é preciso injetar nada
   // manualmente aqui.
 }
+// ─── CORRESPONDÊNCIA PIN → GUIA ──────────────────────────────────────────────
+// Liga o nome de uma cidade/pin do mapa ao respetivo guia detalhado (GUIDES_DATA),
+// comparando os nomes (ignorando maiúsculas/acentos). Serve tanto para as cidades
+// fixas do histórico como para os pins criados manualmente.
+function normalizeForMatch(s) {
+  return (s || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+// Casos em que o nome da cidade visitada não bate com o título do guia (o guia
+// cobre a viagem/região com outro nome — ex: guia "Islândia" sobre a cidade
+// "Reykjavik", ou "Bangkok" escrito em inglês no guia mas "Banguecoque" no pin).
+const GUIDE_NAME_ALIASES = {
+  'reykjavik': 'islandia',
+  'male': 'maldivas',
+  'doha': 'catar',
+  'banguecoque': 'bangkok',
+  'funchal': 'madeira',
+};
+function findGuideForPlace(placeName) {
+  const target = normalizeForMatch(placeName);
+  if (!target) return null;
+  // 0. Correspondência manual (ver GUIDE_NAME_ALIASES acima)
+  if (GUIDE_NAME_ALIASES[target]) {
+    const aliasGuide = GUIDES_DATA.find(g => g.id === GUIDE_NAME_ALIASES[target]);
+    if (aliasGuide) return aliasGuide;
+  }
+  // 1. Correspondência exata (ex: "Peniche" === "Peniche")
+  let guide = GUIDES_DATA.find(g => normalizeForMatch(g.name) === target);
+  if (guide) return guide;
+  // 2. O nome do local aparece como palavra dentro do nome do guia, ou
+  //    vice-versa — cobre guias que juntam 2+ cidades (ex: "Toronto" e
+  //    "Niágara Falls" dentro do guia "Toronto & Niágara").
+  const targetWords = target.split(' ').filter(w => w.length >= 4);
+  guide = GUIDES_DATA.find(g => {
+    const gName = normalizeForMatch(g.name);
+    const gWords = gName.split(' ').filter(w => w.length >= 4);
+    return targetWords.some(w => gName.includes(w)) || gWords.some(w => target.includes(w));
+  });
+  return guide || null;
+}
+function guideNameHtml(placeName, iconPrefix) {
+  const prefix = iconPrefix ? iconPrefix + ' ' : '';
+  const guide = findGuideForPlace(placeName);
+  if (!guide) return prefix + placeName;
+  return `${prefix}<a href="#" class="popup-guide-name" onclick="openGuideModal('${guide.id}');return false;">${placeName}</a>`;
+}
+
 function renderMapPins() {
   if (!leafletMap || !markersLayer) return;
   markersLayer.clearLayers();
 
+  // Viagem de Natal 2026 (Colmar, Estrasburgo, Freiburg, Basileia) — ficam
+  // a cinzento até ao dia da viagem, depois passam a vermelho (visitado).
+  const NATAL2026_CUTOFF = new Date('2026-12-23');
+  const NATAL2026_PIN_NAMES = new Set(['Colmar', 'Estrasburgo', 'Freiburg', 'Basileia']);
+
   // Cidades já visitadas (histórico fixo, com lat/lng) — só de consulta
   SEARCH_DATA.filter(d => d.type === 'city' && d.lat != null && d.lng != null).forEach(c => {
-    L.marker([c.lat, c.lng], { icon: visitedIcon() })
+    const nameHtml = guideNameHtml(c.name, '\uD83D\uDCCD');
+    const isPendingNatal2026 = NATAL2026_PIN_NAMES.has(c.name) && new Date() < NATAL2026_CUTOFF;
+    L.marker([c.lat, c.lng], { icon: isPendingNatal2026 ? futureTripIcon() : visitedIcon() })
       .addTo(markersLayer)
-      .bindPopup(`<div class="map-popup"><strong>\uD83D\uDCCD ${c.name}</strong>${c.year ? `<div class="map-popup-sub">${c.year}</div>` : ''}</div>`);
+      .bindPopup(`<div class="map-popup"><strong>${nameHtml}</strong>${c.year ? `<div class="map-popup-sub">${c.year}</div>` : ''}</div>`);
   });
 
   // Pins adicionados à mão (editáveis)
   pins.filter(p => p.lat != null && p.lng != null).forEach(pin => {
     const icon = pin.type === 'pin-wish' ? wishIcon() : visitedIcon();
     const sub = pin.type === 'pin-visited' ? (pin.year || '') : '\u2B50 Wishlist';
+    const nameHtml = guideNameHtml(pin.name, pin.emoji || '');
     L.marker([pin.lat, pin.lng], { icon })
       .addTo(markersLayer)
       .bindPopup(`
         <div class="map-popup">
-          <strong>${pin.emoji || ''} ${pin.name}</strong>
+          <strong>${nameHtml}</strong>
           <div class="map-popup-sub">${sub}</div>
           ${pin.note ? `<div class="map-popup-note">${pin.note}</div>` : ''}
           <div class="map-popup-actions">
@@ -1788,8 +1846,8 @@ const SEARCH_DATA = [
   {name:'Esc\u00F3pia', year:'Maced\u00F3nia do Norte \u00B7 2026', id:807, lat:42.00, lng:21.43, type:'city', code:'mk'},
   {name:'Pristina', year:'Kosovo \u00B7 2026', id:383, lat:42.67, lng:21.17, type:'city', code:'xk'},
   // Cities
-  {name:'Lisboa', year:'capital \u00B7 sempre', id:620, lat:38.72, lng:-9.14, type:'city', code:'pt'},
-  {name:'Porto', year:'Portugal \u00B7 sempre', id:620, lat:41.15, lng:-8.61, type:'city', code:'pt'},
+  {name:'Lisboa', year:'Portugal', id:620, lat:38.72, lng:-9.14, type:'city', code:'pt'},
+  {name:'Porto', year:'Portugal \u00B7 2007 \u00B7 2025 Ver\u00E3o', id:620, lat:41.15, lng:-8.61, type:'city', code:'pt'},
   {name:'Berlim', year:'Alemanha \u00B7 Ver\u00E3o 2019 Ver\u00E3o', id:276, lat:52.52, lng:13.4, type:'city', code:'de'},
   {name:'Viena', year:'\u00C1ustria \u00B7 2021 Ver\u00E3o', id:40, lat:48.21, lng:16.37, type:'city', code:'at'},
   {name:'Bruxelas', year:'B\u00E9lgica \u00B7 2017 Ver\u00E3o', id:56, lat:50.85, lng:4.35, type:'city', code:'be'},
@@ -1798,12 +1856,11 @@ const SEARCH_DATA = [
   {name:'Copenhaga', year:'Dinamarca \u00B7 2022 Natal', id:208, lat:55.68, lng:12.57, type:'city', code:'dk'},
   {name:'Madrid', year:'Espanha \u00B7 2025 Natal', id:724, lat:40.42, lng:-3.7, type:'city', code:'es'},
   {name:'Barcelona', year:'Espanha \u00B7 2023 P\u00E1scoa', id:724, lat:41.38, lng:2.18, type:'city', code:'es'},
-  {name:'Loret del Mar', year:'Espanha \u00B7 2000 P\u00E1scoa', id:724, lat:41.69, lng:2.84, type:'city', code:'es'},
   {name:'Benidorm', year:'Espanha \u00B7 2007 P\u00E1scoa', id:724, lat:38.54, lng:-0.13, type:'city', code:'es'},
-  {name:'Lobios', year:'Espanha \u00B7 Galiza \u00B7 2011 Ver\u00E3o', id:724, lat:41.85, lng:-8.07, type:'city', code:'es'},
+  {name:'Parque Nacional da Peneda-Ger\u00EAs', year:'Portugal \u00B7 2011 Ver\u00E3o', id:620, lat:41.72820589930815, lng:-8.162718998376707, type:'city', code:'pt'},
   {name:'Edimburgo', year:'Esc\u00F3cia \u00B7 2024 Natal', id:826, lat:55.95, lng:-3.19, type:'city', code:'gb-sct'},
   {name:'Londres', year:'Inglaterra \u00B7 2014 P\u00E1scoa', id:826, lat:51.5, lng:-0.12, type:'city', code:'gb-eng'},
-  {name:'Belfast', year:'Irlanda do Norte \u00B7 2025 P\u00E1scoa', id:826, lat:54.6, lng:-5.93, type:'city', code:'gb-nir'},
+  {name:'Irlanda do Norte', year:'2025 P\u00E1scoa', id:826, lat:54.6, lng:-5.93, type:'city', code:'gb-nir'},
   {name:'Nova Iorque', year:'EUA \u00B7 2023 Ver\u00E3o', id:840, lat:40.71, lng:-74.0, type:'city', code:'us'},
   {name:'Abu Dhabi', year:'Emirados \u00C1rabes \u00B7 2024 Natal', id:784, lat:24.47, lng:54.37, type:'city', code:'ae'},
   {name:'Adis Abeba', year:'Eti\u00F3pia \u00B7 2025 Ver\u00E3o', id:231, lat:9.03, lng:38.74, type:'city', code:'et'},
@@ -4218,6 +4275,11 @@ async function openGuideModal(guideId) {
   modal.dataset.activeGuide = guide.id;
   modal.classList.add('on');
   document.getElementById('backdrop').classList.add('on');
+  // Fecha qualquer popup do mapa que tenha ficado aberto por trás (ex: ao
+  // abrir o guia a partir de um pin) e bloqueia o scroll do fundo enquanto
+  // o modal está aberto.
+  if (typeof leafletMap !== 'undefined' && leafletMap && leafletMap.closePopup) leafletMap.closePopup();
+  document.body.style.overflow = 'hidden';
 
   // Se tem pasta de fotos e ainda não foram carregadas, carregar em background
   if (guide.photoFolder && (!guide.photos || guide.photos.length === 0)) {
@@ -4245,6 +4307,7 @@ function closeGuideModal(evt) {
   if (evt && evt.target !== document.getElementById('guide-modal')) return;
   document.getElementById('guide-modal').classList.remove('on');
   document.getElementById('backdrop').classList.remove('on');
+  document.body.style.overflow = '';
 }
 
 document.addEventListener('keydown', function(e) {
@@ -4255,6 +4318,7 @@ document.addEventListener('keydown', function(e) {
   if (modal && modal.classList.contains('on')) {
     modal.classList.remove('on');
     document.getElementById('backdrop').classList.remove('on');
+    document.body.style.overflow = '';
   }
 });
 
