@@ -384,6 +384,7 @@ let pendingCoords = null;
 let leafletMap = null;
 let markersLayer = null;
 let homesLayer = null;
+const MAPTILER_API_KEY = 'doMYvcoiIVaoMRrwyJff';
 let mapInitialBounds = null;
 let wishCountriesNumeric = new Set();
 let soonCountriesNumeric = new Set(); // países marcados como "a visitar em breve" no mapa
@@ -789,7 +790,6 @@ async function initMap() {
     // alfabeto) — ao contrário de tiles OSM "simples", que mostram só o nome
     // local. Regista-te grátis em https://cloud.maptiler.com/account/keys/ e
     // cola a tua chave aqui em baixo.
-    const MAPTILER_API_KEY = 'doMYvcoiIVaoMRrwyJff';
 
     L.tileLayer(
       `https://api.maptiler.com/maps/streets-v4/256/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`,
@@ -822,6 +822,7 @@ async function initMap() {
     });
 
     renderMapPins();
+    geocodePendingWishPins();
 
     // Ponto de partida do mapa: Europa/Atlântico (Portugal, Açores, Madeira,
     // Cabo Verde e Marrocos incluídos). Não usamos TODOS os pins no arranque —
@@ -867,7 +868,7 @@ function classicPinIcon(color) {
   });
 }
 function visitedIcon() { return classicPinIcon(); }
-function wishIcon()    { return classicPinIcon(); }
+function wishIcon()    { return classicPinIcon('#2f9e5b'); }
 function futureTripIcon() { return classicPinIcon('#1a5a8a'); }
 function homeIcon() {
   return L.divIcon({
@@ -1283,6 +1284,35 @@ function setPinType(type) {
   buildYearSelect(type === 'pin-wish');
 }
 
+// ─── GEOCODING (nome → coordenadas) para pins da wishlist ────────────────────
+// Os pins criados pelo botão "+ Adicionar" não têm lat/lng (só nome), por isso
+// procuramos o local no MapTiler para o pin aparecer no separador Mapa.
+async function geocodePlace(name, countryId) {
+  const code = (NUM_TO_CODE[+countryId] || '').toLowerCase();
+  const country = /^[a-z]{2}$/.test(code) ? `&country=${code}` : '';
+  const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(name)}.json?key=${MAPTILER_API_KEY}&limit=1&language=pt${country}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const c = data.features && data.features[0] && data.features[0].center;
+    return c ? { lng: c[0], lat: c[1] } : null;
+  } catch (e) { return null; }
+}
+let _geocodingBusy = false;
+async function geocodePendingWishPins() {
+  if (_geocodingBusy) return;
+  _geocodingBusy = true;
+  try {
+    let changed = false;
+    for (const pin of pins.filter(p => p.type === 'pin-wish' && (p.lat == null || p.lng == null))) {
+      const pos = await geocodePlace(pin.name, pin.countryId);
+      if (pos) { pin.lat = pos.lat; pin.lng = pos.lng; pin.geo = true; changed = true; }
+    }
+    if (changed) { await savePins(); renderMapPins(); }
+  } finally { _geocodingBusy = false; }
+}
+
 function submitPin() {
   const name = document.getElementById('pf-name').value.trim();
   if (!name) { document.getElementById('pf-name').focus(); return; }
@@ -1305,7 +1335,12 @@ function submitPin() {
   };
   if (editId) {
     const idx = pins.findIndex(p => p.id === editId);
-    if (idx > -1) pins[idx] = pin;
+    if (idx > -1) {
+      // Pin localizado automaticamente + nome alterado → localizar de novo
+      if (pins[idx].geo && pins[idx].name !== pin.name) { pin.lat = null; pin.lng = null; }
+      else if (pins[idx].geo && pin.lat != null) pin.geo = true;
+      pins[idx] = pin;
+    }
   } else {
     pins.push(pin);
   }
@@ -1323,6 +1358,9 @@ function submitPin() {
   }
 
   showNotif(currentPinType === 'pin-visited' ? '\uD83D\uDCCD Pin guardado!' : '\u2B50 Adicionado \u00E0 wishlist!');
+
+  // Wishlist sem coordenadas → procurar o local para aparecer no mapa
+  if (pin.type === 'pin-wish' && (pin.lat == null || pin.lng == null)) geocodePendingWishPins();
 }
 
 // ─── ADICIONAR BANDEIRA AO MAPA EM TEMPO REAL ────────────────────────────────
@@ -1353,6 +1391,7 @@ const GUIDE_NAME_ALIASES = {
   'banguecoque': 'bangkok',
   'funchal': 'madeira',
   'lobios': 'peneda-geres',
+  'terceira': 'terceira',
 };
 function findGuideForPlace(placeName) {
   const target = normalizeForMatch(placeName);
@@ -1404,8 +1443,8 @@ function renderMapPins() {
   // Pins adicionados à mão (editáveis)
   pins.filter(p => p.lat != null && p.lng != null).forEach(pin => {
     const icon = pin.type === 'pin-wish' ? wishIcon() : visitedIcon();
-    const sub = pin.type === 'pin-visited' ? (pin.year || '') : '\u2B50 Wishlist';
-    const nameHtml = guideNameHtml(pin.name, pin.emoji || '');
+    const sub = pin.type === 'pin-visited' ? (pin.year || '') : ('Quero visitar!' + (pin.year ? ' \u00B7 ' + pin.year : ''));
+    const nameHtml = guideNameHtml(pin.name, pin.type === 'pin-wish' ? '\u2B50' : (pin.emoji || ''));
     L.marker([pin.lat, pin.lng], { icon })
       .addTo(markersLayer)
       .bindPopup(`
@@ -1580,16 +1619,23 @@ function renderWishList() {
     </div>`;
   });
 
-  const pinItems = wishPins.map(p => `
+  const pinItems = wishPins.map(p => {
+    // Bandeira: o campo emoji guarda o código do país (ex: 'jp'); se faltar, vai buscar pelo countryId
+    let code = /^[a-z]{2}(-[a-z]+)?$/i.test(p.emoji || '') ? p.emoji.toLowerCase() : '';
+    if (!code && p.countryId) code = FLAG_CODES[+p.countryId] || NUM_TO_CODE[+p.countryId] || '';
+    const icon = code
+      ? `<img src="https://flagcdn.com/w160/${code}.png" style="width:28px;height:19px;border-radius:3px;object-fit:cover;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;">`
+      : `<div class="pin-dot wish">${p.emoji || '\u2B50'}</div>`;
+    return `
     <div class="pin-item">
-      <div class="pin-dot wish">${p.emoji || '\u2B50'}</div>
+      ${icon}
       <div class="pin-info">
         <div class="pin-name">${p.name}</div>
-        <div class="pin-meta">${p.note || 'Quero visitar!'}</div>
+        ${p.note ? `<div class="pin-meta">${p.note}</div>` : ''}
       </div>
       <div class="pin-delete" onclick="deletePin('${p.id}')" title="Remover">\u2715</div>
-    </div>
-  `);
+    </div>`;
+  });
 
   wishList.innerHTML = [...countryItems, ...pinItems].join('');
 }
@@ -1896,6 +1942,7 @@ const SEARCH_DATA = [
   {name:'Zanzibar', year:'Tanz\u00E2nia \u00B7 2025 Ver\u00E3o', id:834, lat:-6.16, lng:39.2, type:'city', code:'tz'},
   {name:'Funchal', year:'Madeira \u00B7 2023', id:620, lat:32.65, lng:-16.91, type:'city', code:'pt'},
   {name:'S\u00E3o Miguel', year:'A\u00E7ores \u00B7 2013 \u00B7 2014 \u00B7 2015 \u00B7 2024', id:620, lat:37.77, lng:-25.5, type:'city', code:'pt'},
+  {name:'Terceira', year:'A\u00E7ores \u00B7 desde 2007', id:620, lat:38.76, lng:-27.2, type:'city', code:'pt'},
   {name:'Faial', year:'A\u00E7ores \u00B7 2023', id:620, lat:38.53, lng:-28.7, type:'city', code:'pt'},
   {name:'Pico', year:'A\u00E7ores \u00B7 2017', id:620, lat:38.47, lng:-28.33, type:'city', code:'pt'},
   {name:'Flores', year:'A\u00E7ores \u00B7 2017', id:620, lat:39.45, lng:-31.11, type:'city', code:'pt'},

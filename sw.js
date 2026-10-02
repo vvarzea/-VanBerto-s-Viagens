@@ -1,7 +1,7 @@
 // VanBerto's — Service Worker
 // Sempre que alterares ficheiros essenciais (index.html, css, js), sobe este número
 // para forçar todos os telemóveis a atualizar a cache guardada.
-const CACHE_VERSION = 'vanbertos-v26';
+const CACHE_VERSION = 'vanbertos-v31';
 
 // Ficheiros essenciais para a app abrir mesmo sem internet.
 // Usa exatamente os mesmos caminhos que o index.html usa.
@@ -9,7 +9,7 @@ const CORE_ASSETS = [
   './',
   'index.html',
   'css/main.css',
-  'js/app.js?v=20260904a',
+  'js/app.js?v=20261002e',
   'manifest.json',
   'images/logo_passaporte.png',
   'images/icons/icon-192.png',
@@ -66,6 +66,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
+  // Geocoding (pesquisa de locais) — sempre da rede, nunca da cache
+  if (request.url.includes('/geocoding/')) return;
 
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
