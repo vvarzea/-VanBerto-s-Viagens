@@ -1949,7 +1949,7 @@ const SEARCH_DATA = [
   {name:'Graciosa', year:'A\u00E7ores \u00B7 2019', id:620, lat:39.05, lng:-28.01, type:'city', code:'pt'},
   {name:'Santa Maria', year:'A\u00E7ores \u00B7 2018', id:620, lat:36.97, lng:-25.17, type:'city', code:'pt'},
   {name:'Corvo', year:'A\u00E7ores \u00B7 2023 Carnaval', id:620, lat:39.67, lng:-31.13, type:'city', code:'pt'},
-  {name:'S\u00E3o Jorge', year:'A\u00E7ores \u00B7 2014', id:620, lat:38.65, lng:-28.07, type:'city', code:'pt'},
+  {name:'S\u00E3o Jorge', year:'A\u00E7ores \u00B7 2014 \u00B7 2018 \u00B7 2026', id:620, lat:38.65, lng:-28.07, type:'city', code:'pt'},
   {name:'Santiago (Cabo Verde)', year:'Cabo Verde \u00B7 2024 P\u00E1scoa', id:132, lat:14.93, lng:-23.51, type:'city', code:'cv'},
   {name:'Glasgow', year:'Esc\u00F3cia \u00B7 2024 Natal', id:826, lat:55.86, lng:-4.25, type:'city', code:'gb-sct'},
   {name:'M\u00F3naco', year:'M\u00F3naco \u00B7 2026 P\u00E1scoa', id:492, lat:43.73, lng:7.42, type:'city', code:'mc'},
@@ -2450,7 +2450,7 @@ const GUIDES_DATA = [
   },
   {
     id: 'sao-jorge', name: 'Ilha de São Jorge', country: 'Portugal', flagCode: 'azores', countryId: 620,
-    sub: 'Açores · 2014-2018',
+    sub: 'Açores · 2014, 2018, 2026',
     photoFolder: 'images/Ilha_de_Sao_Jorge/Ilha_de_Sao_Jorge',
     sections: [
       { title: '🗺️ Locais visitados', items: [
@@ -2466,11 +2466,26 @@ const GUIDES_DATA = [
         'Cooperativa do Queijo de São Jorge (Beira)',
         'Ponta dos Rosais (e Farol)',
         'Parque Florestal das Sete Fontes',
+        'Arco Natural de Velas',
+        'Miradouro do Pico da Velha',
+        'Baloiço Fajã de João Dias',
+        'Miradouro da Fajã dos Cubres',
+        'Reserva Florestal de Recreio da Silveira',
+        'Piscinas Naturais Fajã Grande',
+        'Miradouro Serra do Topo',
+        'Cascata do Cruzal',
+      ]},
+      { title: '🏨 Hotel', items: [
+        'Intact - Farm and Bungalows Resort',
       ]},
       { title: '🍴 Restaurantes', items: [
         'O Forninho',
         'Restaurante Amaro',
         'Sabores da Fajã',
+        'Atlantico Chinês',
+        'Pronut\'s & Kebabs',
+        'O Carneiro',
+        'Pachamama in Azores',
       ]},
     ]
   },
